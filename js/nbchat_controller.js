@@ -17,7 +17,12 @@ var NBChatController;
     // <variables>
     var debugArray = [];
     var taggedUsers = {}; //ToDo: change nick tagging to ident tagging.
-    var chat_options = { sndArrival: true, sndKick: true, sndTagged: true, sndInvite: true, sndWhisp: true };
+    var options_controller_instance = {
+        sndArrival: true, sndKick: true, sndTagged: true, sndInvite: true, sndWhisp: true,
+        sDspFrmt: "", fontSize: "", corpText: true, sAwayMsg: "",
+        bEmotsOff: false, bTextFrmtOff: false, bWhispOff: false, bTimeStampOn: true,
+        oEventShowNotifys: { bDspArrivals: true, bDspStatusChg: true, bDspDeparts: true }
+    };
     var ServerName, nick_me, IsAuthRequestSent, bConnectionRegistered, bInitialPropChange = true, bIsKicked;
     var bInviteFlood = false;
     var ChannelName, CategoryId, Topic, Wel, Lang, Lang2, AuthTypeCode, AuthPass;
@@ -153,14 +158,16 @@ var NBChatController;
     }
     NBChatController.Disconnect = Disconnect;
     function GetExtraOptions() {
-        //ToDo: move to storage class or namespace.
         var extra_options = new Object();
-        if (flashObj != null) {
-            extra_options = flashObj.GetExtraOptions();
+        //if (flashObj != null) {
+        //    extra_options = flashObj.GetExtraOptions();
+        //} else {
+        //    printError("Non-flash storage has not been implemented for function GetExtraOptions().");
+        //}
+        if (localStorage.stored_extra_options) {
+            extra_options = JSON.parse(localStorage.stored_extra_options);
         }
-        else {
-            printError("Non-flash storage has not been implemented for function GetExtraOptions().");
-        }
+        //alert(JSON.stringify(extra_options));    
         return extra_options;
     }
     NBChatController.GetExtraOptions = GetExtraOptions;
@@ -232,19 +239,21 @@ var NBChatController;
         return false;
     }
     function LoadChatOptions() {
-        //ToDo: move to storage class or namespace.
         var options = null; //
-        if (flashObj != null) {
-            options = flashObj.LoadChatOptions();
+        //if (flashObj != null) {
+        //    options = flashObj.LoadChatOptions();
+        //} else {
+        //    printError("Non-flash storage has not been implemented for function LoadChatOptions().");
+        //}
+        if (localStorage.stored_chat_options) {
+            options = JSON.parse(localStorage.stored_chat_options);
         }
-        else {
-            printError("Non-flash storage has not been implemented for function LoadChatOptions().");
-        }
+        //alert(JSON.stringify(options));
         if (!IsUndefinedOrNull(options)) {
-            chat_options = options;
+            options_controller_instance = options;
         }
         else {
-            options = chat_options;
+            options = options_controller_instance;
         }
         return options;
     }
@@ -330,7 +339,7 @@ var NBChatController;
                         var join_item = parser_item.rval;
                         if (join_item.user.nick !== nick_me) {
                             onJoin(join_item.user, join_item.ircmChannelName);
-                            if (chat_options.sndArrival)
+                            if (options_controller_instance.sndArrival)
                                 playJoinSnd();
                         }
                         else {
@@ -346,7 +355,7 @@ var NBChatController;
                         var quit_nick = parser_item.rval;
                         if (quit_nick !== nick_me) {
                             onRemoveUserByNick(quit_nick);
-                            if (chat_options.sndTagged !== false) {
+                            if (options_controller_instance.sndTagged !== false) {
                                 if (taggedUsers[quit_nick] === true)
                                     playTagSnd();
                             }
@@ -361,7 +370,7 @@ var NBChatController;
                         var part_item = parser_item.rval;
                         if (part_item.nick !== nick_me) {
                             onRemoveUserByNick(part_item.nick);
-                            if (chat_options.sndTagged !== false) {
+                            if (options_controller_instance.sndTagged !== false) {
                                 if (taggedUsers[part_item.nick] === true)
                                     playTagSnd();
                             }
@@ -402,7 +411,7 @@ var NBChatController;
                             //private notice
                             var nick = ParserWx.ExtractNick(notice_item.t0);
                             onNoticePrivate(nick, notice_item.t1, text_message);
-                            if (chat_options.sndTagged !== false)
+                            if (options_controller_instance.sndTagged !== false)
                                 if (taggedUsers[nick] === true)
                                     playTagSnd();
                         }
@@ -410,7 +419,7 @@ var NBChatController;
                             //notice message general handler
                             var nick = ParserWx.ExtractNick(notice_item.t0);
                             onNotice(nick, notice_item.t1, text_message);
-                            if (chat_options.sndTagged !== false)
+                            if (options_controller_instance.sndTagged !== false)
                                 if (taggedUsers[nick] === true)
                                     playTagSnd();
                         }
@@ -436,7 +445,7 @@ var NBChatController;
                         else if (IsEmptyString(privmsg_item.Reciver)) {
                             var nick = ParserWx.ExtractNick(privmsg_item.SenderUserStr);
                             onPrivmsg(nick, privmsg_item.IrcmChannelName, privmsg_item.Message);
-                            if (chat_options.sndTagged !== false) {
+                            if (options_controller_instance.sndTagged !== false) {
                                 if (taggedUsers[nick] === true)
                                     playTagSnd();
                             }
@@ -576,7 +585,7 @@ var NBChatController;
                     {
                         var r = parser_item.rval;
                         onInvite(ParserWx.ExtractNick(r.SenderUserStr), r.TargetNick, r.IrcmChannelName);
-                        if (chat_options.sndInvite === true && bInviteFlood === false)
+                        if (options_controller_instance.sndInvite === true && bInviteFlood === false)
                             playInviteSnd();
                     }
                     break;
@@ -728,13 +737,13 @@ var NBChatController;
         if (IsUndefinedOrNull(options)) {
             throw new Error("SaveChatOptions function: options paratmeter cannot be null.");
         }
-        if (flashObj != null) {
-            flashObj.SaveChatOptions(options);
-        }
-        else {
-            printError("Non-flash storage has not been implemented for function SaveChatOptions(...).");
-        }
-        chat_options = options;
+        //if (flashObj != null) {
+        //    flashObj.SaveChatOptions(options);
+        //} else {
+        //    printError("Non-flash storage has not been implemented for function SaveChatOptions(...).");
+        //}
+        options_controller_instance = options;
+        localStorage.setItem("stored_chat_options", JSON.stringify(options));
     }
     NBChatController.SaveChatOptions = SaveChatOptions;
     function SaveGuestuserPass(pw) {
@@ -785,13 +794,12 @@ var NBChatController;
     }
     NBChatController.sendToServerQue = sendToServerQue;
     function SetExtraOptions(extra_options) {
-        //ToDo: move to storage class or namespace.
-        if (flashObj != null) {
-            flashObj.SetExtraOptions();
-        }
-        else {
-            printError("Non-flash storage has not been implemented for function SetExtraOptions(...).");
-        }
+        //if (flashObj != null) {
+        //    flashObj.SetExtraOptions();
+        //} else {
+        //    printError("Non-flash storage has not been implemented for function SetExtraOptions(...).");
+        //}
+        localStorage.setItem("stored_extra_options", JSON.stringify(extra_options));
     }
     NBChatController.SetExtraOptions = SetExtraOptions;
     function SetChanProps() {

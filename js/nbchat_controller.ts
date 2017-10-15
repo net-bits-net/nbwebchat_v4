@@ -36,12 +36,30 @@ declare let sVersion: string; // gs is not used because variable may have been u
 namespace NBChatController {
     "use strict";
 
+    interface IEventShowNotifys {
+        bDspArrivals: boolean;
+        bDspStatusChg: boolean;
+        bDspDeparts: boolean;
+    }
+
     interface IChatOptions {
         sndArrival: boolean;
         sndKick: boolean;
         sndTagged: boolean;
         sndInvite: boolean;
         sndWhisp: boolean;
+
+        sDspFrmt: string;
+        fontSize: string;
+        corpText: boolean;
+        sAwayMsg: string;
+
+        bEmotsOff: boolean;
+        bTextFrmtOff: boolean;
+        bWhispOff: boolean;
+        bTimeStampOn: boolean;
+
+        oEventShowNotifys: IEventShowNotifys;
     }
 
     //Note: currently using namespace, when all major browsers have support for module loading then it can be changed to module here. --HY 26-Dec-2016.
@@ -53,7 +71,13 @@ namespace NBChatController {
     // <variables>
     let debugArray: string[] = [];
     let taggedUsers: { [nick: string]: boolean; } = {}; //ToDo: change nick tagging to ident tagging.
-    let chat_options: IChatOptions = { sndArrival: true, sndKick: true, sndTagged: true, sndInvite: true, sndWhisp: true };
+    let options_controller_instance: IChatOptions = {
+        sndArrival: true, sndKick: true, sndTagged: true, sndInvite: true, sndWhisp: true,
+        sDspFrmt: "", fontSize: "", corpText: true, sAwayMsg: "",
+        bEmotsOff: false, bTextFrmtOff: false, bWhispOff: false, bTimeStampOn: true,
+
+        oEventShowNotifys: { bDspArrivals: true, bDspStatusChg: true, bDspDeparts: true }
+    };
 
     let ServerName: string, nick_me: string, IsAuthRequestSent: boolean, bConnectionRegistered: boolean, bInitialPropChange: boolean = true, bIsKicked: boolean;
     let bInviteFlood: boolean = false;
@@ -278,15 +302,18 @@ namespace NBChatController {
     }
 
     export function GetExtraOptions(): object {
-        //ToDo: move to storage class or namespace.
-
         let extra_options: object = new Object();
 
-        if (flashObj != null) {
-            extra_options = flashObj.GetExtraOptions();
-        } else {
-            printError("Non-flash storage has not been implemented for function GetExtraOptions().");
+        //if (flashObj != null) {
+        //    extra_options = flashObj.GetExtraOptions();
+        //} else {
+        //    printError("Non-flash storage has not been implemented for function GetExtraOptions().");
+        //}
+
+        if (localStorage.stored_extra_options) {
+            extra_options = JSON.parse(localStorage.stored_extra_options);
         }
+        //alert(JSON.stringify(extra_options));    
 
         return extra_options;
     }
@@ -364,20 +391,24 @@ namespace NBChatController {
     }
 
     export function LoadChatOptions(): IChatOptions {
-        //ToDo: move to storage class or namespace.
 
         let options: IChatOptions = null; //
 
-        if (flashObj != null) {
-            options = flashObj.LoadChatOptions();
-        } else {
-            printError("Non-flash storage has not been implemented for function LoadChatOptions().");
+        //if (flashObj != null) {
+        //    options = flashObj.LoadChatOptions();
+        //} else {
+        //    printError("Non-flash storage has not been implemented for function LoadChatOptions().");
+        //}
+
+        if (localStorage.stored_chat_options) {
+            options = JSON.parse(localStorage.stored_chat_options);
         }
+        //alert(JSON.stringify(options));
 
         if (!IsUndefinedOrNull(options)) {
-            chat_options = options;
+            options_controller_instance = options;
         } else {
-            options = chat_options;
+            options = options_controller_instance;
         }
 
         return options;
@@ -477,7 +508,7 @@ namespace NBChatController {
 
                         if (join_item.user.nick !== nick_me) {
                             onJoin(join_item.user, join_item.ircmChannelName);
-                            if (chat_options.sndArrival) playJoinSnd();
+                            if (options_controller_instance.sndArrival) playJoinSnd();
                         } else {
                             user_me = join_item.user;
                             ChannelName = join_item.ircmChannelName;
@@ -494,7 +525,7 @@ namespace NBChatController {
                         if (quit_nick !== nick_me) {
                             onRemoveUserByNick(quit_nick);
 
-                            if (chat_options.sndTagged !== false) {
+                            if (options_controller_instance.sndTagged !== false) {
                                 if (taggedUsers[quit_nick] === true) playTagSnd();
                             }
                         } else {
@@ -509,7 +540,7 @@ namespace NBChatController {
 
                         if (part_item.nick !== nick_me) {
                             onRemoveUserByNick(part_item.nick);
-                            if (chat_options.sndTagged !== false) {
+                            if (options_controller_instance.sndTagged !== false) {
                                 if (taggedUsers[part_item.nick] === true) playTagSnd();
                             }
                         } else {
@@ -544,13 +575,13 @@ namespace NBChatController {
                             const nick: string = ParserWx.ExtractNick(notice_item.t0);
                             onNoticePrivate(nick, notice_item.t1, text_message);
 
-                            if (chat_options.sndTagged !== false) if (taggedUsers[nick] === true) playTagSnd();
+                            if (options_controller_instance.sndTagged !== false) if (taggedUsers[nick] === true) playTagSnd();
                         } else {
                             //notice message general handler
                             const nick: string = ParserWx.ExtractNick(notice_item.t0);
                             onNotice(nick, notice_item.t1, text_message);
 
-                            if (chat_options.sndTagged !== false) if (taggedUsers[nick] === true) playTagSnd();
+                            if (options_controller_instance.sndTagged !== false) if (taggedUsers[nick] === true) playTagSnd();
                         }
                     }
                     break;
@@ -579,7 +610,7 @@ namespace NBChatController {
                             let nick: string = ParserWx.ExtractNick(privmsg_item.SenderUserStr);
                             onPrivmsg(nick, privmsg_item.IrcmChannelName, privmsg_item.Message);
 
-                            if (chat_options.sndTagged !== false) {
+                            if (options_controller_instance.sndTagged !== false) {
                                 if (taggedUsers[nick] === true) playTagSnd();
                             }
                         } else {
@@ -734,7 +765,7 @@ namespace NBChatController {
                     {
                         const r = parser_item.rval as NBChatCore.InviteCls;
                         onInvite(ParserWx.ExtractNick(r.SenderUserStr), r.TargetNick, r.IrcmChannelName);
-                        if (chat_options.sndInvite === true && bInviteFlood === false) playInviteSnd();
+                        if (options_controller_instance.sndInvite === true && bInviteFlood === false) playInviteSnd();
                     }
                     break;
 
@@ -897,13 +928,15 @@ namespace NBChatController {
             throw new Error("SaveChatOptions function: options paratmeter cannot be null.");
         }
 
-        if (flashObj != null) {
-            flashObj.SaveChatOptions(options);
-        } else {
-            printError("Non-flash storage has not been implemented for function SaveChatOptions(...).");
-        }
+        //if (flashObj != null) {
+        //    flashObj.SaveChatOptions(options);
+        //} else {
+        //    printError("Non-flash storage has not been implemented for function SaveChatOptions(...).");
+        //}
 
-        chat_options = options;
+        options_controller_instance = options;
+
+        localStorage.setItem("stored_chat_options", JSON.stringify(options));
     }
 
     export function SaveGuestuserPass(pw: string): void {
@@ -958,13 +991,13 @@ namespace NBChatController {
     }
 
     export function SetExtraOptions(extra_options: object): void {
-        //ToDo: move to storage class or namespace.
+        //if (flashObj != null) {
+        //    flashObj.SetExtraOptions();
+        //} else {
+        //    printError("Non-flash storage has not been implemented for function SetExtraOptions(...).");
+        //}
 
-        if (flashObj != null) {
-            flashObj.SetExtraOptions();
-        } else {
-            printError("Non-flash storage has not been implemented for function SetExtraOptions(...).");
-        }
+        localStorage.setItem("stored_extra_options", JSON.stringify(extra_options));
     }
 
     export function SetChanProps(): void {
