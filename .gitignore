@@ -47,5 +47,5 @@ Temporary Items
 .apdisk
 
 #Typescript file support files
-*.map
-*.js
+#*.map
+#*.js

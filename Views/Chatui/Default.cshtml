@@ -1,0 +1,439 @@
+﻿@*
+
+	Copyright (c) Net-Bits.Net ( http://www.net-bits.net ) and any other contributors.
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+
+*@
+
+@using ircwW3.Core
+@using System.Text
+@model ircwW3.Models.ChatUIViewModel
+@{
+	Layout = "~/Views/Shared/_ChatUIMain.cshtml";
+
+	var UserWebchatClient = Model.WebchatClient;
+	if (string.IsNullOrWhiteSpace(UserWebchatClient)) {
+		UserWebchatClient = CoreHelpers.GetDefaultWebchatTemplate();
+	}
+
+	ViewBag.SiteURL = MainConfig.IConfig().SitePath;
+	ViewBag.Title = CoreHelpers.GetChannelNameDisplayFormat(Model.STAG_CHANNELNAME);
+	Model.STAG_NBWCHATROOTDIR = Url.Content("~/NBWChat");
+	Model.STAG_NBWCHATTEMPLATEDIR = Model.STAG_NBWCHATROOTDIR + UserWebchatClient;
+}
+
+@section NBChatUIHtmlHeader {
+
+	<!--
+	/*
+	Credits:
+	Paddy Sparks - graphic design
+	mmdesigns.us err0r - Webchat GUI
+	net-bits.net HY - Flash/Javascript development.
+	@@21-Nov-2014
+	*/
+	-->
+
+	<style>
+		#flashfailnotice {
+			height: 205px;
+			width: 300px;
+			/* must be absolutely positioned so that overlapping will occur */
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background-color: #053F69;
+			padding: 1px;
+			color: white;
+			font-size: 1.5em;
+			margin: auto;
+			z-index: 10000;
+		}
+	</style>
+
+	<link rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/nbchat30.css?update=16,15,16" type="text/css" />
+	<link rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/jquery-ui.css?update=12,25,14" type="text/css" />
+	<link class="changestyle" rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/themes/default.css" type="text/css" />
+
+	<script type="text/javascript">
+		sFUIDIR = '@Model.STAG_NBWCHATTEMPLATEDIR';
+		sVersion = 'IRCwx Webchat v4';
+
+		var HasWebsocketSupport = false;
+		var gsPresenterInitialized = false;
+		var gsChannelName   = "%#@Html.Raw(CoreHelpers.EscapeJSStringQuotes(Model.STAG_CHANNELNAME))";
+		var gsAuthPass      = "@Model.STAG_USERTICKET";
+		var gsSiteUrl       = '@ViewBag.SiteURL'; //warning: if the domain is different then what is set here, then page may give unexpected results.
+		var gsCategoryId    = '@Request.QueryString["c"]';
+		var gsTopic         = '@Html.Raw(CoreHelpers.EscapeJSStringQuotes(Request.QueryString["t"]))';
+		var gsWel           = '@Html.Raw(CoreHelpers.EscapeJSStringQuotes(Request.QueryString["wm"]))';
+		var gsLang          = '@Html.Raw(CoreHelpers.EscapeJSStringQuotes(Request.QueryString["l"]))';
+		var gsLang2         = ''; //not used, legacy code.
+
+		if ('WebSocket' in window && window.WebSocket.CLOSING === 2) {
+			HasWebsocketSupport = true;
+		}
+	</script>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/jquery-ui.min.js?update=12,25,14"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/jquery.tools.min.js?update=12,25,14"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatres.js?update=12,25,14"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/global.js?update=12,25,14"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nblang_v4.js?update=01,18,17"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_core.js?"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_connection.js?"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/ircwx_parser.js?"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_controller.js?v=0001"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_v4.js?update=01,18,17"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/jquery.cookie.js?update=12,25,14"></script>
+
+	<script language="javascript" type="text/javascript">
+		//warning: if the domain is different then what is set here, then page may give unexpected results.
+		sSiteURL = '@ViewBag.SiteURL'; //old variable name, its a repeat to avoid unintended bugs, fix it later.
+		iUserLoggin = @Model.STAG_USERLOGINTYPE;
+		sGuestNick = '@Model.STAG_GUESTNICK';
+		sIcoDir = sURIFUIDIR2 + 'images/listicons/';
+		if (isWK) sEmotsDir = sURIFUIDIR2 + 'images/emots/';
+		emotsWndURI = sFUIDIR + '/nbchatwndemoticons.htm?v=3.444';
+	</script>
+
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/wndmain.js?update=12,25,14"></script>
+}
+
+<!------------------------ Theme Selector ----------------->
+<div id="colorselholder">
+	<a title="blue" href="#" rel="default.css" class="styleswitch"><div style="display:inline-block;width:12px;height:12px;border:1px solid #CCC;background-color:#285E83;"></div></a>&nbsp;
+	<a title="black" href="#" rel="black.css" class="styleswitch"><div style="display:inline-block;width:12px;height:12px;border:1px solid #CCC;background-color:black;"></div></a>&nbsp;
+</div>
+<!------------------------END------------------------------>
+<!--------------- SLIDER DOWN BOX -EMOTES ------------------>
+<div id="sliderWrap">
+	<div id="openCloseIdentifier"></div>
+	<div id="slider">
+		<div id="sliderContent">
+			<div id="wndEmotsWindowContainerSub">
+				<iframe id="wndFEmots" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm" style="height: 165px;width: 295px; margin: 0px;" frameborder="0"></iframe>
+			</div>
+			<div style="display:none;" id="wndFEmotsstatus">0</div>
+			<div id="openCloseWrap">
+				<a href="#" class="topMenuAction" id="topMenuImage">close</a>
+			</div>
+		</div>
+	</div>
+</div>
+<!------------------------END------------------------------>
+<!---------------- Away Message Set ----------------------->
+<div id="wndSetAwayMsgContainer">
+	<div class="awaymsgabouttext">Set or change your away message here!</div>
+	<div id="setaway"><input type="text" id="txAwayMsg" name="txAwayMsg" style="width:100%;display:block;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;padding:3px 8px;" /></div>
+	<div style="padding:10px 0 5px 0;text-align:center;">
+		<input id="saveawaymsg" type="button" value="Save" />&nbsp;<input id="closeawaymsg" type="button" value="Cancel" />
+	</div>
+</div>
+<!------------------------END------------------------------>
+<div style="height: 100%;position: relative;">
+	<!----------------------- Needed window div ------------------------>
+	<div id="whisperwindowadd">
+		<!--------------- Options ---------------------------------->
+		<div id="optionsContainer">
+			<div id="optionsheader"><img style="margin-top:-3px;margin-bottom:-3px;" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/dragable.gif" alt="" /> Chat Options</div>
+			<div id="optionsareaholder">
+				<iframe id="optionsPane" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm" style="width: 100%; margin: 0px;" frameborder="0"></iframe>
+			</div>
+		</div>
+		<!--------------- End -------------------------------------->
+		<!--------------- Modes Dialog ---------------------------------->
+		<div class="pwindows" id="modesContainer">
+			<div id="modesheader"><img style="margin-top:-3px;margin-bottom:-3px;" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/dragable.gif" alt="" /> Room Modes</div>
+			<div id="modesareaholder">
+				<iframe id="modesPane" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm" style="width: 100%; margin: 0px;" frameborder="0"></iframe>
+			</div>
+		</div>
+		<!--------------- End -------------------------------------->
+		<!--------------- Access ------------------------------------>
+		<div class="pwindows" id="accessContainer">
+			<div id="accessheader"><img style="margin-top:-3px;margin-bottom:-3px;" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/dragable.gif" alt="" /> Room Access</div>
+			<div id="accessareaholder">
+				<iframe id="accessPane" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm" style="width: 100%; margin: 0px;" frameborder="0"></iframe>
+			</div>
+		</div>
+		<!--------------- End -------------------------------------->
+		<!--------------- Access ------------------------------------>
+		<div class="pwindows" id="propsContainer">
+			<div id="propsheader"><img style="margin-top:-3px;margin-bottom:-3px;" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/dragable.gif" alt="" /> Room Properties</div>
+			<div id="propsareaholder">
+				<iframe id="propsPane" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm" style="width: 100%; margin: 0px;" frameborder="0"></iframe>
+			</div>
+		</div>
+		<!--------------- End -------------------------------------->
+	</div>
+	<!------------------------END------------------------------>
+	<!------------------------ Logo & Roomname Bar ------------>
+	<div id="logoholder">
+		<div id="siteicon"></div>
+		<div id="headerlogo">@MainConfig.IConfig().SiteTitle</div>
+		<div class="channame">
+			<div class="insetborder">
+				<span class="channame_nowchatting">Now Chatting In:</span> <img id="chanIco" border="0" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/spacer.png" /> <span id="txChan" class="chanlabel">loading...</span>
+			</div>
+		</div>
+		<span id="txChanModes" class="chanmodeslabel" style="display:none;"></span>
+		<div id="nbflashchat20"></div>
+		<script type="text/javascript">
+			if (!HasWebsocketSupport) {
+				flashconfig.src = '@Model.STAG_NBWCHATROOTDIR/nbflashconnectionv4.swf?update=20,35';
+				flashembed("nbflashchat20", flashconfig);
+			}
+		</script>
+	</div>
+	<!------------------------END------------------------------>
+	<!------------------------ Navigation --------------------->
+	<div id="headertop">
+		<div id="headernav">
+			<ul>
+				<li><a class="menubuttons" title="Home" target="_blank" href="@ViewBag.SiteURL">Home</a></li> @*Note: keep @ViewBag.SiteURL here, it might identify early if it is set to wrong url.*@
+				<li><a class="menubuttons" title="More Rooms" target="_blank" href="@Url.Content("~/ChannelsList")">More Rooms</a></li>
+				<li><a class="menubuttons" title="Options" href="javascript:OpenChatOptionsWnd();">Options</a></li>
+				<li><a class="menubuttons" title="Help" target="_blank" href="@Url.Content("~/Help")">Help</a></li>
+				@using Microsoft.AspNet.Identity
+				@{
+					var MyUserId = User.Identity.GetUserId();
+					var MyUserName = User.Identity.GetUserName();
+				}
+
+				@if (Request.IsAuthenticated) {
+					<li>
+						@Html.ActionLink("Hello " + MyUserName + "!", "Manage", "u/" + MyUserId, routeValues: null, htmlAttributes: new { title = "Manage Account", target = "_blank" })
+					</li>
+					<li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+
+					using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-form" })) {
+						@Html.AntiForgeryToken()
+
+					}
+
+				} else {
+					<li>@Html.ActionLink("Sign In", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+					<li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+				}
+			</ul>
+		</div>
+	</div>
+	<!------------------------END------------------------------>
+	<!------------------------ Tabs Holder -------------------->
+	<div id="statusholder">
+		<div class="inactivetab" id="statustab">Chat Notifications (<span id="statuscount">0</span>)</div><span style="display:inline-block;width:2px;"></span><div class="activetab" id="chattab">Chatroom</div>
+	</div>
+	<!------------------------END------------------------------>
+	<!------------------------ Status Window ------------------>
+	<div id="statuswindowholder" style="display:none;">
+		<div id="statusareaholder"><iframe style="overflow-x: hidden !important;" id="StatusPane" name="StatusPane" frameborder="0" scrolling="yes" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatstatuspane.htm"></iframe></div>
+		<div id="clearstatusbtn">Clear Chat Notifications</div>
+	</div>
+	<!------------------------END------------------------------>
+	<!------------------------ Chat Window -------------------->
+	<div id="chatwindowholder">
+		<div id="chatareaholder"><iframe style="overflow-x: hidden !important;" id="ChatPane" name="ChatPane" frameborder="0" scrolling="yes" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatmainpane.htm"></iframe></div>
+		<div id="nicklistinfo1">
+			<div id="awayb" title="Away"><a href="javascript:ToggleAwayButton(null, 'button');" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image40','','@Model.STAG_NBWCHATTEMPLATEDIR/images/away.png',1)"><img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/away-grey.png" id='img1' name="Image40" width="22" height="20" border="0"></a></div>
+			<div id="txNumberOfUser">loading...</div>
+		</div>
+		<div id="nicklistinfo2">
+			<div id="lvuMe" class="lvuitemMe">
+				<img id="uicoMe" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/spacer.gif" border="0" class="lvuitemico" />
+				<span id="lbMe" class="lvuitemlbMe"></span>
+			</div>
+		</div>
+		<div id="chatnicklistholder">
+			<div id="chatnicklist">
+				<div id="lvUsers" onmouseout="menuMouseOut(this);"></div>
+			</div>
+		</div>
+		<div id="sendIntputDiv">
+			<input id="txSend" name="txSend" type="text" maxlength="512" onclick="ScrollFix();" onkeypress="fnCheckKey(event);" onkeydown="onTxSendKeypress(event);" />
+		</div>
+		<div id="sendbuttons">
+			<a id="btn_sendmsg" title="send message" href="#" onmousedown="MM_swapImage('Image28','','@Model.STAG_NBWCHATTEMPLATEDIR/images/button_send_pressed.png',1)" onmouseup="MM_swapImage('Image28','','@Model.STAG_NBWCHATTEMPLATEDIR/images/button_send_normal.png',1)" onmouseover="MM_swapImage('Image28','','@Model.STAG_NBWCHATTEMPLATEDIR/images/button_send_hover.png',1)" onmouseout="MM_swapImgRestore()"><img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/button_send_normal.png" name="Image28" width="65" height="25" border="0"></a>
+			<a id="btn_sendaction" title="send action" href="#"><img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/button_action.png" name="Image29" width="22" height="25" border="0"></a>
+			<a title="view emotes" href="#" class="topMenuAction" id="topMenuImage"><img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/button_emotes.png" id="imgEmots" width="25" height="25" border="0"></a>
+			<a title="set away message" href="#" id="openawaymsg"><img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/button_awaymsg.png" width="25" height="25" border="0"></a>
+		</div>
+		<div id="nicklistuicons">
+			<div class="buttonholder">
+				<span style="padding:0 5px 0 0;" title="Whisper User"><a id="btn_whisperuser" href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image36','','@Model.STAG_NBWCHATTEMPLATEDIR/images/whisper.png',1)"><img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/whisper-grey.png" id="btnWhisp" name="Image36" width="18" height="18" border="0"></a></span>
+				<span style="padding:0 10px 0 10px;" title="Ignore User"><a id="btn_ignoreuser" href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image35','','@Model.STAG_NBWCHATTEMPLATEDIR/images/iggy.png',1)"><img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/iggy-grey.png" id="btnIgnore" name="Image35" width="18" height="18" border="0"></a></span>
+				<span style="padding:0 10px 0 10px;" title="Tag User"><a id="btn_taguser" href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image37','','@Model.STAG_NBWCHATTEMPLATEDIR/images/tag.png',1)"><img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/tag-grey.png" id="btnTag" name="Image37" width="18" height="18" border="0"></a></span>
+				<span style="padding:0 0 0 5px;" title="View User Profile"><a id="btn_viewprofile" href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image34','','@Model.STAG_NBWCHATTEMPLATEDIR/images/profile.png',1)"><img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/profile-grey.png" id="btnViewProfile" name="Image34" width="18" height="17" border="0"></a></span>
+			</div>
+		</div>
+	</div>
+	<!------------------------END------------------------------>
+	<!------------------------ Popup Menus -------------------->
+	<div id="cmenuCP" class="contextmenu" tabindex="-1" onkeydown="mnuOnKeyPress(event, this);" onmouseover="menuMouseIn(this);" onmouseout="menuMouseOut(this);" unselectable="on">
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="mnuCpCopy" onclick="copyCP();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Copy</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="mnuCpSelectAll" onclick="selectAllCP();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Select All</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="mnuCpClearAll" onclick="clearCP();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Clear All</div>
+		<div tabindex="-1" class="menuitemsep" align="center" unselectable="on"></div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="listOptions" onclick="listCommands();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Commands</div>
+		<div class="menuitem superownermenu"><b>SuperOwner Menu</b></div>
+		<div tabindex="-1" class="menuitemsep superownermenu" align="center" unselectable="on"></div>
+		<div class="menuitem superownermenu" onMouseOver="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="menuAccess" onClick="OpenAccessOptionsWnd();" onKeyDown="mnuOnKeyPress(event, this);" unselectable="on">Room Access</div>
+		<div class="menuitem superownermenu" onMouseOver="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="menuModes" onClick="OpenModesOptionsWnd();" onKeyDown="mnuOnKeyPress(event, this);" unselectable="on">Room Modes</div>
+		<div class="menuitem superownermenu" onMouseOver="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="menuProps" onClick="OpenPropsOptionsWnd();" onKeyDown="mnuOnKeyPress(event, this);" unselectable="on">Room Properties</div>
+	</div>
+	<div id="mnuHost" tabindex="-1" class="contextmenu" onkeydown="mnuOnKeyPress(event, this);" style="width: 150px;" onmouseover="menuMouseIn(this);">
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miVPH" onclick="mifViewProfile();" onkeydown="mnuOnKeyPress(event, this);" onmousedown="onMouseDown(event);" unselectable="on">View Profile</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miWH" onclick="mifWhisper();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on" style="font-weight: bold;">Whisper</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miIH" onclick="mifIgnore();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ignore</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miTUH" onclick="mifTaguser();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Tag User</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miLTH" onclick="mifLocaltime();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Local Time</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miAMH" onclick="mifAwayMessage();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Away Message</div>
+		<div tabindex="-1" class="menuitemsep" align="center" unselectable="on"></div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miKH" onclick="mifKick();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Kick</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miKHM" onclick="mifKickwmsg();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Kick w/ Message</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miB15mH" onclick="mifBan15m();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ban 15 min.</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miB1hH" onclick="mifBan1h();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ban 1 hr</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miB24hH" onclick="mifBan24h();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ban 24 hr</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miBnolH" onclick="mifBannol();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ban No Limit</div>
+
+		<div tabindex="-1" class="menuitemsep" align="center" unselectable="on"></div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miVH" onclick="mifVoice();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Voice</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miPH" onclick="mifParti();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Participant</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miHOH" onclick="mifHelpOp();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">HelpOp</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miHH" onclick="mifHost();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Host</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miOH" onclick="mifOwner();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Owner</div>
+		<div class="menuitem superownermenu"><b>SuperOwner Menu</b></div>
+		<div tabindex="-1" class="menuitemsep superownermenu" align="center" unselectable="on"></div>
+		<div tabindex="-1" class="menuitem superownermenu" onMouseOver="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miOH" onClick="mifPassport();" onKeyDown="mnuOnKeyPress(event, this);" unselectable="on">Get Passport</div>
+		<div tabindex="-1" class="menuitem superownermenu" onMouseOver="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miOH" onClick="mifAddAccess('OWNER');" onKeyDown="mnuOnKeyPress(event, this);" unselectable="on">Add Owner Access</div>
+		<div tabindex="-1" class="menuitem superownermenu" onMouseOver="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miOH" onClick="mifAddAccess('HOST');" onKeyDown="mnuOnKeyPress(event, this);" unselectable="on">Add Host Access</div>
+		<div tabindex="-1" class="menuitem superownermenu" onMouseOver="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miOH" onClick="mifAddAccess('VOICE');" onKeyDown="mnuOnKeyPress(event, this);" unselectable="on">Add Voice Access</div>
+		<div tabindex="-1" class="menuitem superownermenu" onMouseOver="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miOH" onClick="mifAddAccess('GRANT');" onKeyDown="mnuOnKeyPress(event, this);" unselectable="on">Add Grant Access</div>
+	</div>
+	<div id="mnuHelpOp" tabindex="-1" class="contextmenu" onkeydown="mnuOnKeyPress(event, this);" style="width: 150px;" onmouseover="menuMouseIn(this);" unselectable="on">
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miVPHO" onclick="mifViewProfile();" onkeydown="mnuOnKeyPress(event, this);" onmousedown="onMouseDown(event);" unselectable="on">View Profile</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miWHO" onclick="mifWhisper();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on" style="font-weight: bold;">Whisper</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miIHO" onclick="mifIgnore();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ignore</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miTUHO" onclick="mifTaguser();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Tag User</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miLTHO" onclick="mifLocaltime();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Local Time</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miAMHO" onclick="mifAwayMessage();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Away Message</div>
+		<div tabindex="-1" class="menuitemsep" align="center" unselectable="on"></div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miVHO" onclick="mifVoice();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Voice</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miPHO" onclick="mifParti();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Participant</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miKHO" onclick="mifKick();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Kick</div>
+	</div>
+	<div id="mnuHelpOp" tabindex="-1" class="contextmenu" onkeydown="mnuOnKeyPress(event, this);" style="width: 150px;" onmouseover="menuMouseIn(this);" unselectable="on">
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miVPHO" onclick="mifViewProfile();" onkeydown="mnuOnKeyPress(event, this);" onmousedown="onMouseDown(event);" unselectable="on">View Profile</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miWHO" onclick="mifWhisper();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on" style="font-weight: bold;">Whisper</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miIHO" onclick="mifIgnore();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ignore</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miTUHO" onclick="mifTaguser();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Tag User</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miLTHO" onclick="mifLocaltime();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Local Time</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miAMHO" onclick="mifAwayMessage();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Away Message</div>
+		<div tabindex="-1" class="menuitemsep" align="center" unselectable="on"></div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miVHO" onclick="mifVoice();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Voice</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miPHO" onclick="mifParti();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Participant</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miKHO" onclick="mifKick();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Kick</div>
+	</div>
+	<div id="mnuHelpOp" tabindex="-1" class="contextmenu" onkeydown="mnuOnKeyPress(event, this);" style="width: 150px;" onmouseover="menuMouseIn(this);" unselectable="on">
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miVPHO" onclick="mifViewProfile();" onkeydown="mnuOnKeyPress(event, this);" onmousedown="onMouseDown(event);" unselectable="on">View Profile</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miWHO" onclick="mifWhisper();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on" style="font-weight: bold;">Whisper</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miIHO" onclick="mifIgnore();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ignore</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miTUHO" onclick="mifTaguser();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Tag User</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miLTHO" onclick="mifLocaltime();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Local Time</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miAMHO" onclick="mifAwayMessage();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Away Message</div>
+		<div tabindex="-1" class="menuitemsep" align="center" unselectable="on"></div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miVHO" onclick="mifVoice();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Voice</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miPHO" onclick="mifParti();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Participant</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miKHO" onclick="mifKick();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Kick</div>
+	</div>
+	<div id="mnuUser" tabindex="-1" class="contextmenu" onkeydown="mnuOnKeyPress(event, this);" style="width: 115px;" onmouseover="menuMouseIn(this);" unselectable="on">
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miVPU" onclick="mifViewProfile();" onkeydown="mnuOnKeyPress(event, this);" onmousedown="onMouseDown(event);" unselectable="on">View Profile</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miWU" onclick="mifWhisper();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on" style="font-weight: bold;">Whisper</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miIU" onclick="mifIgnore();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ignore</div>
+		<div tabindex="-1" class="menuitemsep" align="center" unselectable="on"></div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miTUU" onclick="mifTaguser();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Tag User</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miLTU" onclick="mifLocaltime();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Local Time</div>
+		<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miAMU" onclick="mifAwayMessage();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Away Message</div>
+	</div>
+	<!------------------------END------------------------------>
+	<div id="wndIcons" style="display:none"></div>
+	<!------------------------ Footer ------------------------->
+	<div id="footerinfo">
+		<div id="copyright">
+			Powered By: Net-Bits.Net Webchat 3.0 &copy; 2006 - 2017 All rights Reserved. -
+			<a href="@Url.Content("~/Privacy-Policy")">Privacy</a> - <a href="@Url.Content("~/ToU")">Terms of Use</a>
+		</div>
+	</div>
+	<!------------------------END------------------------------>
+</div>
+<!------------------------ Advertisement ---------------------->
+<div style="text-align:center;">
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- rs_wx -->
+	<ins class="adsbygoogle"
+		 style="display:block"
+		 data-ad-client="ca-pub-8254166811237269"
+		 data-ad-slot="1944741641"
+		 data-ad-format="auto"></ins>
+	<script>
+		(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+</div>
+<!------------------------END------------------------------>
+<script language="JavaScript" type="text/JavaScript">
+	if($.cookie("css")) {
+		var cssr = $.cookie("css");
+		var cssrb = "@Model.STAG_NBWCHATTEMPLATEDIR/themes/" + cssr;
+		$("link.changestyle").attr("href",cssrb);
+	}
+	$( window ).resize(function() {
+		ScrollFix();ScrollFixs();
+	});
+
+	$(document).ready(function(){
+	    fnInitialize();
+
+		$('.styleswitch').on( "click", function() {
+			var cssc = $(this).attr('rel');
+			var csscb = "@Model.STAG_NBWCHATTEMPLATEDIR/themes/" + cssc;
+			$("link.changestyle").attr("href",csscb);
+			$.cookie("css",$(this).attr('rel'), {expires: 365, path: '/'});
+			return false;
+		});
+		MM_preloadImages(
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/spect.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/away.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/noprofile.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/nogenderwpic.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/female.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/femalewpic.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/male.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/malewpic.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/noprofile.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/staff.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/superowner.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/owner.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/ignore.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/host.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/helpop.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/tagged.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/rmicon_srv.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/rmicon_user.png',
+			'@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/spacer.gif'
+		);
+
+	});
+</script>

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2006-2017  Net-Bits.Net
  * All rights reserved.
  *
@@ -6,389 +6,253 @@
  *
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  */
-
-/*
- *** NOTES ***
-(1) Connection object and presenter ready states are handled in controller.
-
-ToDos:
-    1) nicks are case insensitive so case insensitive nick comparisions. [pending]
-    2) Ping timeout got an exception. [tested could not reproduce.]
-    3) Escape ircwx special characters.
-    4) Add all the options fields to IChatOptions.
-    5) better socket error handling and display messages e.g. there is no couldn't connect, bad ip error is not show to name few issues.
-    6) Debug print implementation.
-    7) disconnect and don't display rejoin message from server after kick.
-
-*/
-
-declare let gsPresenterInitialized: boolean;
-declare let gsChannelName: string;
-declare let gsAuthPass: string;
-declare let gsCategoryId: string;
-declare let gsTopic: string;
-declare let gsWel: string;
-declare let gsLang: string;
-declare let gsLang2: string;
-declare let gsServerConnections: string[];
-declare let sVersion: string; // gs is not used because variable may have been used in nbchat_v4.js
-
-namespace NBChatController {
+var NBChatController;
+(function (NBChatController) {
     "use strict";
-
-    interface IChatOptions {
-        sndArrival: boolean;
-        sndKick: boolean;
-        sndTagged: boolean;
-        sndInvite: boolean;
-        sndWhisp: boolean;
-    }
-
     //Note: currently using namespace, when all major browsers have support for module loading then it can be changed to module here. --HY 26-Dec-2016.
     // <imports>
-    import ParserWx = IRCwxParser;
-    import NBTickerFlags = NBChatCore.NBTickerFlags;
+    var ParserWx = IRCwxParser;
+    var NBTickerFlags = NBChatCore.NBTickerFlags;
     // </imports>
-
     // <variables>
-    let debugArray: string[] = [];
-    let taggedUsers: { [nick: string]: boolean; } = {}; //ToDo: change nick tagging to ident tagging.
-    let chat_options: IChatOptions = { sndArrival: true, sndKick: true, sndTagged: true, sndInvite: true, sndWhisp: true };
-
-    let ServerName: string, nick_me: string, IsAuthRequestSent: boolean, bConnectionRegistered: boolean, bInitialPropChange: boolean = true, bIsKicked: boolean;
-    let bInviteFlood: boolean = false;
-    let ChannelName: string, CategoryId: string, Topic: string, Wel: string, Lang: string, Lang2: string, AuthTypeCode: string, AuthPass: string;
-    let connectionStarterTicker_: NBChatCore.NBTicker = null;
-    let reconnectionDelayedTicker_: NBChatCore.NBTicker = null;
-    let connectionChecker_: NBChatCore.NBTicker = null; let connection_idle_count: number = 0;
-    let user_me: NBChatCore.IRCmUser = null;
-
-    let start_new_nameslist: boolean = true;
-
+    var debugArray = [];
+    var taggedUsers = {}; //ToDo: change nick tagging to ident tagging.
+    var chat_options = { sndArrival: true, sndKick: true, sndTagged: true, sndInvite: true, sndWhisp: true };
+    var ServerName, nick_me, IsAuthRequestSent, bConnectionRegistered, bInitialPropChange = true, bIsKicked;
+    var bInviteFlood = false;
+    var ChannelName, CategoryId, Topic, Wel, Lang, Lang2, AuthTypeCode, AuthPass;
+    var connectionStarterTicker_ = null;
+    var reconnectionDelayedTicker_ = null;
+    var connectionChecker_ = null;
+    var connection_idle_count = 0;
+    var user_me = null;
+    var start_new_nameslist = true;
     //connection vars
-    let first_connection: boolean = true;
-    let current_socket_num: number = -1;
-
-    // </variables>
-
-    // <function_pointers>
-    declare let fnAppendText: NBChatCore.fnWriteToPresenterDef;
-    let fnWriteToPresenter: NBChatCore.fnWriteToPresenterDef = null;
-    let IRCSend: NBChatConnection.fnWriteToConnectionDef;
-
-    let onTest: (string: string) => void;
-
-    declare let on301: Function;
-    declare let on302: Function;
-    declare let on324: Function;
-    declare let on332: Function;
-    declare let on821Chan: Function;
-    declare let on821Pr: Function;
-    declare let on822Chan: Function;
-    declare let on822Pr: Function;
-    declare let onAccessNRelatedReplies: Function;
-    declare let onChanMode: Function;
-    declare let onChanModeWParams: Function;
-    declare let onChanPrivmsg: Function;
-    declare let onDataIRC: Function;
-    declare let onDataIRC2: Function;
-    declare let onEndofNamesList: Function;
-    declare let onErrorReplies: Function;
-    declare let onInvite: Function;
-    declare let onJoin: Function;
-    declare let onKick: Function;
-    declare let onKnock: Function;
-    declare let onNick: Function;
-    declare let onNotice: Function;
-    declare let onNoticeChanBroadcast: Function;
-    declare let onNoticeServerBroadcast: Function;
-    declare let onNoticeServerMessage: Function;
-    declare let onNoticePrivate: Function;
-    declare let onPrivmsg: (sNickFrom: string, sChan: string, sMessage: string) => void;
-    declare let onPrivmsgPr: Function;
-    declare let onProp: Function;
-    declare let onPropReplies: Function;
-    declare let onSetNick: Function;
-    declare let onUserMode: Function;
-    declare let onWhisper: Function;
-
-    declare let ViewMessageConnecting: Function;
-    declare let ViewMessageReconnectDelayed: Function;
-    declare let ViewMessageReconnectImmediate: Function;
-    declare let ViewMessageDisconnected: Function;
-
-    //this should be removed?:
-    declare let onIniLocalUser: Function;
-    declare let onJoinMe: Function;
-    declare let onClearUserList: Function;
-    declare let onNameslistMe: Function;
-    declare let onAddUser: Function;
-    declare let UpdateUserCount: Function;
-    declare let onFlashSocketLoad: Function;
-    declare let onRemoveUserByNick: Function;
-    declare let onNickMe: Function;
-
+    var first_connection = true;
+    var current_socket_num = -1;
+    var fnWriteToPresenter = null;
+    var IRCSend;
+    var onTest;
     // </function_pointers>
-
-    function onTestImpl(s: string): void {
+    function onTestImpl(s) {
         alert(s);
     }
-
     onTest = onTestImpl;
-
-    function testCaller(): void {
+    function testCaller() {
         console.log("testCaller() called.");
         onTest("Message from controller.");
     }
-
     //Initialize
     IRCSend = NBChatConnection.Send;
     Main();
-
     // <NBChatConnection Events>
-    NBChatConnection.OnConnect = (connection_result: { success: boolean, address: string }): void => {
-        let socket_type: string = "NA";
-
-        if (NBChatConnection.SocketType != null) socket_type = NBChatConnection.SocketType();
-
+    NBChatConnection.OnConnect = function (connection_result) {
+        var socket_type = "NA";
+        if (NBChatConnection.SocketType != null)
+            socket_type = NBChatConnection.SocketType();
         console.log("::(NBChatController.NBSock.OnConnect[" + socket_type + "])::" + connection_result.success + ", address: " + connection_result.address);
-
         if (connection_result.success) {
             IRCSend("AUTHTYPE ircwx1\r\nCLIENTMODE CD1"); //ToDo: change it to IRCWX2
             IRCSend("NICK " + nick_me);
             IRCSend("USER anon \"anon.com\" \"0.0.0.0\" :anon");
-        } else {
+        }
+        else {
             reconnectDelayed();
         }
     };
-
-    NBChatConnection.OnClose = (message: string): void => {
+    NBChatConnection.OnClose = function (message) {
         console.log("::(NBChatController.NBSock.OnClose)::" + message);
-
         reconnectDelayed();
     };
-
-    NBChatConnection.OnData = (s: string): void => {
+    NBChatConnection.OnData = function (s) {
         console.log("<<" + s);
-
-        if (IsEmptyString(s)) return;
-
+        if (IsEmptyString(s))
+            return;
         onNbConnectionData(s);
     };
-
-    NBChatConnection.OnDebugData = (debug_data: string): void => {
+    NBChatConnection.OnDebugData = function (debug_data) {
         console.log("::(NBChatController.NBSock.OnDebugData)::" + debug_data);
     };
-
-    NBChatConnection.OnError = (error_message: string): void => {
+    NBChatConnection.OnError = function (error_message) {
         console.log("::(NBChatController.NBSock.OnError)::" + error_message);
     };
-
-    NBChatConnection.OnReady = (): void => {
+    NBChatConnection.OnReady = function () {
         //*WARNING*: This can fire before controller sets 'NBChatConnection.OnReady'.
-
         console.log("::(NBChatController.NBSock.OnReady)");
     };
     // </NBChatConnection Events>
-
-    export function addTag(nick: string): void {
+    function addTag(nick) {
         taggedUsers[nick] = true;
     }
-
-    function addToDebugArray(s: string): void { // -- Function converstion completed 25-Dec-2016 HY
+    NBChatController.addTag = addTag;
+    function addToDebugArray(s) {
         debugArray.push(s);
         if (debugArray.length > 50) {
             debugArray.splice(0, 1);
         }
     }
-
-    function ClearUserList(): void {
+    function ClearUserList() {
         start_new_nameslist = true;
         onClearUserList();
     }
-
     //connect
-    export function Connect(reconnection_immediate: boolean = false): void {
+    function Connect(reconnection_immediate) {
+        if (reconnection_immediate === void 0) { reconnection_immediate = false; }
         if (NBChatConnection.CanConnect()) {
             if (reconnection_immediate && !first_connection) {
                 ViewMessageReconnectImmediate();
             }
-
-            const socket_info = GetServerIPAndPortRandomly();
-
+            var socket_info = GetServerIPAndPortRandomly();
             ViewMessageConnecting(socket_info.ip, socket_info.port);
-
             NBChatConnection.Connect(socket_info.ip, socket_info.port);
-
             first_connection = false;
         }
     }
-
-    function connectionCheckerTickerCallbackImpl(): NBTickerFlags {
-
+    NBChatController.Connect = Connect;
+    function connectionCheckerTickerCallbackImpl() {
         if (bIsKicked) {
             return NBTickerFlags.Stop;
         }
-
         connection_idle_count++;
-
         if (connection_idle_count >= 3 && connection_idle_count < 14) {
             if (connection_idle_count % 3 === 0) {
                 IRCSend("PING :0001");
             }
-        } else if (connection_idle_count >= 14) {
+        }
+        else if (connection_idle_count >= 14) {
             //ToDo: move formatting to css.
             WriteToPresenter("<font color='#FF0000'>Client Debug Alert: I'm closing connection. Reason: Ping timeout.</font>");
             connection_idle_count = 0;
             NBChatConnection.Close(null);
             reconnectionDelayedTicker_.Start();
         }
-
         return NBTickerFlags.Continue;
     }
-
-    function connectionStarterCallbackImpl(): NBTickerFlags {
-
+    function connectionStarterCallbackImpl() {
         if (NBChatConnection.IsReady() && gsPresenterInitialized) {
-
             fnWriteToPresenter = fnAppendText;
-
-            if (IsEmptyString(gsAuthPass)) AuthPass = gsAuthPass = GetGuestuserPass();
+            if (IsEmptyString(gsAuthPass))
+                AuthPass = gsAuthPass = GetGuestuserPass();
             user_me = new NBChatCore.IRCmUser();
             onIniLocalUser(user_me);
             onFlashSocketLoad();
             Connect();
-
             return NBTickerFlags.Stop;
         }
-
         return NBTickerFlags.Continue;
     }
-
     // ToDo: function DebugArrayPrint()
-
-    export function DebugPrint(): void {
+    function DebugPrint() {
         //ToDo:
     }
-
+    NBChatController.DebugPrint = DebugPrint;
     //disconnect
-    export function Disconnect(reason: string): void {
+    function Disconnect(reason) {
         NBChatConnection.Close(reason);
         ViewMessageDisconnected(reason);
     }
-
-    export function GetExtraOptions(): object {
+    NBChatController.Disconnect = Disconnect;
+    function GetExtraOptions() {
         //ToDo: move to storage class or namespace.
-
-        let extra_options: object = new Object();
-
+        var extra_options = new Object();
         if (flashObj != null) {
             extra_options = flashObj.GetExtraOptions();
-        } else {
+        }
+        else {
             printError("Non-flash storage has not been implemented for function GetExtraOptions().");
         }
-
         return extra_options;
     }
-
-    export function GetGuestuserPass(): string {
+    NBChatController.GetExtraOptions = GetExtraOptions;
+    function GetGuestuserPass() {
         //ToDo: move to storage class or namespace.
-        let result: string = "qwerty";
-
+        var result = "qwerty";
         if (flashObj != null) {
             result = flashObj.GetGuestuserPass();
-        } else {
+        }
+        else {
             printError("Non-flash storage has not been implemented for function GetGuestuserPass().");
         }
-
         return result;
     }
-
-    export function GetMyDateTime(): string {
+    NBChatController.GetGuestuserPass = GetGuestuserPass;
+    function GetMyDateTime() {
         return new Date().toString();
     }
-
-    function GetServerIPAndPortRandomly(): { ip: string, port: number } {
-        let result: { ip: string, port: number } = null;
-
+    NBChatController.GetMyDateTime = GetMyDateTime;
+    function GetServerIPAndPortRandomly() {
+        var result = null;
         if (IsUndefinedOrNull(gsServerConnections) || gsServerConnections.length === 0) {
             throw new Error("Server connection ip or port is not in correct format.");
         }
-
         //start randomly then round robin.
         if (current_socket_num === -1) {
             current_socket_num = Math.floor((Math.random() * gsServerConnections.length));
-        } else {
+        }
+        else {
             current_socket_num++;
             if (current_socket_num >= gsServerConnections.length) {
                 current_socket_num = 0;
             }
         }
-
-        const connection: string = gsServerConnections[current_socket_num];
-
-        const connection_parts: string[] = connection.split(":", 2);
-
+        var connection = gsServerConnections[current_socket_num];
+        var connection_parts = connection.split(":", 2);
         if (connection_parts.length > 1) {
             result = { ip: connection_parts[0], port: parseInt(connection_parts[1], 10) };
-        } else {
+        }
+        else {
             throw new Error("Server connection ip or port is not in correct format.");
         }
-
         return result;
     }
-
-    function GotoChannel(): void {
+    function GotoChannel() {
         if (!IsEmptyString(ChannelName)) {
             IRCSend("CREATE " + ChannelName);
         }
     }
-
-    function handleError(sError: string): void { // -- Function converstion completed 25-Dec-2016 HY
+    function handleError(sError) {
         // ToDo: move out presentation logic from parser.
         WriteToPresenter("<font color='#FF0000'>Error: " + sError + "</font>");
     }
-
-    export function InviteFlood(bFlooding: boolean): void {
+    function InviteFlood(bFlooding) {
         bInviteFlood = bFlooding;
     }
-
-    function IsChanProps(): boolean {
-        if (!IsEmptyString(CategoryId)) return true;
-        if (!IsEmptyString(Topic)) return true;
-        if (!IsEmptyString(Wel)) return true;
-        if (!IsEmptyString(Lang)) return true;
-        if (!IsEmptyString(Lang2)) return true;
-
+    NBChatController.InviteFlood = InviteFlood;
+    function IsChanProps() {
+        if (!IsEmptyString(CategoryId))
+            return true;
+        if (!IsEmptyString(Topic))
+            return true;
+        if (!IsEmptyString(Wel))
+            return true;
+        if (!IsEmptyString(Lang))
+            return true;
+        if (!IsEmptyString(Lang2))
+            return true;
         return false;
     }
-
-    export function LoadChatOptions(): IChatOptions {
+    function LoadChatOptions() {
         //ToDo: move to storage class or namespace.
-
-        let options: IChatOptions = null; //
-
+        var options = null; //
         if (flashObj != null) {
             options = flashObj.LoadChatOptions();
-        } else {
+        }
+        else {
             printError("Non-flash storage has not been implemented for function LoadChatOptions().");
         }
-
         if (!IsUndefinedOrNull(options)) {
             chat_options = options;
-        } else {
+        }
+        else {
             options = chat_options;
         }
-
         return options;
     }
-
-    export function Main(): number {
-
+    NBChatController.LoadChatOptions = LoadChatOptions;
+    function Main() {
         AuthTypeCode = "";
         nick_me = ">Guest";
         AuthPass = gsAuthPass;
-
         //Note: used global name with gs to separate names clearly to avoid conflicts, maybe there is better way than this. 23-Sep-17
         ChannelName = gsChannelName;
         CategoryId = gsCategoryId;
@@ -396,68 +260,60 @@ namespace NBChatController {
         Wel = gsWel;
         Lang = gsLang;
         Lang2 = gsLang2;
-
-        if (IsEmptyString(AuthPass)) { //Takes care of 2 issues: (1) covers null and (2) on empty string T shouldn't be set.
+        if (IsEmptyString(AuthPass)) {
             AuthPass = "";
-        } else {
-            AuthTypeCode = "T"
         }
-
+        else {
+            AuthTypeCode = "T";
+        }
         if (IsUndefinedOrNull(ChannelName)) {
             ChannelName = "";
-        } else {
+        }
+        else {
             ChannelName = ChannelName.replace("\b", "\\b");
         }
-
-        if (IsUndefinedOrNull(CategoryId)) CategoryId = "";
-        if (IsUndefinedOrNull(Topic)) Topic = "";
-        if (IsUndefinedOrNull(Wel)) Wel = "";
-        if (IsUndefinedOrNull(Lang)) Lang = "";
-        if (IsUndefinedOrNull(Lang2)) Lang2 = "";
-
+        if (IsUndefinedOrNull(CategoryId))
+            CategoryId = "";
+        if (IsUndefinedOrNull(Topic))
+            Topic = "";
+        if (IsUndefinedOrNull(Wel))
+            Wel = "";
+        if (IsUndefinedOrNull(Lang))
+            Lang = "";
+        if (IsUndefinedOrNull(Lang2))
+            Lang2 = "";
         connectionStarterTicker_ = new NBChatCore.NBTicker("ConnectionStarterTicker");
         connectionStarterTicker_.StopConditionFn = connectionStarterCallbackImpl;
         connectionStarterTicker_.Start();
-
         reconnectionDelayedTicker_ = new NBChatCore.NBTicker("ReconnectionDelayedTicker");
         reconnectionDelayedTicker_.StopConditionFn = reconnectionDelayedTickerCallbackImpl;
-
         connectionChecker_ = new NBChatCore.NBTicker("ConnectionCheckerTicker");
         connectionChecker_.StopConditionFn = connectionCheckerTickerCallbackImpl;
         connectionChecker_.SetTickerInterval(55000);
         connectionChecker_.Start();
-
         return 0;
     }
-
-    function onNbConnectionData(raw_str: string): void {
+    NBChatController.Main = Main;
+    function onNbConnectionData(raw_str) {
         connection_idle_count = 0;
-
         raw_str = (raw_str.charAt(0) === ":") ? raw_str.substr(1) : raw_str;
-
         // trace incoming
         addToDebugArray("<<:" + raw_str);
-
-        const parser_item: NBChatCore.CommonParserReturnItem | null = ParserWx.parse(raw_str);
-
+        var parser_item = ParserWx.parse(raw_str);
         if (parser_item != null) {
-
             switch (parser_item.type) {
-                case NBChatCore.ParserReturnItemTypes.PingReply:
-                    IRCSend(parser_item.rval as string);
+                case 22 /* PingReply */:
+                    IRCSend(parser_item.rval);
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Pong:
+                case 23 /* Pong */:
                     //Note: no need to put anything here, connection_idle_count is reset to 0 on every server message.
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.IRCwxError:
-                    handleError(parser_item.rval as string);
+                case 6 /* IRCwxError */:
+                    handleError(parser_item.rval);
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.RPL_001_WELCOME:
+                case 28 /* RPL_001_WELCOME */:
                     {
-                        const rpl_001 = parser_item.rval as NBChatCore.Rpl001Welcome;
+                        var rpl_001 = parser_item.rval;
                         ServerName = rpl_001.serverName;
                         nick_me = rpl_001.userName;
                         onSetNick(nick_me);
@@ -465,20 +321,19 @@ namespace NBChatController {
                         GotoChannel();
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.RPL_251_LUSERCLIENT:
-                case NBChatCore.ParserReturnItemTypes.RPL_265_LOCALUSERS:
-                    onNoticeServerMessage(parser_item.rval as string);
+                case 29 /* RPL_251_LUSERCLIENT */:
+                case 30 /* RPL_265_LOCALUSERS */:
+                    onNoticeServerMessage(parser_item.rval);
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Join:
+                case 8 /* Join */:
                     {
-                        const join_item = parser_item.rval as NBChatCore.JoinCls;
-
+                        var join_item = parser_item.rval;
                         if (join_item.user.nick !== nick_me) {
                             onJoin(join_item.user, join_item.ircmChannelName);
-                            if (chat_options.sndArrival) playJoinSnd();
-                        } else {
+                            if (chat_options.sndArrival)
+                                playJoinSnd();
+                        }
+                        else {
                             user_me = join_item.user;
                             ChannelName = join_item.ircmChannelName;
                             onJoinMe(user_me, ChannelName);
@@ -486,42 +341,40 @@ namespace NBChatController {
                         }
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Quit:
+                case 27 /* Quit */:
                     {
-                        const quit_nick: string = parser_item.rval as string;
-
+                        var quit_nick = parser_item.rval;
                         if (quit_nick !== nick_me) {
                             onRemoveUserByNick(quit_nick);
-
                             if (chat_options.sndTagged !== false) {
-                                if (taggedUsers[quit_nick] === true) playTagSnd();
+                                if (taggedUsers[quit_nick] === true)
+                                    playTagSnd();
                             }
-                        } else {
+                        }
+                        else {
                             ClearUserList();
                         }
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Part:
+                case 21 /* Part */:
                     {
-                        const part_item = parser_item.rval as NBChatCore.PartCls;
-
+                        var part_item = parser_item.rval;
                         if (part_item.nick !== nick_me) {
                             onRemoveUserByNick(part_item.nick);
                             if (chat_options.sndTagged !== false) {
-                                if (taggedUsers[part_item.nick] === true) playTagSnd();
+                                if (taggedUsers[part_item.nick] === true)
+                                    playTagSnd();
                             }
-                        } else {
+                        }
+                        else {
                             ClearUserList();
                         }
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Notice:
+                case 13 /* Notice */:
                     {
-                        const notice_item = parser_item.rval as NBChatCore.NoticeBaseCls;
-                        const text_message = NBChatCore.TrimLeadingColon((notice_item.t3.length === 0) ? notice_item.t2 : notice_item.t3);
+                        var notice_item = parser_item.rval;
+                        var text_message = NBChatCore.TrimLeadingColon((notice_item.t3.length === 0) ? notice_item.t2 : notice_item.t3);
                         //t0: server_name | nick
                         //t1: server_name | notice_keyword | chan_name
                         //t2: chan_name | nick | text_message
@@ -529,473 +382,454 @@ namespace NBChatController {
                         if (notice_item.t0 === ServerName) {
                             //server message
                             if (!bIsKicked) {
-                                if (notice_item.t1 === "WARNING" && text_message.indexOf("join a chatroom") > 0) GotoChannel();
+                                if (notice_item.t1 === "WARNING" && text_message.indexOf("join a chatroom") > 0)
+                                    GotoChannel();
                             }
                             onNoticeServerMessage(notice_item.t1 + " " + text_message);
-                        } else if (notice_item.t2.indexOf("%") === 0) {
+                        }
+                        else if (notice_item.t2.indexOf("%") === 0) {
                             //channel broadcast
                             onNoticeChanBroadcast(ParserWx.ExtractNick(notice_item.t0), notice_item.t1, text_message);
-                        } else if (notice_item.t1.indexOf("%") < 0) {
+                        }
+                        else if (notice_item.t1.indexOf("%") < 0) {
                             //server broadcast
-                            if (bConnectionRegistered) onNoticeServerBroadcast(ParserWx.ExtractNick(notice_item.t0), text_message);
-                            else onNoticeServerMessage(notice_item.t1 + " " + text_message);
-                        } else if (notice_item.t3.indexOf(":") < 0) {
+                            if (bConnectionRegistered)
+                                onNoticeServerBroadcast(ParserWx.ExtractNick(notice_item.t0), text_message);
+                            else
+                                onNoticeServerMessage(notice_item.t1 + " " + text_message);
+                        }
+                        else if (notice_item.t3.indexOf(":") < 0) {
                             //private notice
-                            const nick: string = ParserWx.ExtractNick(notice_item.t0);
+                            var nick = ParserWx.ExtractNick(notice_item.t0);
                             onNoticePrivate(nick, notice_item.t1, text_message);
-
-                            if (chat_options.sndTagged !== false) if (taggedUsers[nick] === true) playTagSnd();
-                        } else {
+                            if (chat_options.sndTagged !== false)
+                                if (taggedUsers[nick] === true)
+                                    playTagSnd();
+                        }
+                        else {
                             //notice message general handler
-                            const nick: string = ParserWx.ExtractNick(notice_item.t0);
+                            var nick = ParserWx.ExtractNick(notice_item.t0);
                             onNotice(nick, notice_item.t1, text_message);
-
-                            if (chat_options.sndTagged !== false) if (taggedUsers[nick] === true) playTagSnd();
+                            if (chat_options.sndTagged !== false)
+                                if (taggedUsers[nick] === true)
+                                    playTagSnd();
                         }
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Kick:
+                case 9 /* Kick */:
                     {
-                        const kick_item = parser_item.rval as NBChatCore.KickCls;
-
+                        var kick_item = parser_item.rval;
                         //server is case-insensitve for nicks, but currently server sends exact nick used on the server so binary comparision will match.
                         //Warning: futhermore, it is difficult reliability do case insensitive unicode nick comparision.
                         if (kick_item.KickedNick === nick_me) {
                             bIsKicked = true;
                         }
-
                         onKick(ParserWx.ExtractNick(kick_item.KickerUserStr), kick_item.IrcmChannelName, kick_item.KickedNick, kick_item.KickMessage);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Privmsg:
+                case 24 /* Privmsg */:
                     {
-                        const privmsg_item = parser_item.rval as NBChatCore.PrivmsgCls;
-
+                        var privmsg_item = parser_item.rval;
                         if (privmsg_item.SenderUserStr[0] === "%") {
                             onChanPrivmsg(privmsg_item.SenderUserStr, privmsg_item.IrcmChannelName, privmsg_item.Message);
-                        } else if (IsEmptyString(privmsg_item.Reciver)) {
-                            let nick: string = ParserWx.ExtractNick(privmsg_item.SenderUserStr);
+                        }
+                        else if (IsEmptyString(privmsg_item.Reciver)) {
+                            var nick = ParserWx.ExtractNick(privmsg_item.SenderUserStr);
                             onPrivmsg(nick, privmsg_item.IrcmChannelName, privmsg_item.Message);
-
                             if (chat_options.sndTagged !== false) {
-                                if (taggedUsers[nick] === true) playTagSnd();
+                                if (taggedUsers[nick] === true)
+                                    playTagSnd();
                             }
-                        } else {
+                        }
+                        else {
                             onPrivmsgPr(ParserWx.ExtractNick(privmsg_item.SenderUserStr), privmsg_item.IrcmChannelName, privmsg_item.Reciver, privmsg_item.Message);
                         }
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Whisper:
+                case 33 /* Whisper */:
                     {
-                        const whisp_item = parser_item.rval as NBChatCore.WhisperCls;
+                        var whisp_item = parser_item.rval;
                         onWhisper(ParserWx.ExtractNick(whisp_item.SenderUserStr), whisp_item.IrcmChannelName, whisp_item.Reciver, whisp_item.Message);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Unaway:
+                case 31 /* Unaway */:
                     {
-                        const unaway_item = parser_item.rval as NBChatCore.UnawayCls;
-
-                        if (unaway_item.IrcmChannelName.length > 0) on821Chan(ParserWx.ExtractNick(unaway_item.SenderUserStr), unaway_item.IrcmChannelName, unaway_item.Message);
-                        else on821Pr(ParserWx.ExtractNick(unaway_item.SenderUserStr), unaway_item.Message);
+                        var unaway_item = parser_item.rval;
+                        if (unaway_item.IrcmChannelName.length > 0)
+                            on821Chan(ParserWx.ExtractNick(unaway_item.SenderUserStr), unaway_item.IrcmChannelName, unaway_item.Message);
+                        else
+                            on821Pr(ParserWx.ExtractNick(unaway_item.SenderUserStr), unaway_item.Message);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Away:
+                case 2 /* Away */:
                     {
-                        const away_item = parser_item.rval as NBChatCore.AwayCls;
-
-                        if (away_item.IrcmChannelName.length > 0) on822Chan(ParserWx.ExtractNick(away_item.SenderUserStr), away_item.IrcmChannelName, away_item.Message);
-                        else on822Pr(ParserWx.ExtractNick(away_item.SenderUserStr), away_item.Message);
+                        var away_item = parser_item.rval;
+                        if (away_item.IrcmChannelName.length > 0)
+                            on822Chan(ParserWx.ExtractNick(away_item.SenderUserStr), away_item.IrcmChannelName, away_item.Message);
+                        else
+                            on822Pr(ParserWx.ExtractNick(away_item.SenderUserStr), away_item.Message);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Item301:
+                case 7 /* Item301 */:
                     {
-                        const item_301 = parser_item.rval as NBChatCore.Item301;
+                        var item_301 = parser_item.rval;
                         on301(item_301.SenderUserStr, item_301.Message);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Numric302:
+                case 14 /* Numric302 */:
                     {
-                        const item_302 = parser_item.rval as NBChatCore.Numric302;
+                        var item_302 = parser_item.rval;
                         on302(item_302.SenderUserStr, item_302.Message);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Numric353:
+                case 18 /* Numric353 */:
                     {
-                        const nameslist_353_result = parser_item.rval as NBChatCore.NameslistUsers;
-
+                        var nameslist_353_result = parser_item.rval;
                         if (start_new_nameslist) {
                             start_new_nameslist = false;
                             onClearUserList();
                         }
-
-                        for (const user of nameslist_353_result.Users) {
-
+                        for (var _i = 0, _a = nameslist_353_result.Users; _i < _a.length; _i++) {
+                            var user = _a[_i];
                             if (user.nick === nick_me) {
                                 user_me = user;
                                 //did it here instead of join because ilevel is set in names list.
-                                if ((user_me.ilevel & NBChatCore.UserLevels.Superowner) === NBChatCore.UserLevels.Superowner) {
+                                if ((user_me.ilevel & 64 /* Superowner */) === 64 /* Superowner */) {
                                     SetChanProps();
                                 }
                                 onNameslistMe(user_me, ChannelName);
                                 continue;
                             }
-
                             onAddUser(user);
                         }
-
                         UpdateUserCount();
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Numric366:
+                case 19 /* Numric366 */:
                     {
                         start_new_nameslist = true;
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Num324ChannelModes:
+                case 15 /* Num324ChannelModes */:
                     {
-                        const r = parser_item.rval as NBChatCore.Num324ChannelModesCls;
+                        var r = parser_item.rval;
                         on324(r.IrcmChannelName, r.sNModes, r.s_l_Mode, r.s_k_Mode);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Num433NickError:
+                case 20 /* Num433NickError */:
                     {
-                        const r = parser_item.rval as NBChatCore.Num433NickErrorCls;
-
+                        var r = parser_item.rval;
                         onErrorReplies("433", r.sCurrentNick, r.sNewNick, r.sMessage);
-
                         if (nick_me.length < 40) {
                             nick_me = nick_me + NBChatCore.RandomNumber(20000);
-                        } else {
+                        }
+                        else {
                             nick_me = nick_me.substr(0, 32);
                             nick_me = nick_me + NBChatCore.RandomNumber(20000);
                         }
-
-                        if (bConnectionRegistered === false) onSetNick(nick_me);
-
+                        if (bConnectionRegistered === false)
+                            onSetNick(nick_me);
                         IRCSend("NICK " + nick_me);
-
-                        if (IsAuthRequestSent) sendAuthInfo();
+                        if (IsAuthRequestSent)
+                            sendAuthInfo();
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Nick:
+                case 12 /* Nick */:
                     {
-                        const r = parser_item.rval as NBChatCore.NickCls;
-                        const current_nick: string = ParserWx.ExtractNick(r.sCurrentUserName);
-
+                        var r = parser_item.rval;
+                        var current_nick = ParserWx.ExtractNick(r.sCurrentUserName);
                         if (current_nick !== nick_me) {
                             onNick(current_nick, r.sNewNick);
-                        } else {
+                        }
+                        else {
                             nick_me = user_me.nick = r.sNewNick;
                             onNickMe(nick_me);
                         }
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.AuthUser:
+                case 3 /* AuthUser */:
                     {
                         IsAuthRequestSent = true;
                         sendAuthInfo();
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Mode:
+                case 11 /* Mode */:
                     {
-                        const r = parser_item.rval;
-
+                        var r = parser_item.rval;
                         if (r instanceof NBChatCore.UserModeCls) {
                             onUserMode(ParserWx.ExtractNick(r.SenderUserStr), r.ModesOpList, r.IrcmChannelName);
-                        } else if (r instanceof NBChatCore.ChanModeCls) {
+                        }
+                        else if (r instanceof NBChatCore.ChanModeCls) {
                             onChanMode(ParserWx.ExtractNick(r.SenderUserStr), r.sModes, r.IrcmChannelName);
-                        } else if (r instanceof NBChatCore.ChanModeWParamsCls) {
+                        }
+                        else if (r instanceof NBChatCore.ChanModeWParamsCls) {
                             onChanModeWParams(ParserWx.ExtractNick(r.SenderUserStr), r.ModesOpList, r.IrcmChannelName);
                         }
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Numric341InviteConfirmation:
+                case 17 /* Numric341InviteConfirmation */:
                     {
                         //Note: at the moment not used.
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Invite:
+                case 5 /* Invite */:
                     {
-                        const r = parser_item.rval as NBChatCore.InviteCls;
+                        var r = parser_item.rval;
                         onInvite(ParserWx.ExtractNick(r.SenderUserStr), r.TargetNick, r.IrcmChannelName);
-                        if (chat_options.sndInvite === true && bInviteFlood === false) playInviteSnd();
+                        if (chat_options.sndInvite === true && bInviteFlood === false)
+                            playInviteSnd();
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Data:
+                case 4 /* Data */:
                     {
-                        const r = parser_item.rval;
-
+                        var r = parser_item.rval;
                         if (r instanceof NBChatCore.DataWhispersCls) {
                             onDataIRC2(ParserWx.ExtractNick(r.SenderUserStr), r.IrcmChannelName, r.TargetNick, r.Tag, r.Message);
-                        } else if (r instanceof NBChatCore.DataServerCls) {
+                        }
+                        else if (r instanceof NBChatCore.DataServerCls) {
                             onDataIRC(r.NickBy, r.DataType, r.Data);
                         }
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Knock:
+                case 10 /* Knock */:
                     {
-                        const r = parser_item.rval as NBChatCore.KnockCls;
+                        var r = parser_item.rval;
                         //Note: onknock function requires full user string.
                         onKnock(r.SenderUserStr, r.IrcmChannelName, r.Message);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Prop:
+                case 25 /* Prop */:
                     {
-                        const r = parser_item.rval as NBChatCore.PropCls;
-                        const sender_nick = ParserWx.ExtractNick(r.SenderUserStr);
-
+                        var r = parser_item.rval;
+                        var sender_nick = ParserWx.ExtractNick(r.SenderUserStr);
                         if (sender_nick === nick_me && r.PropType.toUpperCase() === "LOCKED" && bInitialPropChange === true) {
-
-                            if (!IsEmptyString(CategoryId)) sendToQ("PROP " + ChannelName + " CATEGORY :" + CategoryId);
-                            if (!IsEmptyString(Topic)) sendToQ("PROP " + ChannelName + " TOPIC :" + Topic);
-                            if (!IsEmptyString(Wel)) sendToQ("PROP " + ChannelName + " ONJOIN :" + Wel);
-                            if (!IsEmptyString(Lang)) sendToQ("PROP " + ChannelName + " LANGUAGE :" + Lang);
-                            if (!IsEmptyString(Lang2)) sendToQ("PROP " + ChannelName + " LANGUAGE2 :" + Lang2);
-
+                            if (!IsEmptyString(CategoryId))
+                                sendToQ("PROP " + ChannelName + " CATEGORY :" + CategoryId);
+                            if (!IsEmptyString(Topic))
+                                sendToQ("PROP " + ChannelName + " TOPIC :" + Topic);
+                            if (!IsEmptyString(Wel))
+                                sendToQ("PROP " + ChannelName + " ONJOIN :" + Wel);
+                            if (!IsEmptyString(Lang))
+                                sendToQ("PROP " + ChannelName + " LANGUAGE :" + Lang);
+                            if (!IsEmptyString(Lang2))
+                                sendToQ("PROP " + ChannelName + " LANGUAGE2 :" + Lang2);
                             bInitialPropChange = false;
                             //ToDo: add timer to lock again these props
                             //Comment: Is it really needed? --HY 13-Sep-2017
-                        } else {
+                        }
+                        else {
                             onProp(sender_nick, r.IrcmChannelName, r.PropType, r.Message);
                         }
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.Numric332ChannelTopic:
+                case 16 /* Numric332ChannelTopic */:
                     {
-                        const r = parser_item.rval as NBChatCore.Numric332ChannelTopicCls;
+                        var r = parser_item.rval;
                         on332(r.IrcmChannelName, r.Topic);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.AccessNRelatedReplies:
+                case 1 /* AccessNRelatedReplies */:
                     {
-                        const r = parser_item.rval as NBChatCore.AccessNRelatedRepliesCls;
+                        var r = parser_item.rval;
                         onAccessNRelatedReplies(r.AccessNumric, r.IrcMsg);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.PropReplies:
+                case 26 /* PropReplies */:
                     {
-                        const r = parser_item.rval as NBChatCore.PropRepliesCls;
+                        var r = parser_item.rval;
                         onPropReplies(r.PropNumric, r.IrcmChannelName, r.IrcMsg);
                     }
                     break;
-
-                case NBChatCore.ParserReturnItemTypes.UnhandledIRCwxMessage:
+                case 32 /* UnhandledIRCwxMessage */:
                     {
-                        const r = parser_item.rval as NBChatCore.UnhandledIRCwxMessageCls;
-
-                        if (isNaN(r.toks[1] as any) === false) {
+                        var r = parser_item.rval;
+                        if (isNaN(r.toks[1]) === false) {
                             if (r.toks[1] === "432" && bConnectionRegistered) {
-                                if (nick_me[0] !== ">") break;
+                                if (nick_me[0] !== ">")
+                                    break;
                             }
-
                             onErrorReplies(r.toks[1], r.toks[2], r.toks[3], NBChatCore.TrimLeadingColon(r.toks.slice(4).join(" ")));
                             break;
                         }
-
                         unhandledCommand(r.IrcMsg);
                     }
                     break;
             }
         }
     }
-
-    export function playJoinSnd(): void {
+    function playJoinSnd() {
         //ToDo: move to sound class or namespace.
-
         if (flashObj != null) {
             flashObj.playJoinSnd();
-        } else {
+        }
+        else {
             printError("Non-flash sound has not been implemented for function playKickSnd().");
         }
     }
-
-    export function playInviteSnd(): void {
+    NBChatController.playJoinSnd = playJoinSnd;
+    function playInviteSnd() {
         //ToDo: move to sound class or namespace.
-
         if (flashObj != null) {
             flashObj.playInviteSnd();
-        } else {
+        }
+        else {
             printError("Non-flash sound has not been implemented for function playKickSnd().");
         }
     }
-
-    export function playKickSnd(): void {
+    NBChatController.playInviteSnd = playInviteSnd;
+    function playKickSnd() {
         //ToDo: move to sound class or namespace.
-
         if (flashObj != null) {
             flashObj.playKickSnd();
-        } else {
+        }
+        else {
             printError("Non-flash sound has not been implemented for function playKickSnd().");
         }
     }
-
-    export function playWhispSnd(): void {
+    NBChatController.playKickSnd = playKickSnd;
+    function playWhispSnd() {
         //ToDo: move to sound class or namespace.
-
         if (flashObj != null) {
             flashObj.playWhispSnd();
-        } else {
+        }
+        else {
             printError("Non-flash sound has not been implemented for function playWhispSnd().");
         }
     }
-
-    function playTagSnd(): void {
+    NBChatController.playWhispSnd = playWhispSnd;
+    function playTagSnd() {
         //ToDo: move to sound class or namespace.
-
         if (flashObj != null) {
             flashObj.playWhispSnd();
-        } else {
+        }
+        else {
             printError("Non-flash sound has not been implemented for function playTagSnd().");
         }
     }
-
-    function printError(s: string): void {
+    function printError(s) {
         //ToDo: move formatting to css.
         WriteToPresenter("<font color='#FF0000' > Error: " + s + " </font>");
     }
-
-    function reconnectDelayed(): void {
+    function reconnectDelayed() {
         ViewMessageReconnectDelayed();
         reconnectionDelayedTicker_.Start();
     }
-
-    function reconnectionDelayedTickerCallbackImpl(): NBTickerFlags {
+    function reconnectionDelayedTickerCallbackImpl() {
         Connect();
         return NBTickerFlags.Stop;
     }
-
-    export function removeTag(nick: string): void {
-        if (taggedUsers[nick]) delete taggedUsers[nick];
+    function removeTag(nick) {
+        if (taggedUsers[nick])
+            delete taggedUsers[nick];
     }
-
-    export function SaveChatOptions(options: IChatOptions): void {
+    NBChatController.removeTag = removeTag;
+    function SaveChatOptions(options) {
         //ToDo: move to storage class or namespace.
-
         if (IsUndefinedOrNull(options)) {
             throw new Error("SaveChatOptions function: options paratmeter cannot be null.");
         }
-
         if (flashObj != null) {
             flashObj.SaveChatOptions(options);
-        } else {
+        }
+        else {
             printError("Non-flash storage has not been implemented for function SaveChatOptions(...).");
         }
-
         chat_options = options;
     }
-
-    export function SaveGuestuserPass(pw: string): void {
+    NBChatController.SaveChatOptions = SaveChatOptions;
+    function SaveGuestuserPass(pw) {
         //ToDo: move to storage class or namespace.
-
         if (flashObj != null) {
             flashObj.SaveGuestuserPass(pw);
-        } else {
+        }
+        else {
             printError("Non-flash storage has not been implemented for function SaveGuestuserPass(...).");
         }
-
         AuthPass = gsAuthPass = pw;
     }
-
-    export function SaveSingleOption(option_name: string, option_val: object): void {
+    NBChatController.SaveGuestuserPass = SaveGuestuserPass;
+    function SaveSingleOption(option_name, option_val) {
         //ToDo: move to storage class or namespace.
-
         if (flashObj != null) {
             flashObj.SaveSingleOption(option_name, option_val);
-        } else {
+        }
+        else {
             printError("Non-flash storage has not been implemented for function SaveSingleOption(...).");
         }
     }
-
-    function sendAuthInfo(): void {
-
+    NBChatController.SaveSingleOption = SaveSingleOption;
+    function sendAuthInfo() {
         if (AuthTypeCode === "T") {
             IRCSend("UTICKET " + AuthPass);
-        } else if (AuthTypeCode === "T2") {
+        }
+        else if (AuthTypeCode === "T2") {
             IRCSend("UTICKET2 " + AuthPass);
-        } else {
+        }
+        else {
             IRCSend("LOGIN guest " + AuthPass);
         }
-
     }
-
-    function sendToChan(chan: string, msg: string): void {
+    function sendToChan(chan, msg) {
         IRCSend("PRIVMSG " + chan + " :" + msg);
     }
-
-    function sendToQ(s: string): void {
+    function sendToQ(s) {
         IRCSend(s);
     }
-
-    export function sendToServer(s: string): void {
+    function sendToServer(s) {
         NBChatConnection.Send(s);
     }
-
-    export function sendToServerQue(s: string): void {
+    NBChatController.sendToServer = sendToServer;
+    function sendToServerQue(s) {
         //Note: everything is send to queue now, this only for legacy code support.
         NBChatConnection.Send(s);
     }
-
-    export function SetExtraOptions(extra_options: object): void {
+    NBChatController.sendToServerQue = sendToServerQue;
+    function SetExtraOptions(extra_options) {
         //ToDo: move to storage class or namespace.
-
         if (flashObj != null) {
             flashObj.SetExtraOptions();
-        } else {
+        }
+        else {
             printError("Non-flash storage has not been implemented for function SetExtraOptions(...).");
         }
     }
-
-    export function SetChanProps(): void {
+    NBChatController.SetExtraOptions = SetExtraOptions;
+    function SetChanProps() {
         if (IsChanProps() === true && bInitialPropChange === true) {
-            if (!IsEmptyString(CategoryId)) sendToQ("PROP " + ChannelName + " UNLOCK :CATEGORY");
-            if (!IsEmptyString(Topic)) sendToQ("PROP " + ChannelName + " UNLOCK :TOPIC");
-            if (!IsEmptyString(Wel)) sendToQ("PROP " + ChannelName + " UNLOCK :ONJOIN");
-            if (!IsEmptyString(Lang)) sendToQ("PROP " + ChannelName + " UNLOCK :LANGUAGE");
-            if (!IsEmptyString(Lang2)) sendToQ("PROP " + ChannelName + " UNLOCK :LANGUAGE2");
-        } else {
+            if (!IsEmptyString(CategoryId))
+                sendToQ("PROP " + ChannelName + " UNLOCK :CATEGORY");
+            if (!IsEmptyString(Topic))
+                sendToQ("PROP " + ChannelName + " UNLOCK :TOPIC");
+            if (!IsEmptyString(Wel))
+                sendToQ("PROP " + ChannelName + " UNLOCK :ONJOIN");
+            if (!IsEmptyString(Lang))
+                sendToQ("PROP " + ChannelName + " UNLOCK :LANGUAGE");
+            if (!IsEmptyString(Lang2))
+                sendToQ("PROP " + ChannelName + " UNLOCK :LANGUAGE2");
+        }
+        else {
             bInitialPropChange = false;
         }
     }
-
-    export function SetNick(nick: string): void {
+    NBChatController.SetChanProps = SetChanProps;
+    function SetNick(nick) {
         nick_me = nick;
     }
-
-    function unhandledCommand(ircmsg: string): void {
+    NBChatController.SetNick = SetNick;
+    function unhandledCommand(ircmsg) {
         WriteToPresenter("Unhandled Command:" + ircmsg);
     }
-
-    export function Version(): string {
+    function Version() {
         if (NBChatConnection.SocketType != null) {
             return sVersion + "(" + NBChatConnection.SocketType() + ")";
-        } else {
+        }
+        else {
             return sVersion + "(socket type is n/a).";
         }
     }
-
-    function WriteToPresenter(s: string): void { //-- Function converstion completed 25-Dec-2016 HY
+    NBChatController.Version = Version;
+    function WriteToPresenter(s) {
         fnWriteToPresenter(s);
     }
-}
+})(NBChatController || (NBChatController = {}));
+//# sourceMappingURL=nbchat_controller.js.map

@@ -1,5 +1,4 @@
-﻿
-/*
+﻿/*
  * Copyright (C) 2006-2017  Net-Bits.Net
  * All rights reserved.
  *
@@ -7,7 +6,6 @@
  *
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  */
-
 
 function IsEmptyString(s: string): boolean {
     "use strict";
@@ -54,6 +52,7 @@ namespace NBChatCore {
         Num433NickError,
         Part,
         PingReply,
+        Pong,
         Privmsg,
         Prop,
         PropReplies,
@@ -308,32 +307,58 @@ namespace NBChatCore {
         | DataServerCls | DataWhispersCls | KnockCls | PropCls | Numric332ChannelTopicCls | AccessNRelatedRepliesCls | PropRepliesCls | UnhandledIRCwxMessageCls;
     }
 
-    export class NBTicker {
-       
-        public StopConditionFn: () => boolean = null;
+    export enum NBTickerFlags {
+        Stop,
+        Continue,
+    }
 
+    export class NBTicker {  
+        //*WARNING*: ticker name does not check name for uniqueness, so programmer has to make sure ticker names are unique. And ticker names should be one word in camel casing with ticker in end.
+
+        //Note: ticker name is helpful during debugging.
+
+        //ToDo:
+        //1) Check for tickername uniqueness.
+        //2) Add ticker naming convention constraint.
+
+        public StopConditionFn: () => NBTickerFlags = null;
+
+        private ticker_name_: string = null;
         private tickerHandle_: number = 0;
         private tick_internval_ms_: number = 500; //default 0.5 seconds.
 
+        constructor(ticker_name: string) {
+            this.ticker_name_ = ticker_name;
+        }
+
         public Start(): void {
-            this.tickerHandle_ = setInterval(this.internalTickerCallback, this.tick_internval_ms_, this);
+            if (this.tickerHandle_ === 0) {
+                //Note: used timeout become don't want to call the callback function again while it is not finished.
+                this.tickerHandle_ = setTimeout(this.internalTickerCallback, this.tick_internval_ms_, this);
+            }
         }
 
         public Stop(): void {
             clearInterval(this.tickerHandle_);
+            this.tickerHandle_ = 0;
         }
 
         public SetTickerInterval(ms: number): void {
-
-            //if (ms <= 25 ) throw new er
+            if (ms < 100) {
+                //ToDo: move text messages to external langage (en, etc...) file.
+                throw new Error("Ticker intervel cannot be less than 100 milliseconds.");
+            }
 
             this.tick_internval_ms_ = ms;
         }
 
         private internalTickerCallback(instance: NBTicker): void {
             if (instance.StopConditionFn instanceof Function) {
-                if (instance.StopConditionFn()) {
+                if (instance.StopConditionFn() === NBTickerFlags.Stop) {
                     instance.Stop();
+                } else {
+                    instance.tickerHandle_ = 0;
+                    instance.Start();
                 }
             }
         }
