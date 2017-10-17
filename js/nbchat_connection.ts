@@ -155,7 +155,7 @@ namespace NBChatConnection {
 
         //ToDo: implement bad case protection.
         //this is not possible in our server since buffer getting too large is protected on the server side,
-        //but in general case attacker construct an attack that will not have end of message character(s) and buffer will keep growning until webclient runs out of memory.
+        //but in general case, an attacker can construct an attack that will not have end of message character(s) and buffer will keep growning until webclient runs out of memory.
 
         if (!(s[s.length - 1] === "\n" && s[s.length - 2] === "\r")) {
             let pos: number = s.lastIndexOf("\r\n");
@@ -226,21 +226,6 @@ namespace NBChatConnection {
         return NBChatCore.NBTickerFlags.Continue;
     }
 
-    //function getSocketTypeName(socket_type: NBSocketType): string {
-    //    let r: string = "NA";
-
-    //    switch (socket_type) {
-    //        case NBSocketType.FlashSocket:
-    //            r = "Flashsocket";
-    //            break;
-    //        case NBSocketType.Websocket:
-    //            r = "Websocket";
-    //            break;
-    //    }
-
-    //    return r;
-    //}
-
     //<NBFlashSock>
     //ToDo: move to its own file.
     class NBFlashsocket implements INBSocket {
@@ -250,10 +235,10 @@ namespace NBChatConnection {
         private is_ready_: boolean = false;
         private str_buffer_: string = "";
         private connecting_: boolean = false;
-        private readonly XmlNullChar:string = "$1a2XMLNULL2a1$";
+        private readonly XmlNullChar: string = "$1a2XMLNULL2a1$"; //this is only related to flash sending messages, it has a problem sending null. Null converts to empty string,
+                                                                    //and there is no when to differtiate null and empty string when required, hence, this method is used.
 
         constructor() {
-            //NBFlashConnectionDataPoster = this.OnData;
             NBSocketGlobalInstance = this;
 
             NBChatConnection.CanConnect = this.CanConnect.bind(this);

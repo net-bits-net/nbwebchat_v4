@@ -9,20 +9,71 @@
 var NBChatController;
 (function (NBChatController) {
     "use strict";
-    //Note: currently using namespace, when all major browsers have support for module loading then it can be changed to module here. --HY 26-Dec-2016.
-    // <imports>
-    var ParserWx = IRCwxParser;
-    var NBTickerFlags = NBChatCore.NBTickerFlags;
-    // </imports>
-    // <variables>
-    var debugArray = [];
-    var taggedUsers = {}; //ToDo: change nick tagging to ident tagging.
-    var options_controller_instance = {
+    var chat_options_default = {
         sndArrival: true, sndKick: true, sndTagged: true, sndInvite: true, sndWhisp: true,
         sDspFrmt: "", fontSize: "", corpText: true, sAwayMsg: "",
         bEmotsOff: false, bTextFrmtOff: false, bWhispOff: false, bTimeStampOn: true,
         oEventShowNotifys: { bDspArrivals: true, bDspStatusChg: true, bDspDeparts: true }
     };
+    //Note: currently using namespace, when all major browsers have support for module loading then it can be changed to module here. --HY 26-Dec-2016.
+    // <imports>
+    var ParserWx = IRCwxParser;
+    var NBTickerFlags = NBChatCore.NBTickerFlags;
+    //Note: Shouldn't be called directly, so nested inside controller. (Storage name is easy to mistake for making direct call.)
+    var NBStorage;
+    (function (NBStorage) {
+        "use strict";
+        //ToDo: HTML5 local storage availibility check.
+        function GetExtraOptions() {
+            var extra_options = null;
+            var temp = localStorage.getItem("$EXTRAOPTIONS" /* EXTRAOPTIONS */);
+            if (!IsEmptyString(temp)) {
+                extra_options = JSON.parse(temp);
+            }
+            //alert(JSON.stringify(extra_options));
+            return extra_options;
+        }
+        NBStorage.GetExtraOptions = GetExtraOptions;
+        function GetItem(k) {
+            return localStorage.getItem(k);
+        }
+        NBStorage.GetItem = GetItem;
+        function GetChatOptions() {
+            var options = null;
+            var temp = localStorage.getItem("$CHATOPTIONS" /* CHATOPTIONS */);
+            if (!IsEmptyString(temp)) {
+                options = JSON.parse(temp);
+                //alert(JSON.stringify(options));
+                if (NBChatCore.FillMissingFields(chat_options_default, options))
+                    SaveChatOptions(options);
+            }
+            return options;
+        }
+        NBStorage.GetChatOptions = GetChatOptions;
+        function SaveChatOptions(options) {
+            //ToDo: test with missing fields/properties.
+            NBChatCore.FillMissingFields(chat_options_default, options);
+            localStorage.setItem("$CHATOPTIONS" /* CHATOPTIONS */, JSON.stringify(options));
+        }
+        NBStorage.SaveChatOptions = SaveChatOptions;
+        function SetExtraOptions(extra_options) {
+            localStorage.setItem("$EXTRAOPTIONS" /* EXTRAOPTIONS */, JSON.stringify(extra_options));
+        }
+        NBStorage.SetExtraOptions = SetExtraOptions;
+        function SaveItem(k, v, save_to_user_account) {
+            var e = null;
+            //Note: 'save_to_user_account' feature is not available at the moment, but it is still good for planning early which items should be saved online to user account.
+            //ToDo: check if key doesn't match any predefined keys.
+            localStorage.setItem(k, v);
+            return e;
+        }
+        NBStorage.SaveItem = SaveItem;
+    })(NBStorage || (NBStorage = {}));
+    // </imports>
+    // <variables>
+    var debugArray = [];
+    var taggedUsers = {}; //ToDo: change nick tagging to ident tagging.
+    var options_controller_instance = chat_options_default;
     var ServerName, nick_me, IsAuthRequestSent, bConnectionRegistered, bInitialPropChange = true, bIsKicked;
     var bInviteFlood = false;
     var ChannelName, CategoryId, Topic, Wel, Lang, Lang2, AuthTypeCode, AuthPass;
@@ -35,10 +86,17 @@ var NBChatController;
     //connection vars
     var first_connection = true;
     var current_socket_num = -1;
+    var reconnect_delay_ms = 2500;
     var fnWriteToPresenter = null;
     var IRCSend;
     var onTest;
     // </function_pointers>
+    // Sounds
+    var JoinSnd = new Audio("/NBWChat/default/sounds/ChatJoin.mp3"); // buffers automatically when created
+    var KickSnd = new Audio("/NBWChat/default/sounds/ChatKick.mp3");
+    var WhispSnd = new Audio("/NBWChat/default/sounds/ChatWhsp.mp3");
+    var InviteSnd = new Audio("/NBWChat/default/sounds/ChatInvt.mp3");
+    var TagSnd = new Audio("/NBWChat/default/sounds/ChatTag.mp3");
     function onTestImpl(s) {
         alert(s);
     }
@@ -67,7 +125,8 @@ var NBChatController;
     };
     NBChatConnection.OnClose = function (message) {
         console.log("::(NBChatController.NBSock.OnClose)::" + message);
-        reconnectDelayed();
+        if (!bIsKicked)
+            reconnectDelayed();
     };
     NBChatConnection.OnData = function (s) {
         console.log("<<" + s);
@@ -158,27 +217,17 @@ var NBChatController;
     }
     NBChatController.Disconnect = Disconnect;
     function GetExtraOptions() {
-        var extra_options = new Object();
-        //if (flashObj != null) {
-        //    extra_options = flashObj.GetExtraOptions();
-        //} else {
-        //    printError("Non-flash storage has not been implemented for function GetExtraOptions().");
-        //}
-        if (localStorage.stored_extra_options) {
-            extra_options = JSON.parse(localStorage.stored_extra_options);
-        }
-        //alert(JSON.stringify(extra_options));    
+        var extra_options = null;
+        extra_options = NBStorage.GetExtraOptions();
+        if (IsUndefinedOrNull(extra_options))
+            extra_options = new Object();
         return extra_options;
     }
     NBChatController.GetExtraOptions = GetExtraOptions;
     function GetGuestuserPass() {
-        //ToDo: move to storage class or namespace.
-        var result = "qwerty";
-        if (flashObj != null) {
-            result = flashObj.GetGuestuserPass();
-        }
-        else {
-            printError("Non-flash storage has not been implemented for function GetGuestuserPass().");
+        var result = NBStorage.GetItem("$GUESTPASS" /* GUESTPASS */);
+        if (IsEmptyString(result)) {
+            result = NBChatCore.GenerateRandomPassword();
         }
         return result;
     }
@@ -239,16 +288,8 @@ var NBChatController;
         return false;
     }
     function LoadChatOptions() {
-        var options = null; //
-        //if (flashObj != null) {
-        //    options = flashObj.LoadChatOptions();
-        //} else {
-        //    printError("Non-flash storage has not been implemented for function LoadChatOptions().");
-        //}
-        if (localStorage.stored_chat_options) {
-            options = JSON.parse(localStorage.stored_chat_options);
-        }
-        //alert(JSON.stringify(options));
+        var options = null;
+        options = NBStorage.GetChatOptions();
         if (!IsUndefinedOrNull(options)) {
             options_controller_instance = options;
         }
@@ -259,16 +300,17 @@ var NBChatController;
     }
     NBChatController.LoadChatOptions = LoadChatOptions;
     function Main() {
+        //Note: used global name with gs to separate names clearly to avoid conflicts, maybe there is better way than this. 23-Sep-17
+        //WARNING: never modify gs variables.
         AuthTypeCode = "";
         nick_me = ">Guest";
         AuthPass = gsAuthPass;
-        //Note: used global name with gs to separate names clearly to avoid conflicts, maybe there is better way than this. 23-Sep-17
-        ChannelName = gsChannelName;
-        CategoryId = gsCategoryId;
-        Topic = gsTopic;
-        Wel = gsWel;
-        Lang = gsLang;
-        Lang2 = gsLang2;
+        ChannelName = (IsUndefinedOrNull(gsChannelName)) ? "" : gsChannelName;
+        CategoryId = (IsUndefinedOrNull(gsCategoryId)) ? "" : gsCategoryId;
+        Topic = (IsUndefinedOrNull(gsTopic)) ? "" : gsTopic;
+        Wel = (IsUndefinedOrNull(gsWel)) ? "" : gsWel;
+        Lang = (IsUndefinedOrNull(gsLang)) ? "" : gsLang;
+        Lang2 = (IsUndefinedOrNull(gsLang2)) ? "" : gsLang2;
         if (IsEmptyString(AuthPass)) {
             AuthPass = "";
         }
@@ -281,21 +323,12 @@ var NBChatController;
         else {
             ChannelName = ChannelName.replace("\b", "\\b");
         }
-        if (IsUndefinedOrNull(CategoryId))
-            CategoryId = "";
-        if (IsUndefinedOrNull(Topic))
-            Topic = "";
-        if (IsUndefinedOrNull(Wel))
-            Wel = "";
-        if (IsUndefinedOrNull(Lang))
-            Lang = "";
-        if (IsUndefinedOrNull(Lang2))
-            Lang2 = "";
         connectionStarterTicker_ = new NBChatCore.NBTicker("ConnectionStarterTicker");
         connectionStarterTicker_.StopConditionFn = connectionStarterCallbackImpl;
         connectionStarterTicker_.Start();
         reconnectionDelayedTicker_ = new NBChatCore.NBTicker("ReconnectionDelayedTicker");
         reconnectionDelayedTicker_.StopConditionFn = reconnectionDelayedTickerCallbackImpl;
+        reconnectionDelayedTicker_.SetTickerInterval(reconnect_delay_ms);
         connectionChecker_ = new NBChatCore.NBTicker("ConnectionCheckerTicker");
         connectionChecker_.StopConditionFn = connectionCheckerTickerCallbackImpl;
         connectionChecker_.SetTickerInterval(55000);
@@ -393,6 +426,7 @@ var NBChatController;
                             if (!bIsKicked) {
                                 if (notice_item.t1 === "WARNING" && text_message.indexOf("join a chatroom") > 0)
                                     GotoChannel();
+                                return;
                             }
                             onNoticeServerMessage(notice_item.t1 + " " + text_message);
                         }
@@ -432,6 +466,7 @@ var NBChatController;
                         //Warning: futhermore, it is difficult reliability do case insensitive unicode nick comparision.
                         if (kick_item.KickedNick === nick_me) {
                             bIsKicked = true;
+                            NBChatConnection.Close(null);
                         }
                         onKick(ParserWx.ExtractNick(kick_item.KickerUserStr), kick_item.IrcmChannelName, kick_item.KickedNick, kick_item.KickMessage);
                     }
@@ -667,53 +702,23 @@ var NBChatController;
         }
     }
     function playJoinSnd() {
-        //ToDo: move to sound class or namespace.
-        if (flashObj != null) {
-            flashObj.playJoinSnd();
-        }
-        else {
-            printError("Non-flash sound has not been implemented for function playKickSnd().");
-        }
+        JoinSnd.play();
     }
     NBChatController.playJoinSnd = playJoinSnd;
     function playInviteSnd() {
-        //ToDo: move to sound class or namespace.
-        if (flashObj != null) {
-            flashObj.playInviteSnd();
-        }
-        else {
-            printError("Non-flash sound has not been implemented for function playKickSnd().");
-        }
+        InviteSnd.play();
     }
     NBChatController.playInviteSnd = playInviteSnd;
     function playKickSnd() {
-        //ToDo: move to sound class or namespace.
-        if (flashObj != null) {
-            flashObj.playKickSnd();
-        }
-        else {
-            printError("Non-flash sound has not been implemented for function playKickSnd().");
-        }
+        KickSnd.play();
     }
     NBChatController.playKickSnd = playKickSnd;
     function playWhispSnd() {
-        //ToDo: move to sound class or namespace.
-        if (flashObj != null) {
-            flashObj.playWhispSnd();
-        }
-        else {
-            printError("Non-flash sound has not been implemented for function playWhispSnd().");
-        }
+        WhispSnd.play();
     }
     NBChatController.playWhispSnd = playWhispSnd;
     function playTagSnd() {
-        //ToDo: move to sound class or namespace.
-        if (flashObj != null) {
-            flashObj.playWhispSnd();
-        }
-        else {
-            printError("Non-flash sound has not been implemented for function playTagSnd().");
-        }
+        TagSnd.play();
     }
     function printError(s) {
         //ToDo: move formatting to css.
@@ -733,37 +738,34 @@ var NBChatController;
     }
     NBChatController.removeTag = removeTag;
     function SaveChatOptions(options) {
-        //ToDo: move to storage class or namespace.
         if (IsUndefinedOrNull(options)) {
             throw new Error("SaveChatOptions function: options paratmeter cannot be null.");
         }
-        //if (flashObj != null) {
-        //    flashObj.SaveChatOptions(options);
-        //} else {
-        //    printError("Non-flash storage has not been implemented for function SaveChatOptions(...).");
-        //}
         options_controller_instance = options;
-        localStorage.setItem("stored_chat_options", JSON.stringify(options));
+        NBStorage.SaveChatOptions(options_controller_instance);
     }
     NBChatController.SaveChatOptions = SaveChatOptions;
     function SaveGuestuserPass(pw) {
-        //ToDo: move to storage class or namespace.
-        if (flashObj != null) {
-            flashObj.SaveGuestuserPass(pw);
-        }
-        else {
-            printError("Non-flash storage has not been implemented for function SaveGuestuserPass(...).");
-        }
         AuthPass = gsAuthPass = pw;
+        var e = NBStorage.SaveItem("$GUESTPASS" /* GUESTPASS */, pw, false);
+        if (e != null) {
+            //ToDo: handle error.
+        }
     }
     NBChatController.SaveGuestuserPass = SaveGuestuserPass;
     function SaveSingleOption(option_name, option_val) {
-        //ToDo: move to storage class or namespace.
-        if (flashObj != null) {
-            flashObj.SaveSingleOption(option_name, option_val);
-        }
-        else {
-            printError("Non-flash storage has not been implemented for function SaveSingleOption(...).");
+        switch (option_name) {
+            case "awaymsg":
+                if (typeof (option_val) === 'string') {
+                    options_controller_instance.sAwayMsg = option_val;
+                }
+                else {
+                    console.log("SaveSingleOption:: error: option_val should be string for away message.");
+                }
+                break;
+            default:
+                console.log("SaveSingleOption:: error: this option name is not implemented.");
+                break;
         }
     }
     NBChatController.SaveSingleOption = SaveSingleOption;
@@ -794,12 +796,7 @@ var NBChatController;
     }
     NBChatController.sendToServerQue = sendToServerQue;
     function SetExtraOptions(extra_options) {
-        //if (flashObj != null) {
-        //    flashObj.SetExtraOptions();
-        //} else {
-        //    printError("Non-flash storage has not been implemented for function SetExtraOptions(...).");
-        //}
-        localStorage.setItem("stored_extra_options", JSON.stringify(extra_options));
+        NBStorage.SetExtraOptions(extra_options);
     }
     NBChatController.SetExtraOptions = SetExtraOptions;
     function SetChanProps() {

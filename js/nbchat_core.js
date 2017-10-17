@@ -289,6 +289,32 @@ var NBChatCore;
     }());
     NBChatCore.NBTicker = NBTicker;
     // </classes>
+    //handy function to fill missing fields in javascript object. e.g. missing chat option fields from default chat options.
+    function FillMissingFields(source, target) {
+        var target_has_changed = false;
+        for (var f in source) {
+            if (IsUndefinedOrNull(target[f])) {
+                target[f] = source[f];
+                target_has_changed = true;
+            }
+            else {
+                if (typeof source[f] === 'object') {
+                    if (FillMissingFields(source[f], target[f]))
+                        target_has_changed = true;
+                }
+            }
+        }
+        return target_has_changed;
+    }
+    NBChatCore.FillMissingFields = FillMissingFields;
+    function GenerateRandomPassword() {
+        var result = '';
+        for (var i = 0; i <= 16; i++) {
+            result += String.fromCharCode(Math.floor(Math.random() * 100) + 33);
+        }
+        return result;
+    }
+    NBChatCore.GenerateRandomPassword = GenerateRandomPassword;
     function RandomNumber(upper_bound) {
         return Math.floor(Math.random() * upper_bound) + 1;
     }

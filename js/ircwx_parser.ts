@@ -192,7 +192,7 @@ namespace IRCwxParser {
             modeoplist.push(oModeParams);
 
             return new NBChatCore.ChanModeWParamsCls(sFrom, sChan, modeoplist);
-        } else if ((sParam === null) || (sParam.length === 0)) {
+        } else if (IsEmptyString(sParam)) {
             return new NBChatCore.ChanModeCls(sFrom, sChan, sModes);
         } else {
             for (const mode of sModes) {
@@ -344,7 +344,7 @@ namespace IRCwxParser {
         for (let i: number = 0; i < ArrayNLpre.length; i++) {
             if (!IsEmptyString(ArrayNLpre[i])) {
                 const ircm_user: IRCmUser = parseNamesListItem(ArrayNLpre[i]);
-                if (ircm_user != null) {
+                if (!IsUndefinedOrNull(ircm_user)) {
                     ArrayNLpost.push(ircm_user);
                 }
             }

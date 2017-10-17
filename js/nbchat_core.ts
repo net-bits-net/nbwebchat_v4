@@ -312,7 +312,7 @@ namespace NBChatCore {
         Continue,
     }
 
-    export class NBTicker {  
+    export class NBTicker {
         //*WARNING*: ticker name does not check name for uniqueness, so programmer has to make sure ticker names are unique. And ticker names should be one word in camel casing with ticker in end.
 
         //Note: ticker name is helpful during debugging.
@@ -365,6 +365,34 @@ namespace NBChatCore {
     }
 
     // </classes>
+
+    //handy function to fill missing fields in javascript object. e.g. missing chat option fields from default chat options.
+    export function FillMissingFields(source: object, target: object): boolean {
+        let target_has_changed: boolean = false;
+
+        for (const f in source) {
+            if (IsUndefinedOrNull(target[f])) {
+                target[f] = source[f];
+                target_has_changed = true;
+            } else {
+                if (typeof source[f] === 'object') {
+                    if (FillMissingFields(source[f], target[f])) target_has_changed = true;
+                }
+            }
+        }
+
+        return target_has_changed;
+    }
+
+    export function GenerateRandomPassword(): string {
+        var result: string = '';
+
+        for (var i: number = 0; i <= 16; i++) {
+            result += String.fromCharCode(Math.floor(Math.random() * 100) + 33);
+        }
+
+        return result;
+    }
 
     export function RandomNumber(upper_bound: number): number {
         return Math.floor(Math.random() * upper_bound) + 1;
