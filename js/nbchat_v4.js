@@ -105,12 +105,12 @@ var imgBtnWhispDisabled = sFUIDIR + '/images/whisper-grey.png';
 var imgBtnWhispEnabled = sFUIDIR + '/images/whisper.png';
 var imgBtnIgnoreDisabled = sFUIDIR + '/images/iggy-grey.png';
 var imgBtnIgnoreEnabled = sFUIDIR + '/images/iggy.png';
-var imgBtnTagEnabled = sFUIDIR + '/images/tag.png';
+var imgBtnTagEnabled = sFUIDIR + '/images/tagged.png';
 var imgBtnTagDisabled = sFUIDIR + '/images/tag-grey.png';
 var imgBtnSendHover = sFUIDIR + '/images/button_send_hover.png';
 var imgBtnAction = sFUIDIR + '/images/button_action.png';
 var imgIconAway = sFUIDIR + '/images/listicons/away.png';
-var imgIconTag = sFUIDIR + '/images/listicons/tag.png';
+var imgIconTag = sFUIDIR + '/images/listicons/tagged.png';
 var imgBtnEmotes = sFUIDIR + '/images/button_emotes.png';
 var imgBtnColorsel = sFUIDIR + '/images/colorsel.png';
 var imgBtnMenubg = sFUIDIR + '/images/menubg.png';
@@ -1090,6 +1090,10 @@ function ProcessInterUserCommand(sCmd) {
 			//fnAppendText("<div class='whispreq' id='whispid123'><div id='abc123' style='color: #8b0000'><span class='cpnickuser'>TestNick</span> has sent you whispers (<a href='javascript:;' onclick='chromeTest();'>accept</a> | <a href='javascript:;' onclick='subdeclineWhisper(\"\", this);'>decline</a>).</div><div><span style='color: #8b0000'>Message:</span> " + ParseTextMessage("Test Message!") + "</div></div>");
 			break;
 
+		case "TOSTATUS":
+			sendTostatus(sCmd.split(" ").slice(1).join(" "));
+			break;
+
 		default:
 			fnAppendText("<span class='msgfrmtparent'><span class='errortype1'>" + langr.l_errorcommand_a + " \"" + sCmd.split(" ", 1)[0] + "\" " + langr.l_errorcommand_b + "</span></span>");
 			return false;
@@ -1613,11 +1617,11 @@ function onTest(s) {
 
 function IsNotLoaded() {
 	if (isIE) {
-		if (StatusPane.document.body != null) {
+		if (StatusPane.document.body != null && ChatPane.document.body != null) {
 			return true;
 		}
 	} else {
-		if (pStatusPane.contentDocument.body != null) {
+		if (pStatusPane.contentDocument.body != null && pChatPane.contentDocument.body != null) {
 			return true;
 		}
 	}
@@ -1645,8 +1649,8 @@ function fnInitialize() {
 	console.log("fnInitialize()::#0");
 
 	if (IsNotLoaded() == false) {
-	    setTimeout(fnInitialize, 1000);
-	    return;
+		setTimeout(fnInitialize, 1000);
+		return;
 	}
 
 	if (isIE) {
@@ -4140,10 +4144,15 @@ function cmenuShow(event) {
 }
 
 function iniContextMenu() {
+	
+	if (IsNotLoaded() == false) {
+		setTimeout(iniContextMenu, 1000);
+		return;
+	}
+
 	_pmnucp = getById('cmenuCP'); _pmnuhost = getById('mnuHost'); _pmnuhelpop = getById('mnuHelpOp'); _pmnuuser = getById('mnuUser');
 	_pwndChat = getById('chatwindowholder'); //'chatwindowholder' to make whisper input box context menu work. Update made by Mike/err0r.
-	//_pcpbody = (isIE) ? ChatPane.document.body : pChatPane.contentDocument.body;
-	_pcpbody = $(document.body);
+	_pcpbody = (isIE) ? ChatPane.document.body : pChatPane.contentDocument.body;
 	_pstatusbody = (isIE) ? StatusPane.document.body : pStatusPane.contentDocument.body;
 	_ptxsend = document.getElementById("txSend");
 	_pMnuCopy = getById('mnuCpCopy');
@@ -4678,11 +4687,13 @@ function sendTostatus(sstr) {
 		var oSpan = document.createElement('div');
 		oSpan.innerHTML = '<div class="linebreakindenter" style="overflow: hidden; position: relative;">' + sstr + '</div>';
 
+		$("#StatusPane").contents().find("#statusbody").append(oSpan);
+
 		if (pStatusPane.contentDocument.body !== null) {
-		    pStatusPane.contentDocument.body.appendChild(oSpan);
-		    if (bSkipStatusScrollCall == false) { autoStatusScroll(pStatusPane.contentDocument.body); }
+			pStatusPane.contentDocument.body.appendChild(oSpan);
+			if (bSkipStatusScrollCall == false) { autoStatusScroll(pStatusPane.contentDocument.body); }
 		} else {
-		    $("#StatusPane").contents().find("#statusbody").append('<div>' + sstr + '</div>');
+			$("#StatusPane").contents().find("#statusbody").append(oSpan);
 		}
 		
 	}
