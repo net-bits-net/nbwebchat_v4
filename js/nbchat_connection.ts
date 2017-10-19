@@ -8,7 +8,7 @@
  */
 
 let flashObj: any; //design: should be declared here only, so no calls outside of this module.
-let NBSocketGlobalInstance: NBChatConnection.INBSocket = null;
+let NBSocketGlobalInstance: NBChatConnection.INBClientSocket = null;
 declare let HasWebsocketSupport: boolean;
 
 function NBFlashConnectionEvent(event_type: string, data: string): void {
@@ -95,7 +95,7 @@ namespace NBChatConnection {
 
     export type fnWriteToConnectionDef = (s: string) => void;
 
-    export interface INBSocket {
+    export interface INBClientSocket {
         //ToDo: move to its own file.
 
         OnClose(message: string): void;
@@ -228,7 +228,7 @@ namespace NBChatConnection {
 
     //<NBFlashSock>
     //ToDo: move to its own file.
-    class NBFlashsocket implements INBSocket {
+    class NBFlashsocket implements INBClientSocket {
 
         //variables
         private socket_subtype_: NBSocketType = NBSocketType.FlashSocket;
@@ -372,14 +372,13 @@ namespace NBChatConnection {
 
     //<NBWebsock>
     //ToDo: move to its own file.
-    class NBWebsocket implements INBSocket {
+    class NBWebsocket implements INBClientSocket {
 
         private socket_subtype_: NBSocketType = NBSocketType.Websocket;
         private is_ready_: boolean = false;
         private str_buffer_: string = "";
         private wsocket_: WebSocket = null;
         private connecting_: boolean = false;
-        private connected_: boolean = false;
         private ip_: string;
         private port_: number;
 
@@ -402,7 +401,6 @@ namespace NBChatConnection {
             let is_connecting: boolean = this.connecting_; //OnClose can throw exception so save it in temp variable.
 
             this.connecting_ = false;
-            this.connected_ = false;
 
             if (is_connecting) {
                 this.OnConnect({ success: false, address: this.ip_ + ":" + this.port_ });
@@ -415,7 +413,6 @@ namespace NBChatConnection {
 
         public OnConnect(connection_result: { success: boolean, address: string }): void {
             this.connecting_ = false;
-            this.connected_ = connection_result.success;
 
             if (NBChatConnection.OnConnect !== null) {
                 NBChatConnection.OnConnect(connection_result);
@@ -467,7 +464,13 @@ namespace NBChatConnection {
         //functions
 
         public CanConnect(): boolean {
-            return !(this.connecting_ || this.connected_);
+            if (!this.is_ready_ || this.connecting_) return false;
+
+            if (!IsUndefinedOrNull(this.wsocket_)) {
+                return !(this.connecting_ || this.wsocket_.readyState == this.wsocket_.CONNECTING || this.wsocket_.readyState == this.wsocket_.OPEN || this.wsocket_.readyState == this.wsocket_.CONNECTING);
+            }
+
+            return true;
         }
 
         public Close(reason: string): void {
@@ -483,9 +486,10 @@ namespace NBChatConnection {
 
             this.ip_ = ip;
             this.port_ = port;
-            this.connecting_ = true;
 
             this.wsocket_ = new WebSocket("ws://" + this.ip_ + ":" + this.port_ + "/");
+
+            this.connecting_ = true;
 
             this.wsocket_.onopen = function(this: WebSocket, ev: Event): any {
                 //this.ip_ doesn't exist here.
@@ -530,5 +534,5 @@ namespace NBChatConnection {
 
     //</NBWebsock>
 
-    const SockMain: INBSocket = (HasWebsocketSupport) ? new NBWebsocket() : new NBFlashsocket();
+    const SockMain: INBClientSocket = (HasWebsocketSupport) ? new NBWebsocket() : new NBFlashsocket();
 }

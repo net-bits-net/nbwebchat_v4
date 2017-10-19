@@ -24,25 +24,158 @@ var NBChatController;
     (function (NBStorage) {
         "use strict";
         //ToDo: HTML5 local storage availibility check.
+        /*
+        ** Net-Bits.Net IRCWX Storage Specification **
+
+        - Storage items are timestamped in ISO date format.
+        - NBStorage module adds or strips timestamps; timestamps should be handled only in storage module.
+        - Online storage operations can fail, so local storage might be newer than online storage.
+           -- NBStorage first checks the timestamps between online and local storage, which ever is newer it uses that.
+           -- If online storage is older then it updates the online storage with the latest.
+           -- In the abense of timestamp on local storage item, it will use online storage.
+        - Local storage may store items from multiple accounts, so prefix each item with user id.
+        - Guests do not have id so guest_ prefix is used.
+        - Guests do not have online storage, so guest storage operations does not make online storage calls.
+        - Not all storage items are suitable to pass online like guest password, there should be an option to limit a storage item to local storage only.
+
+        - Online storage operations possible failures:
+        -- size of storage has exceeded online storage limit. Online storage has only 4K characters limit,
+            and whole storage is stored in json format. Recommended to keep the total size of characters in local and online storage is 2K characters.
+        -- Session may have timed out. In that cause, user would have to sign in again on the site for the online storage to work again. This is one of the case when online storage might be stale.
+
+        - Local storage operations possible failures:
+        -- Exceeded the size of local storage. See maximum limit for local storage.
+
+        */
+        function updateOnlineUserStorage(k, v) {
+            if (IsUndefinedOrNull(gsOnlineUserStorage)) {
+                return;
+            }
+            //WARNING: this will block subsequent ajax update, but if ajax call fails then online storage is not updated.
+            //ToDo: handle above issue gracefully.
+            gsOnlineUserStorage[k] = v;
+            $.ajax({
+                url: "/Chatui/UpdateUserOnlineStorage",
+                type: "POST",
+                data: { k: k, v: v },
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (response) {
+                    console.log(response);
+                    //ToDo: handle error, right now may not be needed due to update logic. See specification above.
+                }
+            });
+        }
+        function splitTimestampAndValue(s) {
+            if (IsEmptyString(s))
+                return null;
+            var result = { ts: null, v: "" };
+            var ts_endpos = s.indexOf("{") - 1;
+            try {
+                if (ts_endpos < 1) {
+                    result.v = s;
+                }
+                else {
+                    var temp_ts_str = s.substring(0, ts_endpos);
+                    var temp_ts = new Date(temp_ts_str.trim());
+                    if (!isNaN(temp_ts.getDate()))
+                        result.ts = temp_ts;
+                    result.v = s.substring(ts_endpos + 1);
+                }
+            }
+            catch (_a) {
+                return null;
+            }
+            return result;
+        }
+        function getLatestVersionOfItemSubFn(item_local, item_online) {
+            var result = { latest_item: "", online_version_is_stale: false };
+            var r_local = splitTimestampAndValue(item_local);
+            var r_online = splitTimestampAndValue(item_online);
+            if (IsUndefinedOrNull(r_local)) {
+                if (!IsUndefinedOrNull(r_online)) {
+                    result.latest_item = r_online.v;
+                    return result;
+                }
+                else {
+                    return null;
+                }
+            }
+            if (IsUndefinedOrNull(r_online)) {
+                if (!IsUndefinedOrNull(r_local)) {
+                    result.latest_item = r_local.v;
+                    result.online_version_is_stale = true;
+                    return result;
+                }
+                else {
+                    return null;
+                }
+            }
+            if (r_online.ts > r_local.ts) {
+                result.latest_item = r_online.v;
+            }
+            else {
+                result.latest_item = r_local.v;
+                result.online_version_is_stale = true;
+            }
+            return result;
+        }
+        function getLocalStorageUserKey(key) {
+            if (IsEmptyString(gsUserId)) {
+                return { local_key: "guest_" + key, is_guest: true };
+            }
+            else {
+                return { local_key: "userid_" + gsUserId + "_" + key, is_guest: false };
+            }
+        }
+        function getLatestVersionOfItem(key) {
+            var _a = getLocalStorageUserKey(key), local_key = _a.local_key, is_guest = _a.is_guest;
+            //wts stands for with timestamp.
+            var item_local_wts = localStorage.getItem(local_key);
+            var temp_online_wts = onlineStorageGetItem(key);
+            //WARNING: specific local and online location might create mistakes, maybe there is better alternative?
+            var r = getLatestVersionOfItemSubFn(item_local_wts, temp_online_wts);
+            if (r === null)
+                return null;
+            if (r.latest_item != null && r.online_version_is_stale && !is_guest) {
+                updateOnlineUserStorage(key, item_local_wts);
+            }
+            return r.latest_item;
+        }
+        function setLatestItemAndUpdateBothStorages(key, value, save_to_user_account) {
+            var _a = getLocalStorageUserKey(key), local_key = _a.local_key, is_guest = _a.is_guest;
+            var value_wts = (new Date()).toISOString() + value; //ToDo: check if iso date works exactly same in all major browsers?
+            localStorage.setItem(local_key, value_wts); //ToDo: handle failure.
+            if (save_to_user_account && !is_guest)
+                updateOnlineUserStorage(key, value_wts);
+        }
+        function onlineStorageGetItem(key) {
+            var result = null;
+            if (!IsUndefinedOrNull(gsOnlineUserStorage)) {
+                result = gsOnlineUserStorage[key];
+            }
+            return result;
+        }
         function GetExtraOptions() {
             var extra_options = null;
-            var temp = localStorage.getItem("$EXTRAOPTIONS" /* EXTRAOPTIONS */);
-            if (!IsEmptyString(temp)) {
-                extra_options = JSON.parse(temp);
+            var latest_item = getLatestVersionOfItem("$EXTRAOPTIONS" /* EXTRAOPTIONS */);
+            if (!IsEmptyString(latest_item)) {
+                extra_options = JSON.parse(latest_item);
             }
             //alert(JSON.stringify(extra_options));
             return extra_options;
         }
         NBStorage.GetExtraOptions = GetExtraOptions;
         function GetItem(k) {
-            return localStorage.getItem(k);
+            return getLatestVersionOfItem(k);
         }
         NBStorage.GetItem = GetItem;
         function GetChatOptions() {
             var options = null;
-            var temp = localStorage.getItem("$CHATOPTIONS" /* CHATOPTIONS */);
-            if (!IsEmptyString(temp)) {
-                options = JSON.parse(temp);
+            var latest_item = getLatestVersionOfItem("$CHATOPTIONS" /* CHATOPTIONS */); //string type is must here, hence, added type to the latest_item (issue is only relevant in typescript file).
+            if (!IsEmptyString(latest_item)) {
+                options = JSON.parse(latest_item);
                 //alert(JSON.stringify(options));
                 if (NBChatCore.FillMissingFields(chat_options_default, options))
                     SaveChatOptions(options);
@@ -53,18 +186,19 @@ var NBChatController;
         function SaveChatOptions(options) {
             //ToDo: test with missing fields/properties.
             NBChatCore.FillMissingFields(chat_options_default, options);
-            localStorage.setItem("$CHATOPTIONS" /* CHATOPTIONS */, JSON.stringify(options));
+            setLatestItemAndUpdateBothStorages("$CHATOPTIONS" /* CHATOPTIONS */, JSON.stringify(options), true);
         }
         NBStorage.SaveChatOptions = SaveChatOptions;
         function SetExtraOptions(extra_options) {
-            localStorage.setItem("$EXTRAOPTIONS" /* EXTRAOPTIONS */, JSON.stringify(extra_options));
+            setLatestItemAndUpdateBothStorages("$EXTRAOPTIONS" /* EXTRAOPTIONS */, JSON.stringify(extra_options), true);
         }
         NBStorage.SetExtraOptions = SetExtraOptions;
         function SaveItem(k, v, save_to_user_account) {
             var e = null;
             //Note: 'save_to_user_account' feature is not available at the moment, but it is still good for planning early which items should be saved online to user account.
+            save_to_user_account = false;
             //ToDo: check if key doesn't match any predefined keys.
-            localStorage.setItem(k, v);
+            setLatestItemAndUpdateBothStorages(k, v, save_to_user_account);
             return e;
         }
         NBStorage.SaveItem = SaveItem;
@@ -159,6 +293,12 @@ var NBChatController;
         start_new_nameslist = true;
         onClearUserList();
     }
+    function Close() {
+        //clean up code here if any.
+        bIsKicked = true; //to avoid reconnection if instance is in browser memory.
+        NBChatConnection.Close(null);
+    }
+    NBChatController.Close = Close;
     //connect
     function Connect(reconnection_immediate) {
         if (reconnection_immediate === void 0) { reconnection_immediate = false; }
@@ -325,6 +465,7 @@ var NBChatController;
         }
         connectionStarterTicker_ = new NBChatCore.NBTicker("ConnectionStarterTicker");
         connectionStarterTicker_.StopConditionFn = connectionStarterCallbackImpl;
+        connectionStarterTicker_.SetTickerInterval(reconnect_delay_ms / 2);
         connectionStarterTicker_.Start();
         reconnectionDelayedTicker_ = new NBChatCore.NBTicker("ReconnectionDelayedTicker");
         reconnectionDelayedTicker_.StopConditionFn = reconnectionDelayedTickerCallbackImpl;
@@ -333,6 +474,7 @@ var NBChatController;
         connectionChecker_.StopConditionFn = connectionCheckerTickerCallbackImpl;
         connectionChecker_.SetTickerInterval(55000);
         connectionChecker_.Start();
+        LoadChatOptions();
         return 0;
     }
     NBChatController.Main = Main;
@@ -758,6 +900,7 @@ var NBChatController;
             case "awaymsg":
                 if (typeof (option_val) === 'string') {
                     options_controller_instance.sAwayMsg = option_val;
+                    NBStorage.SaveChatOptions(options_controller_instance);
                 }
                 else {
                     console.log("SaveSingleOption:: error: option_val should be string for away message.");

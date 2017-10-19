@@ -21,15 +21,17 @@ ToDos:
 
 */
 
-declare let gsPresenterInitialized: boolean;
-declare let gsChannelName: string;
 declare let gsAuthPass: string;
 declare let gsCategoryId: string;
-declare let gsTopic: string;
-declare let gsWel: string;
+declare let gsChannelName: string;
 declare let gsLang: string;
 declare let gsLang2: string;
+declare let gsOnlineUserStorage: object;
+declare let gsPresenterInitialized: boolean;
 declare let gsServerConnections: string[];
+declare let gsTopic: string;
+declare let gsUserId: string;
+declare let gsWel: string;
 declare let sVersion: string; // gs is not used because variable may have been used in nbchat_v4.js
 
 namespace NBChatController {
@@ -86,13 +88,165 @@ namespace NBChatController {
 
         //ToDo: HTML5 local storage availibility check.
 
+        /*
+        ** Net-Bits.Net IRCWX Storage Specification **
+
+        - Storage items are timestamped in ISO date format.
+        - NBStorage module adds or strips timestamps; timestamps should be handled only in storage module.
+        - Online storage operations can fail, so local storage might be newer than online storage.
+           -- NBStorage first checks the timestamps between online and local storage, which ever is newer it uses that.
+           -- If online storage is older then it updates the online storage with the latest.
+           -- In the abense of timestamp on local storage item, it will use online storage.
+        - Local storage may store items from multiple accounts, so prefix each item with user id.
+        - Guests do not have id so guest_ prefix is used.
+        - Guests do not have online storage, so guest storage operations does not make online storage calls.
+        - Not all storage items are suitable to pass online like guest password, there should be an option to limit a storage item to local storage only.
+
+        - Online storage operations possible failures:
+        -- size of storage has exceeded online storage limit. Online storage has only 4K characters limit,
+            and whole storage is stored in json format. Recommended to keep the total size of characters in local and online storage is 2K characters.
+        -- Session may have timed out. In that cause, user would have to sign in again on the site for the online storage to work again. This is one of the case when online storage might be stale.
+
+        - Local storage operations possible failures:
+        -- Exceeded the size of local storage. See maximum limit for local storage.
+
+        */
+
+        function updateOnlineUserStorage(k: string, v: string): void {
+
+            if (IsUndefinedOrNull(gsOnlineUserStorage)) {
+                return;
+            }
+
+            //WARNING: this will block subsequent ajax update, but if ajax call fails then online storage is not updated.
+            //ToDo: handle above issue gracefully.
+            gsOnlineUserStorage[k] = v;
+
+            $.ajax({
+                url: "/Chatui/UpdateUserOnlineStorage",
+                type: "POST",
+                data: { k: k, v: v },
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (response) {
+                    console.log(response);
+                    //ToDo: handle error, right now may not be needed due to update logic. See specification above.
+                }
+            });
+        }
+
+        function splitTimestampAndValue(s: string): { ts: Date, v: string } {
+
+            if (IsEmptyString(s)) return null;
+
+            let result: { ts: Date, v: string } = { ts: null, v: "" };
+
+            const ts_endpos: number = s.indexOf("{") - 1;
+
+            try {
+
+                if (ts_endpos < 1) {
+                    result.v = s;
+                } else {
+                    const temp_ts_str: string = s.substring(0, ts_endpos);
+                    const temp_ts: Date = new Date(temp_ts_str.trim());
+
+                    if (!isNaN(temp_ts.getDate())) result.ts = temp_ts;
+                    result.v = s.substring(ts_endpos + 1);
+                }
+
+            } catch {
+                return null;
+            }
+
+            return result;
+        }
+
+        function getLatestVersionOfItemSubFn(item_local: string, item_online: string): { latest_item: string, online_version_is_stale: boolean } {
+            let result: { latest_item: string, online_version_is_stale: boolean } = { latest_item: "", online_version_is_stale: false };
+            const r_local = splitTimestampAndValue(item_local);
+            const r_online = splitTimestampAndValue(item_online);
+
+            if (IsUndefinedOrNull(r_local)) {
+                if (!IsUndefinedOrNull(r_online)) {
+                    result.latest_item = r_online.v;
+                    return result;
+                } else {
+                    return null;
+                }
+            }
+
+            if (IsUndefinedOrNull(r_online)) {
+                if (!IsUndefinedOrNull(r_local)) {
+                    result.latest_item = r_local.v;
+                    result.online_version_is_stale = true;
+                    return result;
+                } else {
+                    return null;
+                }
+            }
+
+            if (r_online.ts > r_local.ts) {
+                result.latest_item = r_online.v;
+            } else {
+                result.latest_item = r_local.v;
+                result.online_version_is_stale = true;
+            }
+
+            return result;
+        }
+
+        function getLocalStorageUserKey(key: string): { local_key: string, is_guest: boolean } {
+            if (IsEmptyString(gsUserId)) {
+                return { local_key: "guest_" + key, is_guest: true };
+            } else {
+                return { local_key: "userid_" + gsUserId + "_" + key, is_guest: false };
+            }
+        }
+
+        function getLatestVersionOfItem(key: string): string {
+            const { local_key, is_guest } = getLocalStorageUserKey(key);
+            //wts stands for with timestamp.
+            const item_local_wts: string = localStorage.getItem(local_key);
+            const temp_online_wts: string = onlineStorageGetItem(key);
+
+            //WARNING: specific local and online location might create mistakes, maybe there is better alternative?
+            const r = getLatestVersionOfItemSubFn(item_local_wts, temp_online_wts);
+
+            if (r === null) return null;
+
+            if (r.latest_item != null && r.online_version_is_stale && !is_guest) {
+                updateOnlineUserStorage(key, item_local_wts);
+            }
+
+            return r.latest_item;
+        }
+
+        function setLatestItemAndUpdateBothStorages(key: string, value: string, save_to_user_account: boolean): void {
+            const { local_key, is_guest } = getLocalStorageUserKey(key);
+            const value_wts: string = (new Date()).toISOString() + value; //ToDo: check if iso date works exactly same in all major browsers?
+            localStorage.setItem(local_key, value_wts); //ToDo: handle failure.
+            if (save_to_user_account && !is_guest) updateOnlineUserStorage(key, value_wts);
+        }
+
+        function onlineStorageGetItem(key: string): string {
+            let result: string = null;
+
+            if (!IsUndefinedOrNull(gsOnlineUserStorage)) {
+                result = gsOnlineUserStorage[key];
+            }
+
+            return result;
+        }
+
         export function GetExtraOptions(): object {
             let extra_options: object = null;
 
-            const temp: string = localStorage.getItem(NBStorageItemsKeys.EXTRAOPTIONS);
+            const latest_item: string = getLatestVersionOfItem(NBStorageItemsKeys.EXTRAOPTIONS);
 
-            if (!IsEmptyString(temp)) {
-                extra_options = JSON.parse(temp);
+            if (!IsEmptyString(latest_item)) {
+                extra_options = JSON.parse(latest_item);
             }
 
             //alert(JSON.stringify(extra_options));
@@ -101,16 +255,16 @@ namespace NBChatController {
         }
 
         export function GetItem(k: string): string {
-            return localStorage.getItem(k);
+            return getLatestVersionOfItem(k);
         }
 
         export function GetChatOptions(): IChatOptions {
             let options: IChatOptions = null;
 
-            const temp: string = localStorage.getItem(NBStorageItemsKeys.CHATOPTIONS);
+            const latest_item: string = getLatestVersionOfItem(NBStorageItemsKeys.CHATOPTIONS); //string type is must here, hence, added type to the latest_item (issue is only relevant in typescript file).
 
-            if (!IsEmptyString(temp)) {
-                options = JSON.parse(temp);
+            if (!IsEmptyString(latest_item)) {
+                options = JSON.parse(latest_item);
 
                 //alert(JSON.stringify(options));
 
@@ -123,20 +277,21 @@ namespace NBChatController {
         export function SaveChatOptions(options: IChatOptions): void {
             //ToDo: test with missing fields/properties.
             NBChatCore.FillMissingFields(chat_options_default, options);
-            localStorage.setItem(NBStorageItemsKeys.CHATOPTIONS, JSON.stringify(options));
+            setLatestItemAndUpdateBothStorages(NBStorageItemsKeys.CHATOPTIONS, JSON.stringify(options), true);
         }
 
         export function SetExtraOptions(extra_options: object): void {
-            localStorage.setItem(NBStorageItemsKeys.EXTRAOPTIONS, JSON.stringify(extra_options));
+            setLatestItemAndUpdateBothStorages(NBStorageItemsKeys.EXTRAOPTIONS, JSON.stringify(extra_options), true);
         }
 
         export function SaveItem(k: string, v: string, save_to_user_account: boolean): Error {
             let e: Error = null;
             //Note: 'save_to_user_account' feature is not available at the moment, but it is still good for planning early which items should be saved online to user account.
+            save_to_user_account = false;
 
             //ToDo: check if key doesn't match any predefined keys.
 
-            localStorage.setItem(k, v);
+            setLatestItemAndUpdateBothStorages(k, v, save_to_user_account);
 
             return e;
         }
@@ -309,6 +464,12 @@ namespace NBChatController {
     function ClearUserList(): void {
         start_new_nameslist = true;
         onClearUserList();
+    }
+
+    export function Close(): void {
+        //clean up code here if any.
+        bIsKicked = true; //to avoid reconnection if instance is in browser memory.
+        NBChatConnection.Close(null);
     }
 
     //connect
@@ -501,6 +662,7 @@ namespace NBChatController {
 
         connectionStarterTicker_ = new NBChatCore.NBTicker("ConnectionStarterTicker");
         connectionStarterTicker_.StopConditionFn = connectionStarterCallbackImpl;
+        connectionStarterTicker_.SetTickerInterval(reconnect_delay_ms/2);
         connectionStarterTicker_.Start();
 
         reconnectionDelayedTicker_ = new NBChatCore.NBTicker("ReconnectionDelayedTicker");
@@ -511,6 +673,8 @@ namespace NBChatController {
         connectionChecker_.StopConditionFn = connectionCheckerTickerCallbackImpl;
         connectionChecker_.SetTickerInterval(55000);
         connectionChecker_.Start();
+
+        LoadChatOptions();
 
         return 0;
     }
@@ -973,6 +1137,7 @@ namespace NBChatController {
             case "awaymsg":
                 if (typeof (option_val) === 'string') {
                     options_controller_instance.sAwayMsg = option_val;
+                    NBStorage.SaveChatOptions(options_controller_instance);
                 } else {
                     console.log("SaveSingleOption:: error: option_val should be string for away message.");
                 }

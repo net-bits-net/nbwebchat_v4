@@ -289,7 +289,6 @@ var NBChatConnection;
             this.str_buffer_ = "";
             this.wsocket_ = null;
             this.connecting_ = false;
-            this.connected_ = false;
             NBSocketGlobalInstance = this;
             NBChatConnection.CanConnect = this.CanConnect.bind(this);
             NBChatConnection.Close = this.Close.bind(this);
@@ -303,7 +302,6 @@ var NBChatConnection;
         NBWebsocket.prototype.OnClose = function (message) {
             var is_connecting = this.connecting_; //OnClose can throw exception so save it in temp variable.
             this.connecting_ = false;
-            this.connected_ = false;
             if (is_connecting) {
                 this.OnConnect({ success: false, address: this.ip_ + ":" + this.port_ });
             }
@@ -315,7 +313,6 @@ var NBChatConnection;
         };
         NBWebsocket.prototype.OnConnect = function (connection_result) {
             this.connecting_ = false;
-            this.connected_ = connection_result.success;
             if (NBChatConnection.OnConnect !== null) {
                 NBChatConnection.OnConnect(connection_result);
             }
@@ -354,7 +351,12 @@ var NBChatConnection;
         };
         //functions
         NBWebsocket.prototype.CanConnect = function () {
-            return !(this.connecting_ || this.connected_);
+            if (!this.is_ready_ || this.connecting_)
+                return false;
+            if (!IsUndefinedOrNull(this.wsocket_)) {
+                return !(this.connecting_ || this.wsocket_.readyState == this.wsocket_.CONNECTING || this.wsocket_.readyState == this.wsocket_.OPEN || this.wsocket_.readyState == this.wsocket_.CONNECTING);
+            }
+            return true;
         };
         NBWebsocket.prototype.Close = function (reason) {
             //ToDo: test sending reason with close.
@@ -366,8 +368,8 @@ var NBChatConnection;
             }
             this.ip_ = ip;
             this.port_ = port;
-            this.connecting_ = true;
             this.wsocket_ = new WebSocket("ws://" + this.ip_ + ":" + this.port_ + "/");
+            this.connecting_ = true;
             this.wsocket_.onopen = function (ev) {
                 //this.ip_ doesn't exist here.
                 //ToDo: see best approach for accessing parent properties here?
