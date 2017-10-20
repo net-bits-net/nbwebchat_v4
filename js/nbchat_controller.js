@@ -46,6 +46,10 @@ var NBChatController;
         - Local storage operations possible failures:
         -- Exceeded the size of local storage. See maximum limit for local storage.
 
+        - HY 19-Oct-2017.
+
+        ** Note: implementation is of spec is complete, above is for reference. -HY 19-Oct-2017.
+
         */
         function updateOnlineUserStorage(k, v) {
             if (IsUndefinedOrNull(gsOnlineUserStorage)) {
@@ -216,6 +220,7 @@ var NBChatController;
     var connectionChecker_ = null;
     var connection_idle_count = 0;
     var user_me = null;
+    var i_have_joined_channel = false;
     var start_new_nameslist = true;
     //connection vars
     var first_connection = true;
@@ -259,6 +264,7 @@ var NBChatController;
     };
     NBChatConnection.OnClose = function (message) {
         console.log("::(NBChatController.NBSock.OnClose)::" + message);
+        i_have_joined_channel = false;
         if (!bIsKicked)
             reconnectDelayed();
     };
@@ -518,6 +524,7 @@ var NBChatController;
                                 playJoinSnd();
                         }
                         else {
+                            i_have_joined_channel = true;
                             user_me = join_item.user;
                             ChannelName = join_item.ircmChannelName;
                             onJoinMe(user_me, ChannelName);
@@ -718,6 +725,8 @@ var NBChatController;
                         IRCSend("NICK " + nick_me);
                         if (IsAuthRequestSent)
                             sendAuthInfo();
+                        if (!i_have_joined_channel)
+                            GotoChannel();
                     }
                     break;
                 case 12 /* Nick */:

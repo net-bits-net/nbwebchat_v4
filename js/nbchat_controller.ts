@@ -18,6 +18,7 @@ ToDos:
     4) Add all the options fields to IChatOptions. [done, but there could be few properties/fields missing]
     5) better socket error handling and display messages e.g. there is no couldn't connect, bad ip error is not show to name few issues.
     6) Debug print implementation.
+    7) Change from 'i_have_joined_channel' variables to ircwx connection stage states.
 
 */
 
@@ -109,6 +110,10 @@ namespace NBChatController {
 
         - Local storage operations possible failures:
         -- Exceeded the size of local storage. See maximum limit for local storage.
+
+        - HY 19-Oct-2017.
+
+        ** Note: implementation is of spec is complete, above is for reference. -HY 19-Oct-2017.
 
         */
 
@@ -313,6 +318,7 @@ namespace NBChatController {
     let reconnectionDelayedTicker_: NBChatCore.NBTicker = null;
     let connectionChecker_: NBChatCore.NBTicker = null; let connection_idle_count: number = 0;
     let user_me: NBChatCore.IRCmUser = null;
+    let i_have_joined_channel: boolean = false;
 
     let start_new_nameslist: boolean = true;
 
@@ -424,6 +430,7 @@ namespace NBChatController {
     NBChatConnection.OnClose = (message: string): void => {
         console.log("::(NBChatController.NBSock.OnClose)::" + message);
 
+        i_have_joined_channel = false;
         if (!bIsKicked) reconnectDelayed();
     };
 
@@ -728,6 +735,7 @@ namespace NBChatController {
                             onJoin(join_item.user, join_item.ircmChannelName);
                             if (options_controller_instance.sndArrival) playJoinSnd();
                         } else {
+                            i_have_joined_channel = true;
                             user_me = join_item.user;
                             ChannelName = join_item.ircmChannelName;
                             onJoinMe(user_me, ChannelName);
@@ -937,6 +945,8 @@ namespace NBChatController {
                         IRCSend("NICK " + nick_me);
 
                         if (IsAuthRequestSent) sendAuthInfo();
+
+                        if (!i_have_joined_channel) GotoChannel();
                     }
                     break;
 
