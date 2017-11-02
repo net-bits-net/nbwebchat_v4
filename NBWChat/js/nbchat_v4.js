@@ -1106,7 +1106,7 @@ function fnSend(str) {
 
 function ViewMessageConnecting(ip, port) {
 	//ToDo: this is quick workaround, perhaps there is better approach.
-	const m = '<span class="status-connecting">' + langr.l_connecting(ip, port) + '</span>';
+	var m = '<span class="status-connecting">' + langr.l_connecting(ip, port) + '</span>';
 	fnAppendText(m);
 	sendTostatus(m);
 }
