@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="../js/jquery.cookie.js"></script>
+	<script type="text/javascript" src="../js/jscolor/jscolor.js"></script>
+	<link rel="stylesheet" href="nbchat30.css" type="text/css" />
+	<link class="changestyle" rel="stylesheet" href="themes/default.css" type="text/css" />
+
+	<title>Chat Options</title>
+	<script type="text/javascript" src="../js/wndoptions.js?update=01,19,2017"></script>
+</head>
+<body style="background:white !important;" onload="fnOnLoad();">
+	<div class="container" style="padding-top:10px;padding-bottom:10px;background-color:white;">
+		<div class="panel panel-default">
+			<div class="panel-heading">My Message Format</div>
+			<div class="panel-body">
+				<div style="padding:10px;line-height:1.5;text-align:center;color:#666;">
+				   
+				   <div class="row">
+						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">                   
+							<div style="padding-bottom:3px;">
+								<select style="display:inline-block;" class="form-control" id="selFont" onchange="fnOnFontFamilyChange();">
+									<option value="Abadi MT Condensed Light">Abadi MT Condensed Light</option>
+									<option value="Arial">Arial</option>
+									<option value="Arial Black">Arial Black</option>
+									<option value="Arial Narrow">Arial Narrow</option>
+									<option value="Book Antiqua">Book Antiqua</option>
+									<option value="Bookman Old Style">Bookman Old Style</option>
+									<option value="Century Gothic">Century Gothic</option>
+									<option value="Comic Sans MS">Comic Sans MS</option>
+									<option value="Courier">Courier</option>
+									<option value="Courier New">Courier New</option>
+									<option value="Estrangelo Edessa">Estrangelo Edessa</option>
+									<option value="Fixedsys">Fixedsys</option>
+									<option value="Franklin Gothic Medium">Franklin Gothic Medium</option>
+									<option value="Garamond">Garamond</option>
+									<option value="Georgia">Georgia</option>
+									<option value="Gautami">Gautami</option>
+									<option value="Harlow Solid Italic">Harlow Solid Italic</option>
+									<option value="Impact">Impact</option>
+									<option value="Kristen ITC">Kristen ITC</option>
+									<option value="Lucida Console">Lucida Console</option>
+									<option value="Lucida Handwriting">Lucida Handwriting</option>
+									<option value="Lucida Calligraphy">Lucida Calligraphy</option>
+									<option value="Lucida Sans Unicode">Lucida Sans Unicode</option>
+									<option value="Latha">Latha</option>
+									<option value="Microsoft Sans Serif">Microsoft Sans Serif</option>
+									<option value="Modern">Modern</option>
+									<option value="Monotype Corsiva">Monotype Corsiva</option>
+									<option value="Mv Boli">Mv Boli</option>
+									<option value="Palatino Linotype">Palatino Linotype</option>
+									<option value="Papyrus">Papyrus</option>
+									<option value="Roman">Roman</option>
+									<option value="System">System</option>
+									<option value="Script">Script</option>
+									<option value="Small Fonts">Small Fonts</option>
+									<option value="Tahoma">Tahoma</option>
+									<option value="Times New Roman">Times New Roman</option>
+									<option value="Trebuchet MS">Trebuchet MS</option>
+									<option value="Tunga">Tunga</option>
+									<option value="Verdana">Verdana</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">         	    
+							<div style="padding-bottom:3px;">
+								<input style="max-width:100px;display:inline-block;" id="selColor" onchange="fnOnTextColorChange();" class="form-control color {hash:true,minS:0.2}" value="#000000"> <a style="font-size:10px;text-decoration:none;color:#333;" href="https://dl.dropboxusercontent.com/u/1080546/colors.html" target="_blank">Old Colors</a>
+							</div>
+						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"> 	
+							<div style="padding-bottom:3px;">
+								<b>Bold</b> <input id="chBold" type="checkbox" onpropertychange="fnOnBoldCheckChange();" onchange="fnOnBoldCheckChange();" />&nbsp;<i>Italics</i>&nbsp;&nbsp;<input id="chItalic" type="checkbox" onpropertychange="fnOnItalicCheckChange();" onchange="fnOnItalicCheckChange();" />
+							</div>
+						</div>
+					</div>							
+					<div style="height:10px;"></div>
+					<div style="padding:3px;border:1px solid #CCC;text-align:center;font-size:18px;">
+						<span id="txSample">&nbsp;Sample Text&nbsp;</span>
+					</div>                 
+				</div>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">Display Settings</div>
+			<div class="panel-body">
+				<div style="padding:10px;line-height:1.5;text-align:left;color:#666;">
+					<div class="row">
+						<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+
+							<span>
+								Font Size:&nbsp;<select style="" class="form-control" id="selFontSize" onchange="fnOnFontSizeChange();">
+									<option value="xx-large">Largest</option>
+									<option value="x-large">Larger</option>
+									<option value="large">Large</option>
+									<option value="medium">Medium</option>
+									<option selected="selected" value="">None</option>
+									<option value="small">Small</option>
+									<option value="x-small">Smaller</option>
+									<option value="xx-small">Smallest</option>
+								</select>
+							</span>
+						</div>
+
+						<div class="col-lg-10 col-md-10 col-sm-10 col-xs-12">
+
+							<span style="padding-right:10px;display:inline-block;">
+								<input id="chCorpText" type="checkbox" checked="checked" onpropertychange="fnOnCropCheckChange();" onchange="fnOnCropCheckChange();" />&nbsp; Auto Clear Chatpane Text
+							</span>
+							<span style="padding-right:10px;display:inline-block;">
+								<input id="chEmotsOff" type="checkbox" onpropertychange="fnOnEmotsOffChange();" onchange="fnOnEmotsOffChange();" />&nbsp; Turn off emoticons
+							</span>
+							<span style="padding-right:10px;display:inline-block;">
+								<input id="chWhispOff" type="checkbox" onpropertychange="fnOnWhispOffChange();" onchange="fnOnWhispOffChange();" />&nbsp; Turn off all new whispers
+							</span>
+							<span style="padding-right:10px;display:inline-block;">
+								<input id="chbTextFrmtOff" type="checkbox" onpropertychange="fnOnbTextFrmtOffChange();" onchange="fnOnbTextFrmtOffChange();" />&nbsp; Turn off text formatting
+							</span>
+							<!--
+							<span style="padding-right:10px;display:inline-block;">
+								<input id="chTimeStamp" type="checkbox" onpropertychange="fnOnbTimeStampChange();" onchange="fnOnbTimeStampChange();" />&nbsp; Turn on timestamps on messages
+							</span>
+							-->
+							<span style="padding-right:10px;display:inline-block;">
+								<input id="chInvite" type="checkbox" onpropertychange="fnOnbInviteChange();" onchange="fnOnbInviteChange();" />&nbsp; Turn off invites
+							</span>
+							<span style="padding-right:10px;display:inline-block;">
+								<input id="chPicons" type="checkbox" onpropertychange="fnOnbPiconsChange();" onchange="fnOnbPiconsChange();" />&nbsp; Turn off profile icons
+							</span>
+							<span style="padding-right:10px;display:inline-block;">
+								<input id="chUnotice" type="checkbox" onpropertychange="fnOnbUnoticeChange();" onchange="fnOnbUnoticeChange();" />&nbsp; Turn off user to user notice
+							</span>
+						</div>
+					</div>
+
+
+				</div>
+			</div>
+		</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">Event Notifications</div>
+			<div class="panel-body">
+				<div style="padding:10px;line-height:1.5;">
+					<span style="padding-right:10px;display:inline-block;">
+						<input type="checkbox" id="chShowArrivals" onpropertychange="fnOnChShowArrivals();" onchange="fnOnChShowArrivals();" checked="checked" />&nbsp; User Arrivals
+					</span>
+					<span style="padding-right:10px;display:inline-block;">
+						<input type="checkbox" id="chShowDeparts" onpropertychange="fnOnChShowDepartures();" onchange="fnOnChShowDepartures();" checked="checked" />&nbsp; User Departures
+					</span>
+					<span style="padding-right:10px;display:inline-block;">
+						<input type="checkbox" id="chShowStatusChg" onpropertychange="fnOnChShowStatusChange();" onchange="fnOnChShowStatusChange();" checked="checked" />&nbsp; User Away And Status Changes
+					</span>
+					<span style="padding-right:10px;display:inline-block;">
+						<input type="checkbox" id="chSndTagged" onpropertychange="fnOnChSndTagged();" onchange="fnOnChSndTagged();" checked="checked" />&nbsp; Play Tagged User Sound
+					</span>
+					<span style="padding-right:10px;display:inline-block;">
+						<input type="checkbox" id="chSndInvite" onpropertychange="fnOnChSndInvite();" onchange="fnOnChSndInvite();" checked="checked" />&nbsp; Play Invite Sound
+					</span>
+					<span style="padding-right:10px;display:inline-block;">
+						<input type="checkbox" id="chSndWhisp" onpropertychange="fnOnChSndWhisp();" onchange="fnOnChSndWhisp();" checked="checked" />&nbsp; Play New Whisper Window Sound
+					</span>
+					<span style="padding-right:10px;display:inline-block;">
+						<input type="checkbox" id="chSndKick" onpropertychange="fnOnChSndKick();" onchange="fnOnChSndKick();" checked="checked" />&nbsp; Play Kick Sound
+					</span>
+					<span style="padding-right:10px;display:inline-block;">
+						<input type="checkbox" id="chSndArrival" onpropertychange="fnOnChSndArrivals();" onchange="fnOnChSndArrivals();" checked="checked" />&nbsp; Play Arrival Sound
+					</span>
+					<span style="padding-right:10px;display:inline-block;">
+						<input type="checkbox" id="chConfirmOnLeaveOff" onpropertychange="fnOnLeavePage();" onchange="fnOnLeavePage();" />&nbsp; Disable Leave Page Confirm
+					</span>
+					<hr style="margin:5px 0px;">
+					<span><input id="urlmanageon" type="radio" name="urlmanage" value="on" onclick="fnOnUrlOn()"> Show URLs</span>
+					<span style="margin-left:20px;margin-right:20px;"><input id="urlmanageoff" type="radio" name="urlmanage" value="off" onclick="fnOnUrlOff()"> Manage URLs</span>
+					<select style="display:inline-block;width:150px;" class="form-control" id="urlm" onchange="fnOnUrlManageChange();">
+						<option value="1">Do Not Show</option>
+						<!--<option value="2">Use Google Safe Url Check</option>-->
+					</select>
+					<select style="display:inline-block;width:200px;" class="form-control" id="utubeurl" onchange="fnOnUtubeManageChange();">
+						<option value="1">Show Youtube URL</option>
+						<option value="2">Show Youtube Title</option>
+						<option value="3">Show Youtube Preview</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-xs-6">
+				<input class="btn btn-sm btn-success btn-block" type="button" value="Save" onclick="fnSave();" />
+			</div>
+			<div class="col-xs-6">
+				<input class="btn btn-sm btn-danger btn-block" type="button" value="Cancel" onclick="fnCancel();" />
+			</div>
+		</div>
+
+	</div>
+	<script language="JavaScript" type="text/JavaScript">
+		$(document).ready(function () {
+			if ($.cookie("css")) {
+				var cssr = $.cookie("css");
+				var cssrb = "themes/" + cssr;
+				$("link.changestyle").attr("href", cssrb);
+			}
+		});
+	</script>
+</body>
+</html>

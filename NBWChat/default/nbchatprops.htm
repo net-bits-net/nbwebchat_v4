@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<link class="changestyle" rel="stylesheet" href="themes/default.css" type="text/css" />
+<script type="text/javascript" src="../js/jquery.cookie.js"></script>
+<script type="text/javascript" src="../js/wndprops.js?update=10,30,16"></script>
+<title>Room Modes</title>
+<style>
+#cholder {
+    display: table;
+    }
+
+  #crow  {
+    display: table-row;
+    }
+	#cright { padding-left:20px; }	
+  #cleft, #right {
+    display: table-cell;
+    }
+</style>
+</head>
+<body style="background:white !important;">
+	<div class="container">
+		<div style="margin:5px 0;">Room: <b><span id="arname">loading...</span></b></div>
+		<div style="border-top:1px solid #CCC;margin:10px 0;">
+		<table class="table table-condensed table-striped table-responsive">
+			<tbody>
+				<tr>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:right;">SuperOwnerID:</td>
+					<td><input style="height:30px;" id="superownername" class="form-control" type="text" disabled /></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:right;">Topic:</td>
+					<td><textarea id="topicbox" class="form-control" style="height:50px;width:100%;" /></textarea></td>
+					<td style="vertical-align:middle;text-align:center;"><input id="topicset" class="btn btn-xs btn-success btn-block" type="button" value="set" /></td>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:center;"><input id="topiclock" type="checkbox" /> <span>lock</span></td>
+				</tr>
+				<tr>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:right;">Join Message:</td>
+					<td><textarea id="onjoinbox" class="form-control" style="height:50px;width:100%;" /></textarea></td>
+					<td style="vertical-align:middle;text-align:center;"><input id="onjoinset" class="btn btn-xs btn-success btn-block" type="button" value="set" /></td>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:center;"><input id="onjoinlock" type="checkbox" /> <span>lock</span></td>
+				</tr>
+				<tr>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:right;">Owner Key:</td>
+					<td><input style="height:30px;" id="ownerkeybox" class="form-control" type="text" /></td>
+					<td style="vertical-align:middle;text-align:center;"><input id="ownerkeyset" class="btn btn-xs btn-success btn-block" type="button" value="set" /></td>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:center;"><input id="ownerkeylock" type="checkbox" /> <span>lock</span></td>
+				</tr>
+				<tr>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:right;">Host Key:</td>
+					<td><input style="height:30px;" id="hostkeybox" class="form-control" type="text" /></td>
+					<td style="vertical-align:middle;text-align:center;"><input id="hostkeyset"  class="btn btn-xs btn-success btn-block" type="button" value="set" /></td>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:center;"><input id="hostkeylock" type="checkbox" /> <span>lock</span></td>
+				</tr>
+				<tr>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:right;">Category:</td>
+					<td>
+						<select style="height:30px;" id="categoryselect" class="form-control"></select>
+					</td>
+					<td style="vertical-align:middle;text-align:center;"><input id="categoryset"  class="btn btn-xs btn-success btn-block" type="button" value="set" /></td>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:center;"><input id="categorylock" type="checkbox" /> <span>lock</span></td>
+				</tr>
+				<tr>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:right;">Language:</td>
+					<td>
+						<select style="height:30px;" id="languageselect" class="form-control">							
+							<option value="EN" >English</option>
+							<option value="FR" >Fran&ccedil;ais</option>
+							<option value="NL" >Nederlands</option>
+							<option value="ES" >Espanol</option>
+							<option value="DE" >German</option>	
+						</select>
+					</td>
+					<td style="vertical-align:middle;text-align:center;"><input id="languageset" class="btn btn-xs btn-success btn-block" type="button" value="set" /></td>
+					<td style="width:80px;font-weight:bold;vertical-align:middle;text-align:center;"><input id="languagelock" type="checkbox" /> <span>lock</span></td>
+				</tr>				
+							
+			</tbody>
+  		</table>
+  		<div style="display:none;">
+			<br />
+  			<div>Debug</div>
+  			<textarea id="propsdebug" style="color:#666;font-size:13px;width:100%;min-height:100px;" /></textarea>
+		</div>
+	</div>
+<script language="JavaScript" type="text/JavaScript">
+	if($.cookie("css")) {
+		var cssr = $.cookie("css");
+		var cssrb = "themes/" + cssr;
+		$("link.changestyle").attr("href",cssrb);
+	}
+	
+</script>
+</body>
+</html>

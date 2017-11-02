@@ -1,0 +1,56 @@
+body { background-color:#000; }
+#headerlogo { text-shadow: 2px 2px 2px #000;color:#fff; }
+#logoholder { background-color:black; }
+#headertop { background-color:transparent; }
+#headernav ul { background-color:#2D2D2D; }
+#headernav ul li a { color:white;font-weight:bold;text-decoration:none; }
+#headernav ul li a:hover { background-color:#000; }
+.navbar-default {background:#2D2D2D;border-bottom:1px solid #4C4C4C;border-top:0px solid #2D2D2D; }
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {color: #ccc;}
+.navbar-collapse .navbar-right li a:hover { background:transparent; } 
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus { background:#000;}
+.navbar-default .navbar-toggle .icon-bar {background: white;}
+.lvuitemlbMe { background-color: transparent;color:white !important;}
+.lvuitemlbMeSel { background-color: transparent;color:white !important; }
+#nicklistinfo1 { color:white;background-color:black;}
+#nicklistinfo2 { background-color:#000;color:whtie; }
+#awayb a { color:white; }
+#awayb a:hover { color:#CCC; }
+.channame_nowchatting { color:white; }
+.chanlabel { color:#fff;font-weight:bold; }
+#wndSetAwayMsgContainer { background-color:black; }
+.awaymsgabouttext { color:#FFF; }
+.awayicon_a { color:white !important; }
+.awayicon_a:hover { color:white; }
+.awayicon_b { color:red !important; }
+.awayicon_b:hover { color:white; }
+#whisperheader { background-color:black; }
+#sliderWrap {color:#333333;border:1px solid #ccc;background:black; }
+#topheaderbar { background-color:#000;color:white; }
+#whisperhistoryheader { background-color:black; }
+.whisperwindowholder { background-color:#000; }
+.whisperclosebutton { color:red;background:white; }
+.whisperminusbutton { color:#4CBAD8;background:white; }
+.whisperclosebuttonb { color:red;background:white; }
+#optionsheader { background-color:#000;color:white; }
+#emotesheader, #modesheader, #accessheader, #propsheader, #emotesheader { background-color:#000;color:white; }
+footer { color:white; }
+footer a { color:white; }
+footer a:hover { color: #ccc;text-decoration:none; }
+.btn_whisperuser_a, .btn_whisperuser_a:hover { color:white; }
+.btn_ignoreuser_a, .btn_ignoreuser_a:hover { color:red; }
+.btn_taguser_a, .btn_taguser_a:hover { color:#CBDFF3; }
+.btn_viewprofile_a, .btn_viewprofile_a:hover  { color:#D6EACE; }
+.btn_whisperuser_d, .btn_ignoreuser_d, .btn_taguser_d, .btn_viewprofile_d  { color:grey;pointer-events: none;cursor: default; }
+.btn_whisperuser_d:hover, .btn_ignoreuser_d:hover, .btn_taguser_d:hover, .btn_viewprofile_d:hover { color:grey; }
+.tooltip.top .tooltip-inner {
+    background-color:red;
+}
+.tooltip.top .tooltip-arrow {
+      border-top-color: red;
+}
+.closebutton { color:red;background:white; }
+@media only screen and (max-width : 750px) {
+	#chatnicklistbg { background:#000; }
+	.navbar-collapse li { border-bottom:1px solid #4E4E4E; }
+}
