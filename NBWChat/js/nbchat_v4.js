@@ -1028,6 +1028,13 @@ function removeTopLines() {
 
 		MChatPaneLines = MChatPaneLinesEls.length;
 
+		if (isIE) {
+			if (bSkipCPScrollCall == false) { autoCPScroll(ChatPane.document.body); }
+		}
+		else {
+			if (bSkipCPScrollCall == false) { autoCPScroll(pChatPane.contentDocument.body); }
+		}
+
 		if (MChatPaneLinesEls.length > MChatPaneMaxLines) {
 			//if didn't finish, make call back after a second.
 			setTimeout(removeTopLines, 1000);
