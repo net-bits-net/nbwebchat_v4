@@ -163,6 +163,7 @@ namespace NBChatConnection {
             if (pos === -1) {
                 //copy whole
                 b += s;
+                s = "";
             } else {
                 if (s[pos + 2] === "\0") {
                     pos += 2;

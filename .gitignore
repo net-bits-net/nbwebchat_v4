@@ -46,7 +46,14 @@ Network Trash Folder
 Temporary Items
 .apdisk
 bin
+obj
+Properties
 
 #Typescript file support files
 #*.map
 #*.js
+*.config
+index.html
+nbwebchat_v4.csproj
+nbwebchat_v4.csproj.user
+Scripts/typings/jquery/jquery.d.ts
