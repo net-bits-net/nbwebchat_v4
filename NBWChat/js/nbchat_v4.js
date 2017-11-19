@@ -37,7 +37,9 @@ var sendFontcolor = null;
 var sendFontweight = null;
 var sendFontstyle = null;
 var whisperzindex = 22;
-var whisperoffset = 0;
+var whisperoffset = 1;
+var whisperoffsetleft = 1;
+var cTab = 'chat';
 if (window.sFUIDIR === undefined) { sFUIDIR = ''; sFUIDIR2 = ''; }
 else {
 	sFUIDIR2 = sFUIDIR + '/';
@@ -126,19 +128,25 @@ var vcount = 0;
 var vtitle = document.title;
 var vinterval_id = '';
 $(window).blur(function () {
+	startTitleCount();
+});
+$(window).focus(function () {
+	suspendTitleCount();
+});
+function startTitleCount() {
 	vtype = '';
 	vcount = 0;
 	vstatus = true;
+	document.title = "(" + vcount + ")" + vtype + " " + vtitle;
 	vinterval_id = setInterval(vcheck, 2000);
-
-});
-$(window).focus(function () {
+}
+function suspendTitleCount() {
 	vstatus = false;
 	clearInterval(vinterval_id);
 	vtype = '';
 	vcount = 0;
 	document.title = vtitle;
-});
+}
 function vcheck() {
 	document.title = "(" + vcount + ")" + vtype + " " + vtitle;
 }
@@ -976,7 +984,6 @@ function fnAppendText(str) {
 		removeTopLines();
 	}
 
-
 	fnNewMessageVisualIndicator();
 }
 function fnAppendText2(str) {
@@ -1011,6 +1018,9 @@ function storeText(str) {
 }
 
 function removeTopLines() {
+
+	if (bCorpText === false) return;
+
 	var count_loops = 0;
 
 	if (MChatPaneLinesEls.length > 0) {
@@ -1279,9 +1289,11 @@ function ProcessInterUserCommand(sCmd) {
 
 		case "+LOGRAWSTOBC":
 			gsLogRawsToBrowserConsole = true;
+			break;
 
 		case "-LOGRAWSTOBC":
 			gsLogRawsToBrowserConsole = false;
+			break;
 
 		case "-PROTECTIONMODE":
 			if (ouserMe.ilevel >= IsHost) {
@@ -1399,9 +1411,11 @@ function ProcessInterUserCommand(sCmd) {
 
 		case "STOPAUTOSCROLLING":
 			stopAutoScrolling();
+			break;
 
 		case "STARTAUTOSCROLLING":
 			startAutoScrolling();
+			break;
 
 		case "PASS":
 			function getSecondWord(s) {
@@ -1909,8 +1923,8 @@ function saveOptions(pOptions) {
 	NBChatController.SaveChatOptions(COptions);
 	// Update Aug 12 2015 Extra Settings
 	NBChatController.SetExtraOptions(EOptions);
-
 	ScrollFix();
+	//alert('Options Saved!');
 }
 function getCPBody() {
 	if (isIE) return ChatPane.document.body;
@@ -1947,46 +1961,74 @@ var bSkipCPScrollCall = false;
 //var scroll_time_limit_ms = 50;
 //var last_scrolled_time = new Date(); last_scrolled_time.setMinutes(last_scrolled_time.getMinutes() - 10);
 //var scrollToLastMessage_callback_handle = 0;
-//var scrollToLastMessageSubFn_callback_handle = 0;
-//var scrollToLastMessageSubFnCallCount = 0;
+var scrollToLastMessageSubFn_callback_handle = 0;
+var scrollToLastMessageSubFnCall_rate_ms = 0;
 
 function scrollToLastMessageSubFnCallbackEntry(cpb) {
 	scrollToLastMessageSubFn_callback_handle = 0;
 	scrollToLastMessageSubFn(cpb);
 }
 
-function scrollToLastMessageSubFn(cpb) {
-	if (!isIOS_Safari) {
-		cpb.scrollTop = cpb.scrollHeight;
-	} else {
-		//WARNING: scrollIntoView seems to cause jumping but it works on iOS Safar. -- HY 1-Nov-2017
-		//For further info: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move
+function clearScrollToLastMessageSubFnCallbackHandle() {
+	clearTimeout(scrollToLastMessageSubFn_callback_handle);
+	scrollToLastMessageSubFn_callback_handle = 0;
+}
 
-		MChatPaneLinesEls[MChatPaneLinesEls.length - 1][0].scrollIntoView(false);
-		iLastAutoCpScrollVal = MChatPaneLinesEls[MChatPaneLinesEls.length - 1][0].getBoundingClientRect().top
+function getNextScrollToLastMessageSubFnCallRateMs(current_rate_ms) {
+	if (current_rate_ms < 25) {
+		return 25;
+	} else if (current_rate_ms < 50) {
+		return 50;
+	} else if (current_rate_ms < 100) {
+		return 100;
+	} else if (current_rate_ms < 250) {
+		return 250;
+	} else if (current_rate_ms < 500) {
+		return 500;
+	} else if (current_rate_ms < 1000) {
+		return 1000;
+	} else {
+		return 2000;
+	}
+}
+
+function scrollToLastMessageSubFn(cpb) {
+
+	if (bCPAutoScroll === false) {
+		clearScrollToLastMessageSubFnCallbackHandle();
+		return;
 	}
 
-	//Note: commented approach sometimes stayed one line up, perhaps do to posted messages from channel and user entered new message.
+	var dist_from_bottom = distFromBottom(cpb);
 
-	//var dist_from_bottom = distFromBottom(cpb);
+	if (dist_from_bottom > 5) {
+		scrollToLastMessageSubFnCall_rate_ms = 0;
 
-	//if (dist_from_bottom > 10) {
-	//	scrollToLastMessageSubFnCallCount = 0;
-	//	if (scrollToLastMessageSubFn_callback_handle === 0) {
-	//		scrollToLastMessageSubFn_callback_handle = setTimeout(scrollToLastMessageSubFnCallbackEntry, 60, cpb);
-	//	}
-	//	return;
-	//}
+		if (!isIOS_Safari) {
+			cpb.scrollTop = cpb.scrollHeight;
+		} else {
+			//WARNING: scrollIntoView seems to cause jumping but it works on iOS Safar. -- HY 1-Nov-2017
+			//For further info: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move
 
-	//if (scrollToLastMessageSubFnCallCount < 2) {
-	//	if (scrollToLastMessageSubFn_callback_handle === 0) {
-	//		scrollToLastMessageSubFnCallCount++;
-	//		scrollToLastMessageSubFn_callback_handle = setTimeout(scrollToLastMessageSubFnCallbackEntry, 60, cpb);
-	//	}
-	//	return;
-	//}
+			MChatPaneLinesEls[MChatPaneLinesEls.length - 1][0].scrollIntoView(false);
+			iLastAutoCpScrollVal = MChatPaneLinesEls[MChatPaneLinesEls.length - 1][0].getBoundingClientRect().top
+		}
+	}
 
-	//scrollToLastMessageSubFnCallCount = 0;
+	dist_from_bottom = distFromBottom(cpb);
+
+	if (dist_from_bottom > 5) {
+		scrollToLastMessageSubFnCall_rate_ms = 0;
+	}
+
+	clearScrollToLastMessageSubFnCallbackHandle();
+	scrollToLastMessageSubFnCall_rate_ms = getNextScrollToLastMessageSubFnCallRateMs(scrollToLastMessageSubFnCall_rate_ms);
+
+	if (scrollToLastMessageSubFnCall_rate_ms <= 1000) {
+		scrollToLastMessageSubFn_callback_handle = setTimeout(scrollToLastMessageSubFnCallbackEntry, scrollToLastMessageSubFnCall_rate_ms, cpb);
+	}
+
+	//console.log("::scrollToLastMessageSubFn()");
 }
 
 function scrollToLastMessage(cpb) {
@@ -2102,6 +2144,7 @@ function UserScrolled() {
 var bSkipCPScroll = false;
 
 function OnCPScroll() {
+	//console.log("on scroll event fired.")
 	var cpb = getCPBody();
 	//bSkipCPScrollCall = true;
 	//DebugWindow("bCPAutoScroll: " + bCPAutoScroll + ", cpb.scrollTop: " + cpb.scrollTop + ", iLastAutoCpScrollVal: " + iLastAutoCpScrollVal + ", cpb.scrollHeight: " + cpb.scrollHeight, "OnCPScroll");
@@ -2801,7 +2844,7 @@ function onChanMode(sSender, sModes, sChan) {
 
 	if (b_xm_ops == true) {
 		var nothing = '';
-		updateUserIcon(ouserMe, puicoMe, plbMem, nothing);
+		updateUserIcon(ouserMe, puicoMe, plbMe, nothing);
 		olvUsers.redrawList();
 	}
 }
@@ -2909,7 +2952,7 @@ function onPropReplies(numeric, sChan, srv_message) {
 				$("#PropsPane").contents().find("#topicbox").val(propinfo);
 			}
 			else if (pentry[4] === 'ONJOIN') {
-				$("#propsPane").contents().find("#onjoinbox").val(propinfo);
+				$("#PropsPane").contents().find("#onjoinbox").val(propinfo);
 			}
 			else if (pentry[4] === 'OWNERKEY') {
 				$("#PropsPane").contents().find("#ownerkeybox").val(propinfo);
@@ -3125,7 +3168,7 @@ function onInvite(sNickFrom, sNickTo, sChanFor) {
 		if (isHtmlTag(sChanFor) == false) {
 			sChanForR = FixChannelEncoding(sChanFor);
 			var sURI = sSiteURL + "c/?cn=" + DecodeRoomName(sChanForR);
-			fnAppendText("<span class='msgfrmtparent'><span class='invite'>" + cmdIndChar + " " + getUserLabel(sNickFrom) + " " + langr.l_hasinvitedyou + "<u><a href='" + sURI + "' target='_blank'>" + DecodeRoomName(sChanForR) + "</a></u>.'</span></span>");
+			fnAppendText("<span class='msgfrmtparent'><span class='invite'>" + cmdIndChar + " " + getUserLabel(sNickFrom) + " " + langr.l_hasinvitedyou + " <u><a href='" + sURI + "' target='_blank'>" + DecodeRoomName(sChanForR) + "</a></u>.</span></span>");
 		}
 		else {
 			fnAppendText("<span class='msgfrmtparent'><span class='invite'><i>" + cmdIndChar + " " + langr.l_blockedinvite(getUserLabel(sNickFrom)) + "</i></span></span>");
@@ -3159,7 +3202,9 @@ function onErrorReplies(nErrorNum, sNickTo, sTarget, sMessage) {
 	switch (nErrorNum) {
 		case "403":
 			fnAppendText("<span class='msgfrmtparent'><span class='errortype1'>" + langr.l_error403_a + " \"" + DecodeRoomName(FixChannelEncoding(sTarget)) + "\" " + langr.l_error403_b + "</span></span>");
-			NBChatController.Disconnect(null);
+			if (NBChatController.IHaveJoinedTheChannel() === false) {
+				NBChatController.Disconnect(null);
+			}
 			break;
 
 		case "404":
@@ -3717,7 +3762,7 @@ function customWhispData(nick, msg) {
 	var str = '';
 	switch (msg.toUpperCase()) {
 		case "WHISPACCEPTNEEDED":
-			str = "<div class='whispreq-tab'>" + langr.l_whispacceptneeded_a + " <span class='cpnickuser'>" + getUserLabel(nick) + "</span> " + langr.l_whispacceptneeded_a + " <span class='cpnickuser'>" + getUserLabel(nick) + "</span> " + langr.l_whispacceptneeded_a + "</div>"
+			str = "<div class='whispreq-tab'>" + langr.l_whispacceptneeded_a + " <span class='cpnickuser'>" + getUserLabel(nick) + "</span> " + langr.l_whispacceptneeded_b + " <span class='cpnickuser'>" + getUserLabel(nick) + "</span> " + langr.l_whispacceptneeded_c + "</div>"
 			RenderWhisper2tabalt(nick, str);
 			break;
 
@@ -5024,15 +5069,7 @@ var wndChatOptions = null;
 // Mike Addon Modes
 function OpenModesOptionsWnd() {
 	if (ouserMe.ilevel >= IsSuperOwner) {
-		$('#statuswindowholder').hide('fast');
-		$('#chatwindowholder').hide('fast');
-		$('#optionswindowholder').hide('fast');
-		$('#accesswindowholder').hide('fast');
-		$('#propsswindowholder').hide('fast');
-		$('[id^="whisperwindowholder_"]').hide('fast');
-		$('#ModesPane').attr('src', sFUIDIR2 + 'nbchatmodes.htm');
-		$('#modeswindowholder').show('fast');
-		ScrollFixs();
+		openPane('modes');
 	}
 	else {
 		fnAppendText("<span class='msgfrmtparent'><span class='errortype1'>" + langr.l_errorslevel + "</span></span>");
@@ -5042,15 +5079,7 @@ function OpenModesOptionsWnd() {
 // Mike Addon Access
 function OpenAccessOptionsWnd() {
 	if (ouserMe.ilevel >= IsSuperOwner) {
-		$('#statuswindowholder').hide('fast');
-		$('#chatwindowholder').hide('fast');
-		$('#optionswindowholder').hide('fast');
-		$('#modeswindowholder').hide('fast');
-		$('#propswindowholder').hide('fast');
-		$('[id^="whisperwindowholder_"]').hide('fast');
-		$('#AccessPane').attr('src', sFUIDIR2 + 'nbchataccess.htm');
-		$('#accesswindowholder').show('fast');
-		ScrollFixs();
+		openPane('access');
 	}
 	else {
 		fnAppendText("<span class='msgfrmtparent'><span class='errortype1'>" + langr.l_errorslevel + "</span></span>");
@@ -5060,15 +5089,7 @@ function OpenAccessOptionsWnd() {
 // Mike Addon Room Props Addon
 function OpenPropsOptionsWnd() {
 	if (ouserMe.ilevel >= IsSuperOwner) {
-		$('#statuswindowholder').hide('fast');
-		$('#chatwindowholder').hide('fast');
-		$('#optionswindowholder').hide('fast');
-		$('#accesswindowholder').hide('fast');
-		$('#modeswindowholder').hide('fast');
-		$('[id^="whisperwindowholder_"]').hide('fast');
-		$('#PropsPane').attr('src', sFUIDIR2 + 'nbchatprops.htm');
-		$('#propswindowholder').show('fast');
-		ScrollFixs();
+		openPane('props');
 	}
 	else {
 		fnAppendText("<span class='msgfrmtparent'><span class='errortype1'>" + langr.l_errorslevel + "</span></span>");
@@ -5303,7 +5324,7 @@ function WhisperTabManager(sNickFrom, sChan, sNickTo, sMessage, type) {
 				var dtTms = new Date();
 				var dtTmsn = dtTms.getDate() + " " + monthNames[dtTms.getMonth()] + " " + dtTms.getFullYear();
 				bTimeStamphalt = true;
-				fnAppendText("<div class='whispreq alert alert-success' id='" + tabWhisp.whsptid + "'><span class='timestamp'>[" + FormatTimeNums(TwelveHour(dtTms.getHours())) + ":" + FormatTimeNums(dtTms.getMinutes()) + "" + amPm(dtTms.getHours()) + "]</span> <span class='cpnickuser'>" + getUserLabel(sNickFrom) + "</span> <span>" + langr.l_whisperacceptdecline_a + "</span><span> (<a class='alert-link' href='javascript:;' onclick='subacceptWhispertab(\"" + tabWhisp.whsptid + "\", this);'>" + langr.l_whisperacceptdecline_b + "</a> | <a class='alert-link' href='javascript:;' onclick='subdeclineWhispertab(\"" + tabWhisp.whsptid + "\", this);'>" + langr.l_whisperacceptdecline_c + "</a> | <a class='alert-link' href='javascript:;' onclick='subdeclineandIgnoreWhispertab(\"" + tabWhisp.whsptid + "/" + sNickFrom + "\", this);'>" + langr.l_whisperacceptdecline_e + "</a>).</span> <span style='font-weight:bold;' class='whisperrequestmessage'>" + langr.l_whisperacceptdecline_d + " " + ParseTextMessage2(sMessage) + "</span></div>");
+				fnAppendText("<div class='whispreq' id='" + tabWhisp.whsptid + "'><span class='timestamp'>[" + FormatTimeNums(TwelveHour(dtTms.getHours())) + ":" + FormatTimeNums(dtTms.getMinutes()) + "" + amPm(dtTms.getHours()) + "]</span> <span class='cpnickuser'>" + getUserLabel(sNickFrom) + "</span> <span>" + langr.l_whisperacceptdecline_a + "</span><span> (<a  href='javascript:;' onclick='subacceptWhispertab(\"" + tabWhisp.whsptid + "\", this);'>" + langr.l_whisperacceptdecline_b + "</a> - <a class='alert-link' href='javascript:;' onclick='subdeclineWhispertab(\"" + tabWhisp.whsptid + "\", this);'>" + langr.l_whisperacceptdecline_c + "</a> - <a class='alert-link' href='javascript:;' onclick='subdeclineandIgnoreWhispertab(\"" + tabWhisp.whsptid + "/" + sNickFrom + "\", this);'>" + langr.l_whisperacceptdecline_e + "</a>).</span> <span style='font-weight:bold;' class='whisperrequestmessage'>" + langr.l_whisperacceptdecline_d + " " + ParseTextMessage2(sMessage) + "</span></div>");
 				sendTostatus("<span id='" + tabWhisp.whsptid + "' class='status-whisper'>" + langr.l_whisperattempt_a + " <b>" + getUserLabel(sNickFrom) + "</b>. " + langr.l_whisperattempt_b + " " + ParseTextMessage2(sMessage) + "</span>");
 				bTimeStamphalt = true;
 				tabWhisp.inmsgs = sMessage;
@@ -5401,9 +5422,13 @@ function createWhispTab(tabWhisp, type) {
 			if (tabWhisp.pwnd) DebugWhisp('WhisperWindowInstanceCreationSuccessful', '');
 			else bTabWhispCreateError = true;
 			whisperzindex++;
-			whisperoffset = whisperoffset + 20;
-			var whisperoffsetcss = whisperoffset + "px";
-			$("#whisperwindowholder_" + tabWhisp.whsptid).css({ 'position': 'absolute', 'top': whisperoffsetcss, 'left': '30%', 'z-index': whisperzindex });
+			if (whisperoffset >= 25) { whisperoffset == 2; }
+			whisperoffset = whisperoffset + 5;
+			if (whisperoffsetleft >= 25) { whisperoffsetleft == 2; }
+			whisperoffsetleft = whisperoffsetleft + 3;
+			var whisperoffsetcss = whisperoffset + "%";
+			var whisperoffsetcssleft = whisperoffsetleft + "%";
+			$("#whisperwindowholder_" + tabWhisp.whsptid).css({ 'position': 'absolute', 'top': whisperoffsetcss, 'left': whisperoffsetcssleft, 'z-index': whisperzindex });
 			$("#whisperwindowholder_" + tabWhisp.whsptid).fadeIn();
 			$("#whisperwindowholder_" + tabWhisp.whsptid).draggable({
 				containment: '#whisperwindowadd',
@@ -5453,35 +5478,36 @@ function zWhispWin(op) {
 	else { $("#whisperwindowadd").css('z-index', ''); }
 }
 function acceptWhispertab(whsptid, sender) {
+	sender.parentNode.parentNode.parentNode.parentNode.removeChild(sender.parentNode.parentNode.parentNode);
 	for (var i = 0; i < WhisperTabs.length; i++) {
 		if (WhisperTabs[i].whsptid == whsptid) {
 			createWhispTab(WhisperTabs[i], null);
 			//WHISPACCEPTED
 			NBChatController.sendToServerQue("DATA " + m_sChan + " " + WhisperTabs[i].receiver.nick + " CMWHISP :WHISPACCEPTED");
 			removeFromStatus(whsptid);
-			sender.parentNode.parentNode.parentNode.parentNode.removeChild(sender.parentNode.parentNode.parentNode);
 		}
 	}
 }
 function declineWhispertab(whsptid, sender) {
+	sender.parentNode.parentNode.parentNode.parentNode.removeChild(sender.parentNode.parentNode.parentNode);
 	for (var i = 0; i < WhisperTabs.length; i++) {
 		if (WhisperTabs[i].whsptid == whsptid) {
 			//WHISPDECLINED
 			NBChatController.sendToServerQue("DATA " + m_sChan + " " + WhisperTabs[i].receiver.nick + " CMWHISP :WHISPDECLINED");
 			RemoveWhisperTab(i);
 			removeFromStatus(whsptid);
-			sender.parentNode.parentNode.parentNode.parentNode.removeChild(sender.parentNode.parentNode.parentNode);
+			
 		}
 	}
 }
 function declineandIgnoreWhispertab(whsptid, sender) {
+	sender.parentNode.parentNode.parentNode.parentNode.removeChild(sender.parentNode.parentNode.parentNode);
 	for (var i = 0; i < WhisperTabs.length; i++) {
 		if (WhisperTabs[i].whsptid == whsptid) {
 			//WHISPDECLINED
 			NBChatController.sendToServerQue("DATA " + m_sChan + " " + WhisperTabs[i].receiver.nick + " CMWHISP :WHISPDECLINED");
 			RemoveWhisperTab(i);
-			removeFromStatus(whsptid);
-			sender.parentNode.parentNode.parentNode.parentNode.removeChild(sender.parentNode.parentNode.parentNode);
+			removeFromStatus(whsptid);			
 		}
 	}
 }
@@ -5570,7 +5596,10 @@ function RemoveWhisperTab(idx) {
 			$('#whispertab_' + deltab).remove();
 			$('#whisperwindowholder_' + deltab).remove();
 			$('#whisperspace_' + deltab).remove();
-			whisperoffset = whisperoffset - 20;
+			whisperoffset = whisperoffset - 4;
+			if (whisperoffset < 0) { whisperoffset = 1; }
+			whisperoffsetleft = whisperoffsetleft - 4;
+			if (whisperoffsetleft < 0) { whisperoffsetleft = 1; }
 		}
 		WhisperTabs.splice(idx, 1);
 	}
@@ -5700,14 +5729,97 @@ function selectNickInNicklist(nicktosel) {
 		$('.lvuitemlb:eq(' + gnickline.id + ')').addClass("lvuitemlbSelected");
 	}
 }
+function resetToChatPane() {
+	cTab = 'chat';
+	$('#chatwindowholder').show('fast');
+	$('#statuswindowholder').hide('fast');
+	$('#optionswindowholder').hide('fast');
+	$('#accesswindowholder').hide('fast');
+	$('#modeswindowholder').hide('fast');
+	$('#propswindowholder').hide('fast');
+	$('[id^="whisperwindowholder_"]').hide('fast');
+	suspendTitleCount();
+	ScrollFix();
+}
+function closeTopTab(tabname) {
+	if (tabname == 'options') { $('#optiontoptab').fadeOut('fast'); }
+	else if (tabname == 'access') { $('#accesstoptab').fadeOut('fast'); }
+	else if (tabname == 'modes') { $('#modestoptab').fadeOut('fast'); }
+	else if (tabname == 'props') { $('#propstoptab').fadeOut('fast'); }
+	suspendTitleCount();
+	return false;
+}
+
+function openPane(panetype) {
+	if (cTab != panetype) {
+		cTab = panetype;
+		$('#chatwindowholder').hide('fast');
+		$('#statuswindowholder').hide('fast');
+		$('#optionswindowholder').hide('fast');
+		$('#accesswindowholder').hide('fast');
+		$('#modeswindowholder').hide('fast');
+		$('#propswindowholder').hide('fast');
+		$('[id^="whisperwindowholder_"]').hide('fast');
+		if (panetype == 'status') {
+			$('.statuscount').text('0');
+			$('.statuscountb').text('0');
+			$('#statuswindowholder').fadeIn('fast');
+			startTitleCount();
+		}
+		else if (panetype == 'chat') {
+			$('#chatwindowholder').fadeIn('fast');
+			suspendTitleCount();
+		}
+		else if (panetype == 'optionstop') {
+			$('#optionswindowholder').fadeIn('fast');
+			startTitleCount();
+		}
+		else if (panetype == 'options') {
+			$('#OptionsbPane').attr('src', sFUIDIR2 + 'nbchatoptions.htm?v=1.4');
+			$('#optionswindowholder').fadeIn('fast');
+			$('#optiontoptab').fadeIn('fast');
+			startTitleCount();
+		}
+		else if (panetype == 'modestop') {
+			$('#modeswindowholder').fadeIn('fast');
+			startTitleCount();
+		}
+		else if (panetype == 'modes') {
+			$('#ModesPane').attr('src', sFUIDIR2 + 'nbchatmodes.htm?v=1.4');
+			$('#modeswindowholder').fadeIn('fast');
+			$('#modestoptab').fadeIn('fast');
+			startTitleCount();
+		}
+		else if (panetype == 'accesstop') {
+			$('#accesswindowholder').fadeIn('fast');
+			startTitleCount();
+		}
+		else if (panetype == 'access') {
+			$('#AccessPane').attr('src', sFUIDIR2 + 'nbchataccess.htm?v=1.4');
+			$('#accesswindowholder').fadeIn('fast');
+			$('#accesstoptab').fadeIn('fast');
+			startTitleCount();
+		}
+		else if (panetype == 'propstop') {
+			$('#propswindowholder').fadeIn('fast');
+			startTitleCount();
+		}
+		else if (panetype == 'props') {
+			$('#PropsPane').attr('src', sFUIDIR2 + 'nbchatprops.htm?v=1.4');
+			$('#propswindowholder').fadeIn('fast');
+			$('#propstoptab').fadeIn('fast');
+			startTitleCount();
+		}
+		else { $('#chatwindowholder').fadeIn('fast'); suspendTitleCount(); }	
+	}	
+	ScrollFixs();
+}
+
 $(document).ready(function () {
-
-
 	$('#viewemotes').on("click", function () {
 		$("#emotesContainer").toggle("clip");
 		return false;
 	});
-
 	$('#closeawaymsg').on("click", function () {
 		$('#wndSetAwayMsgContainer').hide('fast');
 		return false;
@@ -5724,89 +5836,62 @@ $(document).ready(function () {
 		return false;
 	});
 	$('#statustab').on("click", function () {
-		//$('.activewtab').switchClass("btn-info", "btn-info");
-		//$('.activetab').switchClass("activetab", "inactivetab");
-		//$('#statustab').switchClass("inactivetab", "activetab");
-		$('.statuscount').text('0');
-		$('.statuscountb').text('0');
-		$('#statuswindowholder').show('fast');
-		$('#chatwindowholder').hide('fast');
-		$('#accesswindowholder').hide('fast');
-		$('#modeswindowholder').hide('fast');
-		$('#propswindowholder').hide('fast');
-		$('#optionswindowholder').hide('fast');
-		$('[id^="whisperwindowholder_"]').hide('fast');
-		ScrollFixs();
+		openPane('status');
 		return false;
 	});
 	$('#statustabb').on("click", function () {
-		$('.statuscount').text('0');
-		$('.statuscountb').text('0');
-		$('#statuswindowholder').show('fast');
-		$('#chatwindowholder').hide('fast');
-		$('#optionswindowholder').hide('fast');
-		$('#accesswindowholder').hide('fast');
-		$('#modeswindowholder').hide('fast');
-		$('#propswindowholder').hide('fast');
-		$('[id^="whisperwindowholder_"]').hide('fast');
-		ScrollFixs();
+		openPane('status');
 		return false;
 	});
 	$('#chattab').on("click", function () {
-		//clearInterval(chatflash);
-		//$('.activewtab').switchClass("activewtab", "inactivewtab");
-		//$('.activetab').switchClass("activetab", "inactivetab");
-		//$('#chattab').switchClass("blinktab", "inactivetab");
-		//$('#chattab').switchClass("inactivetab", "activetab");
-		$('#chatwindowholder').show('fast');
-		$('#statuswindowholder').hide('fast');
-		$('#optionswindowholder').hide('fast');
-		$('#accesswindowholder').hide('fast');
-		$('#modeswindowholder').hide('fast');
-		$('#propswindowholder').hide('fast');
-		$('[id^="whisperwindowholder_"]').hide('fast');
-		ScrollFix();
+		openPane('chat');
 		return false;
 	});
 	$('#chattabb').on("click", function () {
-		$('#chatwindowholder').show('fast');
-		$('#statuswindowholder').hide('fast');
-		$('#optionswindowholder').hide('fast');
-		$('#accesswindowholder').hide('fast');
-		$('#modeswindowholder').hide('fast');
-		$('#propswindowholder').hide('fast');
-		$('[id^="whisperwindowholder_"]').hide('fast');
-		ScrollFix();
+		openPane('chat');
 		return false;
 	});
 	$('#clearstatusbtn').on("click", function () {
 		clearStatusPane();
 		return false;
 	});
-	$('.optionstab').on("click", function () {
-		$('#statuswindowholder').hide('fast');
-		$('#chatwindowholder').hide('fast');
-		$('#accesswindowholder').hide('fast');
-		$('#modeswindowholder').hide('fast');
-		$('#propswindowholder').hide('fast');
-		$('[id^="whisperwindowholder_"]').hide('fast');
-		$('#OptionsbPane').attr('src', sFUIDIR2 + 'nbchatoptions.htm');
-		$('#optionswindowholder').show('fast');
-		ScrollFixs();
+	$('#optiontoptab').on("click", function () {
+		openPane('optionstop');
 		return false;
 	});
-
-	// Close dialogs
-	$('.closepanebtn').on("click", function () {
-		$('#chatwindowholder').show('fast');
-		$('#statuswindowholder').hide('fast');
-		$('#optionswindowholder').hide('fast');
-		$('#accesswindowholder').hide('fast');
-		$('#modeswindowholder').hide('fast');
-		$('#propswindowholder').hide('fast');
-		$('[id^="whisperwindowholder_"]').hide('fast');
-		ScrollFix();
+	$('.optionstab').on("click", function () {
+		openPane('options');
+		return false;
 	});
+	$('#modestoptab').on("click", function () {
+		openPane('modestop');
+		return false;
+	});
+	$('#accesstoptab').on("click", function () {
+		openPane('accesstop');
+		return false;
+	});
+	$('#propstoptab').on("click", function () {
+		openPane('propstop');
+		return false;
+	});
+	// Close dialogs
+	$('#closeoptionspanebtn').on("click", function () {
+		$('#optiontoptab').fadeOut('fast');
+		resetToChatPane();	
+	});
+	$('#closemodespanebtn').on("click", function () {
+		$('#modestoptab').fadeOut('fast');
+		resetToChatPane();	
+	});
+	$('#closeaccesspanebtn').on("click", function () {
+		$('#accesstoptab').fadeOut('fast');
+		resetToChatPane();	
+	});
+	$('#closepropspanebtn').on("click", function () {
+		$('#propstoptab').fadeOut('fast');
+		resetToChatPane();	
+	});	
 	$('#btn_sendmsg').on("click", function () {
 		fnCPAppendText();
 		return false;
@@ -5831,6 +5916,12 @@ $(document).ready(function () {
 		onBtnViewProfile();
 		return false;
 	});
+	$('#saveoptionspanebtn').on("click", function () {
+		options_iframe = document.getElementById("OptionsbPane").contentWindow;
+		saveOptions(options_iframe.oOPtions);
+		return false;
+	});
+	
 	$(document).on('click', '[id^="whispertab_"]', function (event) {
 		var getid = $(this).attr("id").split("_");
 		var tid = getid[1];
@@ -5911,29 +6002,7 @@ $(document).ready(function () {
 	$("#sliderWrap").draggable({
 		containment: '#whisperwindowadd',
 		cursor: 'move',
-		handle: '#emotesdrag',
-		drag: function () {
-			zWhispWin('on');
-		},
-		stop: function () {
-			zWhispWin('off');
-		}
-	});
-	$("#modesContainer").draggable({
-		containment: '#whisperwindowadd',
-		cursor: 'move',
-		handle: '#modesheader',
-		drag: function () {
-			zWhispWin('on');
-		},
-		stop: function () {
-			zWhispWin('off');
-		}
-	});
-	$("#propsContainer").draggable({
-		containment: '#whisperwindowadd',
-		cursor: 'move',
-		handle: '#propsheader',
+		handle: '#emotesheader',
 		drag: function () {
 			zWhispWin('on');
 		},
@@ -5942,15 +6011,25 @@ $(document).ready(function () {
 		}
 	});
 	$('.emoteWindow').on("click", function () {
-		if ($("#sliderWrap").is(":visible")) {
-			$("#sliderWrap").fadeOut();
+		if ($("#openCloseIdentifier").is(":hidden")) {
+			$("#sliderWrap").animate({ 
+				opacity: "0"
+			}, 600 );
+			$("#openCloseIdentifier").show();
+			setTimeout(function () {
+				$("#sliderWrap").css("z-index", "0");
+			}, 700);			
 		} else {
-			$("#sliderWrap").fadeIn();
 			var emotstatus = $('#wndFEmotsstatus').text();
 			if (emotstatus == '0') {
 				$('#wndFEmots').attr('src', emotsWndURI);
 				$('#wndFEmotsstatus').text('1');
 			}
+			$("#sliderWrap").css("z-index", "23");
+			$("#sliderWrap").animate({ 
+				opacity: "1"
+			}, 600 );
+			$("#openCloseIdentifier").hide();
 		}
 		return false;
 	});

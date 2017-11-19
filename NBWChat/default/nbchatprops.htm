@@ -11,7 +11,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <link class="changestyle" rel="stylesheet" href="themes/default.css" type="text/css" />
 <script type="text/javascript" src="../js/jquery.cookie.js"></script>
-<script type="text/javascript" src="../js/wndprops.js?update=10,30,16"></script>
+<script type="text/javascript" src="../js/wndprops.js?v1.4"></script>
 <title>Room Modes</title>
 <style>
 #cholder {
@@ -28,8 +28,11 @@
 </style>
 </head>
 <body style="background:white !important;">
-	<div class="container">
-		<div style="margin:5px 0;">Room: <b><span id="arname">loading...</span></b></div>
+	<div class="container-fluid">
+		<div style="position:absolute;top:10px;right:20px;z-index:99;">
+			<input style="" class="btn btn-sm btn-danger" type="button" value="X" onclick="fnCancel();" />
+		</div>
+		<div style="margin:35px 0 0 0;">Room: <b><span id="arname">loading...</span></b></div>
 		<div style="border-top:1px solid #CCC;margin:10px 0;">
 		<table class="table table-condensed table-striped table-responsive">
 			<tbody>

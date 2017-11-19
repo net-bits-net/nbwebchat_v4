@@ -1,5 +1,5 @@
 /* Global CSS Settings */
-html, body {height: 100%;margin: 0;padding: 0;}
+html, body {height: 100%;margin: 0;padding: 0;-ms-overflow-style: scrollbar;}
 body { font-family:Tahoma;font-size:14px;  }
 /* Header Section */
 #nbflashchat20 { float:right;padding:10px 10px 0 0; }
@@ -46,6 +46,7 @@ body { font-family:Tahoma;font-size:14px;  }
 /* Access */
 #accessareaholder {z-index:2;position:absolute;right:10px;left:5px;top:117px;bottom:60px;background-color: white;overflow-y: hidden;overflow-x: initial;margin: 0;padding: 0 0 10px 10px;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;border:1px solid #292929;}
 .closepanebtn { position:absolute;left:10px;bottom:25px;display:inline-block; }
+.saveopanebtn {	position:absolute;left:70px;bottom:25px;display:inline-block; }
 /* Props */
 #propsareaholder {z-index:2;position:absolute;right:10px;left:5px;top:117px;bottom:60px;background-color: white;overflow-y: hidden;overflow-x: initial;margin: 0;padding: 0 0 10px 10px;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;border:1px solid #292929;}
 /* Popup Menus */
@@ -55,10 +56,11 @@ body { font-family:Tahoma;font-size:14px;  }
 .menuitem { background-color:;color:#000; }
 .menuitemSelected { color:white !important;background-color:#0a24a6; }.menuitemsep { margin:2px;cursor: default; -moz-user-select: none;height:1px;border-top:1px solid #E0E0E0;border-bottom:1px solid #FFFFFF;height:0px; }
 /* Emote Slider */
-#sliderWrap { display:none;position:absolute;z-index:22;width:320px;background:white;top:130px;right:240px; }
+#sliderWrap { opacity:0;position:absolute;z-index:0;width:320px;background:white;top:130px;right:240px; }
 #sliderContent {background:white;width:100%;}
 #wndEmotsWindowContainerSub iframe { width:100%; }
 #emotesheader { padding:5px 5px;font-weight:bold; }
+#emotesheader:hover { cursor:move; }
 /* Tabs */
 .activetab, .inactivetab, .blinktab { padding:3px 10px;font-weight:bold;font-size:12px;font-family:tahoma;}
 .blinkborder { width:480px;height:280px;-webkit-border-radius: 8px;border:2px solid red !important; }
@@ -92,9 +94,9 @@ body { font-family:Tahoma;font-size:14px;  }
 #chatnicklistholder, #nicklistuicons, #nicklistinfo1, #nicklistinfo2 { display:block; }
 #lvUsers {width: 210px;text-align: left;overflow-x:hidden;}
 #txNumberOfUser { font-size:13px;color:#fff;text-align:left;padding:0px 5px 0 10px; }
-#awayb { position:absolute;right:5px;top:0px;font-size:17px; } 
-#nicklistinfo1 {z-index:5;position:absolute;right:5px;top:112px;width:221px;max-width:221px;height:20px;max-height:20px;overflow:hidden;}
-#nicklistinfo2 {z-index:5;position:absolute;right:5px;top:133px;width:221px;max-width:221px;height:25px;overflow:hidden;}
+#awayb { position:absolute;right:5px;top:0px;font-size:14px;max-height:14px; } 
+#nicklistinfo1 {z-index:5;position:absolute;right:5px;top:115px;width:221px;max-width:221px;height:25px;max-height:25px;overflow:hidden;line-height:25px;}
+#nicklistinfo2 {z-index:5;position:absolute;right:5px;top:141px;width:221px;max-width:221px;height:22px;overflow:hidden;line-height:5px;}
 #nicklistinfo2 img { margin-top:-3px;margin-bottom:-3px; }
 #nicklistuicons { z-index:5;position:absolute;right:10px;width:205px;bottom:27px;text-align:center; }
 #chatnicklistbg { display:none;  }
@@ -121,8 +123,8 @@ body { font-family:Tahoma;font-size:14px;  }
 #whisperareaholder {position:absolute;right:5px;left:5px;top:40px;bottom:45px;background-color: white;overflow-y: hidden;overflow-x: initial;margin: 0;padding: 0 0 10px 10px;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;border:1px solid #292929;}
 #whispersendIntputDiv {	position:absolute;bottom:10px;left:5px;right:90px;}
 #whispersendbuttons { position:absolute;bottom:6px;right:7px; }
-.whisperminibtn { position:absolute;top:5px;right:25px; }
-.whisperboxclose { position:absolute;top:5px;right:10px; }
+.whisperminibtn { position:absolute;top:5px;right:25px;z-index:9; }
+.whisperboxclose { position:absolute;top:5px;right:10px;z-index:9; }
 .whisperwindowholder { width:480px;height:290px;border:2px solid #FFF;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px; }
 .whisperareawho { color:white;font-size:13px;font-weight:bold;position:absolute;top:6px;left:8px; }
 .whisperarea { position:absolute;right:5px;left:5px;top:30px;bottom:40px;background-color: white;margin: 0;padding: 0 0 10px 10px;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;border:1px solid #292929; }
@@ -134,6 +136,13 @@ body { font-family:Tahoma;font-size:14px;  }
 .whisperclosebutton { font-size:15px;border-radius: 50%; line-height:12px; }
 .whisperminusbutton { margin-right:3px;font-size:15px;border-radius: 50%; line-height:12px; }
 .whisperclosebuttonb { font-size:13px;border-radius: 50%; line-height:12px; }
+.whisperrequestmessage { color:black; }
+.whispreq { border:1px solid #C0DBED;padding:0 10px;margin:2px 10px 2px 0px;background:#E7F1F8;-webkit-border-radius: 6px;-moz-border-radius: 6px;border-radius: 6px; }
+.whispreq a { font-weight:bold; }
+.whispreq a:hover { text-decoration:none; }
+.whisperareawho { display:block;width:100%; }
+.whisperareawho:hover { cursor:move; }
+.status-whisper { }
 /* Footer */
 footer { position:absolute;bottom:3px;min-height:20px;left:10px;right:10px;color:white;font-size:13px;overflow:hidden; }
 .aright { text-align:right; }
@@ -212,6 +221,7 @@ a.videolink span:hover {opacity:1;}
 .whisperalerttext { color:#245269;font-weight:bold; }
 .closebutton { font-size:15px;border-radius: 50%; line-height:12px; }
 .closebutton:hover { cursor:pointer; }
+.ie-only { display: none; }
 /* Small Screen Css */
 @media only screen and (max-width : 750px) {
 	#headerlogo { position:absolute;top:48px;z-index:22;left:30px; }
@@ -243,7 +253,7 @@ a.videolink span:hover {opacity:1;}
 	#optionswindowtoggle { display:block; }
 	.whisperwindowholder { width:250px;height:250px; }
 	.aright { text-align:left !important; }
-	#sliderWrap { width:250px;height:200px;background:white;top:130px;right:45px;margin:0;padding:0px; }
+	#sliderWrap { width:300px;right:45px; }
 	#sliderContent {width:100%;background:white;}
 	#wndEmotsWindowContainerSub iframe { height:164px; }
 	#emotesheader { padding:5px 5px;font-weight:bold; }	

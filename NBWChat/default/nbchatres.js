@@ -25,7 +25,8 @@ colRepl[':)'] = 'smile.gif';
 colRepl[':d'] = 'grin.gif';
 colRepl['*-)'] = 'mmm.gif';
 colRepl[":("] = 'sad.gif';
-colRepl[":'("] = 'cry2.gif';
+colRepl[":*("] = 'cry2.gif';
+colRepl[":'("] = 'cry.gif';
 colRepl['(us)'] = 'dont-know.gif';
 colRepl['(a)'] = 'angel.gif';
 colRepl['^o)'] = 'ugh.gif';
@@ -124,8 +125,46 @@ colRepl[':['] = 'bat2.gif';
 colRepl['(ap)'] = 'plane.gif';
 colRepl['-sc'] = 'scrub.gif';
 colRepl['(ed)'] = 'egg_dance.gif';
+	  //CHRISTMAS//
+// colRepl['(ix)'] = 'xmas.gif';
+// colRepl['(sm)'] = 'snowman.gif';
+// colRepl['|x'] = 'xmas-tree.gif';
+// colRepl['(nw)'] = 'new-year.gif';
+// colRepl['(rf)'] = 'rudey.gif';
+// colRepl[':x'] = 'santa.gif';
+// colRepl['|o'] = 'baubles.gif';
+// colRepl['^x'] = 'snowflake.gif';
+// colRepl['(el)'] = 'elf.gif';
+// colRepl['(xp)'] = 'xmas-pud.gif';
+	 //END CHRISTMAS
 colRepl['(r)'] = 'rainbow2.gif';
 colRepl['(bu)'] = 'butterfly.gif';
+//colRepl['(^^)'] = 'ballons2.gif';
 colRepl['(^)'] = 'cake.gif';
 colRepl['-@)'] = 'hammering.gif';
+//colRepl[':y'] = 'yahoo.gif';
+	 //HALLOWEEN//
+// colRepl['(bh)'] = 'bat-halloween.gif';
+// colRepl['(pk)'] = 'pumpkin.gif';
+// colRepl['(fn)'] = 'frank.gif';
+// colRepl['(wt)'] = 'witch.gif';
+// colRepl['(fg)'] = 'fangs.gif';
+// colRepl['(su)'] = 'skull.gif';
+// colRepl['(mu)'] = 'mummy.gif';
+	//END HALLOWEEN//
+//THANKSGIVING//
+colRepl['(fp)'] = 'fem-pilg.gif';
+colRepl['(mg)'] = 'male-pilg.gif';
+colRepl['(tk)'] = 'turkey.gif';
+//END THANKSGIVING//
+//valentine//
+// colRepl['(v1)'] = 'val1.gif';
+// colRepl['(v2)'] = 'val2.gif';
+// colRepl['(v3)'] = 'val3.gif';
+//END valintine//
+	   //EASTER//
+//colRepl['(eg)'] = 'easter-egg.gif';//
+//colRepl['(b^)'] = 'bunny3.gif';
+//colRepl['|>'] = 'chick-egg.gif';//
+	 //END EASTER//
 

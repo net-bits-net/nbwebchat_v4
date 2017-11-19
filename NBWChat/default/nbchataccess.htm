@@ -11,7 +11,7 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <link class="changestyle" rel="stylesheet" href="themes/default.css" type="text/css" />
 <script type="text/javascript" src="../js/jquery.cookie.js"></script>
-<script type="text/javascript" src="../js/wndaccess.js?update=08,12,15"></script>
+<script type="text/javascript" src="../js/wndaccess.js?v1.4"></script>
 <style>
 body { font-size:13px; }
 #cholder {
@@ -37,16 +37,19 @@ body { font-size:13px; }
 
 </head>
 <body style="background:white !important;">
-<div class="container" style="padding:10px;background-color:white;line-height:1.5;">
+<div class="container-fluid" style="padding:10px;background-color:white;line-height:1.5;">
+	<div style="position:absolute;top:10px;right:20px;z-index:99;">
+		<input style="" class="btn btn-sm btn-danger" type="button" value="X" onclick="fnCancel();" />
+	</div>
 	Room: <b><span id="arname">loading...</span></b><br />
-	<div style="">
-		<button id="showaddaccess" type="button" class="btn btn-xs btn-success">Add Access</button>
-		<button style="display:none;" id="showlistaccess" type="button" class="btn btn-xs btn-warning">Show List</button>
-		<button id="reloadaccess" type="button" class="btn btn-xs btn-info">Reload</button>
-		<button id="clearowners" type="button" class="btn btn-xs btn-warning">Clear Owners</button>
-		<button id="clearhosts" type="button" class="btn btn-xs btn-warning">Clear Hosts</button>
-		<button id="clearbans" type="button" class="btn btn-xs btn-warning">Clear Denies</button>
-		<button id="clearaccess" type="button" class="btn btn-xs btn-danger">Clear All Entries</button>
+	<div style="margin-top:18px;">
+		<button style="margin-bottom:5px;" id="showaddaccess" type="button" class="btn btn-xs btn-success">Add Access</button>
+		<button style="display:none;margin-bottom:5px;" id="showlistaccess" type="button" class="btn btn-xs btn-warning">Show List</button>
+		<button style="margin-bottom:5px;" id="reloadaccess" type="button" class="btn btn-xs btn-info">Reload</button>
+		<button style="margin-bottom:5px;" id="clearowners" type="button" class="btn btn-xs btn-warning">Clear Owners</button>
+		<button style="margin-bottom:5px;" id="clearhosts" type="button" class="btn btn-xs btn-warning">Clear Hosts</button>
+		<button style="margin-bottom:5px;" id="clearbans" type="button" class="btn btn-xs btn-warning">Clear Denies</button>
+		<button style="margin-bottom:5px;" id="clearaccess" type="button" class="btn btn-xs btn-danger">Clear All Entries</button>
 	</div>
 	<div style="border-top:1px solid #CCC;margin:10px 0;">
 	    <div id="accesslistadder" style="display:none;">

@@ -10,8 +10,8 @@ body { background-color:#285E83; }
 .navbar-collapse .navbar-right li a:hover { background:transparent; } 
 .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus { background:#285E83;}
 .navbar-default .navbar-toggle .icon-bar {background: white;}
-.lvuitemlbMe { background-color: transparent;color:white !important;}
-.lvuitemlbMeSel { background-color: transparent;color:white !important; }
+.lvuitemlbMe { background: transparent;color:white !important;}
+.lvuitemlbMeSel { background: transparent;color:white !important; }
 #nicklistinfo1 { color:white;background-color:#285E83; }
 #nicklistinfo1 a { color:white; }
 #nicklistinfo2 { background-color:#285E82;color:white; }
@@ -19,9 +19,9 @@ body { background-color:#285E83; }
 .chanlabel { color:#E8F0F7;font-weight:bold; }
 #wndSetAwayMsgContainer { background-color:#285E83;border:1px solid #000; }
 .awaymsgabouttext { color:#FFF; }
-.awayicon_a { color:white !important; }
+.awayicon_a { color:white !important;border:1px solid #ccc;background:#1E4864;padding:0 2px; }
 .awayicon_a:hover { color:white; }
-.awayicon_b { color:red !important; }
+.awayicon_b { color:#1163CB !important;border:1px solid #1163CB;background:#fff;padding:0 2px; }
 .awayicon_b:hover { color:white; }
 #whisperheader { background-color:#285E83; }
 #sliderWrap {color:#333333;border:1px solid #ccc;background:#285E83; }

@@ -521,8 +521,8 @@ var IRCwxParser;
                         type: 5 /* Invite */,
                         rval: {
                             SenderUserStr: toks[0],
-                            IrcmChannelName: toks[2],
-                            TargetNick: NBChatCore.TrimLeadingColon(toks[3]),
+                            TargetNick: toks[2],
+                            IrcmChannelName: NBChatCore.TrimLeadingColon(toks[3]),
                         },
                     };
                 case "DATA":

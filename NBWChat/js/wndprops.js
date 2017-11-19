@@ -17,6 +17,11 @@ function tellProps(ptstr) {
 function isEmpty(str) {
   return str.replace(/^\s+|\s+$/g, '').length == 0;
 }
+function fnCancel() {
+	window.parent.closeTopTab('props');
+	window.parent.resetToChatPane();
+	//window.parent.$('#optionsPane').attr('src', sFUIDIR + '/iframes/blank.htm')
+}
 $(document).ready(function(){
 	var arRN = $("#txChan",parent.document).text();
 	$('#arname').text(arRN);

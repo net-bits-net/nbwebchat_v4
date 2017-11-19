@@ -31,6 +31,11 @@ function getModes() {
 	$("#rkey").val(rKey);
 	$("#modeboxes :input").prop("disabled", false);
 }
+function fnCancel() {
+	window.parent.closeTopTab('modes');
+	window.parent.resetToChatPane();
+	//window.parent.$('#optionsPane').attr('src', sFUIDIR + '/iframes/blank.htm')
+}
 $(document).ready(function(){
 	var cRN = $("#txChan",parent.document).text();
 	var cRNb = window.parent.m_sChan;

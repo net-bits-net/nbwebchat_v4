@@ -12,17 +12,17 @@ body { background-color:#000; }
 .navbar-default .navbar-toggle .icon-bar {background: white;}
 .lvuitemlbMe { background-color: transparent;color:white !important;}
 .lvuitemlbMeSel { background-color: transparent;color:white !important; }
-#nicklistinfo1 { color:white;background-color:black;}
-#nicklistinfo2 { background-color:#000;color:whtie; }
+#nicklistinfo1 { color:white;background:transparent;}
+#nicklistinfo2 { background:transparent;color:white; }
 #awayb a { color:white; }
 #awayb a:hover { color:#CCC; }
 .channame_nowchatting { color:white; }
 .chanlabel { color:#fff;font-weight:bold; }
 #wndSetAwayMsgContainer { background-color:black; }
 .awaymsgabouttext { color:#FFF; }
-.awayicon_a { color:white !important; }
+.awayicon_a { color:white !important;border:1px solid #ccc;background:#2D2D2D;padding:0 2px; }
 .awayicon_a:hover { color:white; }
-.awayicon_b { color:red !important; }
+.awayicon_b { color:#1163CB !important;border:1px solid #1163CB;background:#fff;padding:0 2px; }
 .awayicon_b:hover { color:white; }
 #whisperheader { background-color:black; }
 #sliderWrap {color:#333333;border:1px solid #ccc;background:black; }

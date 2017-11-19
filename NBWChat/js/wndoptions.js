@@ -301,24 +301,14 @@ function fnOnUtubeManageChange() {
 //
 function fnSave() {
 	window.parent.saveOptions(oOPtions);
-	window.parent.$('#optionsContainer').fadeOut();	
-	window.parent.$('#chatwindowholder').show('fast');
-	window.parent.$('#statuswindowholder').hide('fast');
-	window.parent.$('#optionswindowholder').hide('fast');
-
-	window.parent.$('[id^="whisperwindowholder_"]').hide('fast');
-	window.parent.ScrollFix();
+	window.parent.resetToChatPane();	
 	//window.parent.$('#optionsContainer').fadeOut();
 	//window.parent.$('#optionsPane').attr('src', sFUIDIR + '/iframes/blank.htm');
 }
 
 function fnCancel() {
-	window.parent.$('#optionsContainer').fadeOut();	
-	window.parent.$('#chatwindowholder').show('fast');
-	window.parent.$('#statuswindowholder').hide('fast');
-	window.parent.$('#optionswindowholder').hide('fast');
-	window.parent.$('[id^="whisperwindowholder_"]').hide('fast');
-	window.parent.ScrollFix();
+	window.parent.closeTopTab('options');
+	window.parent.resetToChatPane();
 	//window.parent.$('#optionsPane').attr('src', sFUIDIR + '/iframes/blank.htm')
 }
 

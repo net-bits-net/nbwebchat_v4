@@ -10,6 +10,12 @@ function getAccess() {
 	var arRNb = window.parent.m_sChan;
 	window.parent.NBChatController.sendToServer("access " + arRNb + " list");
 }
+function fnCancel() {
+	window.parent.closeTopTab('access');
+	window.parent.resetToChatPane();
+	//window.parent.$('#optionsPane').attr('src', sFUIDIR + '/iframes/blank.htm')
+}
+
 $(document).ready(function(){	
 	var arRN = $("#txChan",parent.document).text();
 	$('#arname').text(arRN);

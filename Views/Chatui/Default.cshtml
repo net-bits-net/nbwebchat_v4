@@ -76,9 +76,11 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/nbchat30.css?update=16,15,16" type="text/css" />
-	<link class="changestyle" rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/themes/default.css" type="text/css" />
-
+	<link rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/nbchat30.css?v1.5" type="text/css" />
+	<link class="changestyle" rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/themes/default.css?v1.1" type="text/css" />
+	<!--[if lte IE 9 ]>
+	<link rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/nbchat30ie.css?update=11,04,17" type="text/css" />
+	<![endif]-->
 	@*core functions here so they can be used.*@
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_core.js?"></script>
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/platform.js">
@@ -86,11 +88,12 @@
 	</script>
 
 	<script type="text/javascript">
-		
+
 		sFUIDIR = '@Model.STAG_NBWCHATTEMPLATEDIR';
 		sVersion = 'IRCwx Webchat v4';
 
 		var gsLogRawsToBrowserConsole = @(new jsbool(CoreHelpers.LooseBoolConverter(Request.QueryString["LOGRAWSTOBC"])));
+		var gsUseFlash = @(new jsbool(CoreHelpers.LooseBoolConverter(Request.QueryString["useflash"])));
 		var HasWebsocketSupport = false;
 		var gsPresenterInitialized = false;
 		var gsUserId = "@Model.STAG_UserId";
@@ -127,7 +130,7 @@
 					} catch(err2) { }
 				}
 			}
-				
+
 			console.log("FlashSupported()::", ver);
 
 			return false;
@@ -181,7 +184,7 @@
 			return true;
 		}
 
-		if ('WebSocket' in window && window.WebSocket.CLOSING === 2 && PossibleWebsocketVer13Support()) {
+		if ('WebSocket' in window && window.WebSocket.CLOSING === 2 && PossibleWebsocketVer13Support() && gsUseFlash === false) {
 			HasWebsocketSupport = true;
 		}
 	</script>
@@ -192,7 +195,7 @@
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_connection.js?"></script>
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/ircwx_parser.js?"></script>
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_controller.js?v=0001"></script>
-	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_v4.js?update=01,19,05"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_v4.js?update=11,16,17"></script>
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/jquery.cookie.js?update=12,25,14"></script>
 
 	<script language="javascript" type="text/javascript">
@@ -210,6 +213,7 @@
 <!------------------------START------------------------------>
 <div style="position:relative;height:100%;">
 	<div class="container-fluid" style="height:100%;margin:0;padding:0;">
+		<div class="ie-only">Internet Explorer 9 and below are not supported. Please update your Internet Explorer or choose an alternate browser.<br /><br /><a href="https://www.google.com/chrome/">Download Chrome</a><br /><a href="https://www.mozilla.org/firefox">Download Firefox</a></div>
 		<div id="whisperwindowadd">		
 			<!---------------- Away Message Set ----------------------->
 			<div id="wndSetAwayMsgContainer">
@@ -223,15 +227,16 @@
 		</div>
 		<!--------------- SLIDER DOWN BOX -EMOTES ------------------>
 		<div id="sliderWrap">
+			<span style="float:right;z-index:24;margin-top:5px;margin-right:5px;"><i class="emoteWindow closebutton fa fa-window-close"></i></span>
 			<div id="emotesheader">
-				<span id="emotesdrag"><i class='fa fa-arrows-alt'></i> Emoticons</span>
-				<span style="float:right;"><i class="emoteWindow closebutton fa fa-window-close"></i></span>
+				<span id="emotesdrag"><i class='fa fa-arrows-alt'></i> Emoticons</span>				
 			</div>
 			<div id="sliderContent">
 				<div id="wndEmotsWindowContainerSub">
-					<iframe id="wndFEmots" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm" frameborder="0"></iframe>
+					<iframe scrolling="yes" id="wndFEmots" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm" frameborder="0" scrolling="yes"></iframe>
 				</div>
 				<div style="display:none;" id="wndFEmotsstatus">0</div>
+				<div id="openCloseIdentifier"></div>
 			</div>
 		</div>
 		<!------------------------END------------------------------>
@@ -269,7 +274,7 @@
 				</div>
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav">
-						<li><a data-toggle="tooltip" title="Home" target="_blank" href="@ViewBag.SiteURL"><i class="fa fa-home"></i> Home</a></li>
+						<li><a data-toggle="tooltip" title="Home" target="_blank" href="@Url.Content("~/")"><i class="fa fa-home"></i> Home</a></li>
 							<li><a data-toggle="tooltip" title="More Rooms" target="_blank" href="@Url.Content("~/ChannelsList")"><i class="fa fa-list"></i> More Rooms</a></li>
 							<li><a data-toggle="tooltip" class="optionstab" title="Options" href="#"><i class="fa fa-gears"></i> Options</a></li>
 							<li><a data-toggle="tooltip" title="Help" target="_blank" href="@Url.Content("~/Help")"><i class="fa fa-question-circle "></i> Help</a></li>
@@ -298,8 +303,8 @@
 											
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
-						<li><a title="blue" href="#" rel="default.css" class="styleswitch"><div style="display:inline-block;width:12px;height:12px;border:1px solid #CCC;background-color:#285E83;"></div></a></li>
-						<li><a title="black" href="#" rel="black.css" class="styleswitch"><div style="display:inline-block;width:12px;height:12px;border:1px solid #CCC;background-color:black;"></div></a></li>
+						<li><a title="blue" href="#" rel="default.css?v1.1" class="styleswitch"><div style="display:inline-block;width:12px;height:12px;border:1px solid #CCC;background-color:#285E83;"></div></a></li>
+						<li><a title="black" href="#" rel="black.css?v1.1" class="styleswitch"><div style="display:inline-block;width:12px;height:12px;border:1px solid #CCC;background-color:black;"></div></a></li>
 					</ul>
 				</div>
 			</div>
@@ -315,10 +320,10 @@
 		<div id="statusholder">			
 			<div class="btn btn-info btn-sm inactivetab" id="statustab">Chat Notifications (<span class="statuscount">0</span>)</div>
 			<div class="btn btn-success btn-sm activetab" id="chattab">Chatroom</div>
-			<div style="display:none;" class="optionstab btn btn-warning btn-sm activetab" id="optionstab">Options</div>
-			<div style="display:none;" class="btn btn-warning btn-sm activetab" id="accesstab">Access</div>
-			<div style="display:none;" class="btn btn-warning btn-sm activetab" id="modestab">Modes</div>
-			<div style="display:none;" class="btn btn-warning btn-sm activetab" id="propstab">Props</div>
+			<div style="display:none;" class="btn btn-warning btn-sm activetab" id="optiontoptab">Options</div>
+			<div style="display:none;" class="btn btn-warning btn-sm activetab" id="accesstoptab">Access</div>
+			<div style="display:none;" class="btn btn-warning btn-sm activetab" id="modestoptab">Modes</div>
+			<div style="display:none;" class="btn btn-warning btn-sm activetab" id="propstoptab">Props</div>
 		</div>
 		<!------------------------END------------------------------>
 		<!------------------------ Options Window ------------------>
@@ -329,19 +334,16 @@
 		<!------------------------ Access Window ------------------>
 		<div id="accesswindowholder" style="display:none;">
 			<div id="accessareaholder"><iframe style="overflow-x: hidden !important;" id="AccessPane" name="AccessPane" frameborder="0" scrolling="yes" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm"></iframe></div>
-			<div class="closepanebtn btn btn-danger">Close</div>
 		</div>
 		<!------------------------END------------------------------>
 		<!------------------------ Modes Window ------------------>
 		<div id="modeswindowholder" style="display:none;">
 			<div id="modesareaholder"><iframe style="overflow-x: hidden !important;" id="ModesPane" name="ModesPane" frameborder="0" scrolling="yes" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm"></iframe></div>
-			<div class="closepanebtn btn btn-danger">Close</div>
 		</div>
 		<!------------------------END------------------------------>
 		<!------------------------ Props Window ------------------>
 		<div id="propswindowholder" style="display:none;">
 			<div id="propsareaholder"><iframe style="overflow-x: hidden !important;" id="PropsPane" name="PropsPane" frameborder="0" scrolling="yes" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm"></iframe></div>
-			<div class="closepanebtn btn btn-danger">Close</div>
 		</div>
 		<!------------------------END------------------------------>
 		<!------------------------ Status Window ------------------>
@@ -480,7 +482,7 @@
 		<!------------------------ Footer ------------------------->
 		<footer>
 			<div>
-				Powered By: Net-Bits.Net Webchat 4.0 &copy; 2006 - 2017 All rights Reserved. -
+				Powered By: Net-Bits.Net Webchat 4.0 (<a href="@Url.Content(string.Format("~/c/?cn={0}&useflash=1",Model.STAG_CHANNELNAME))">Connect With Flash</a>) &copy; 2006 - 2017 All rights Reserved. -
 			<a href="@Url.Content("~/Privacy-Policy")">Privacy</a> - <a href="@Url.Content("~/ToU")">Terms of Use</a>
 			</div>
 		</footer>
@@ -489,7 +491,18 @@
 </div>
 <!------------------------END------------------------------>
 <!------------------------ Advertisement ---------------------->
-
+<div style="text-align:center;">
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- rs_wx -->
+	<ins class="adsbygoogle"
+		 style="display:block"
+		 data-ad-client="ca-pub-8254166811237269"
+		 data-ad-slot="1944741641"
+		 data-ad-format="auto"></ins>
+	<script>
+		(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+</div>
 <!------------------------END------------------------------>
 <script language="JavaScript" type="text/JavaScript">
 	if($.cookie("css")) {

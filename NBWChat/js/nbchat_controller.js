@@ -421,6 +421,10 @@ var NBChatController;
         // ToDo: move out presentation logic from parser.
         WriteToPresenter("<font color='#FF0000'>Error: " + sError + "</font>");
     }
+    function IHaveJoinedTheChannel() {
+        return i_have_joined_channel;
+    }
+    NBChatController.IHaveJoinedTheChannel = IHaveJoinedTheChannel;
     function InviteFlood(bFlooding) {
         bInviteFlood = bFlooding;
     }
