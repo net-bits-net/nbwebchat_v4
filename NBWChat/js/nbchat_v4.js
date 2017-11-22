@@ -2001,7 +2001,7 @@ function scrollToLastMessageSubFn(cpb) {
 
 	var dist_from_bottom = distFromBottom(cpb);
 
-	if (dist_from_bottom > 5) {
+	if (dist_from_bottom > 0) {
 		scrollToLastMessageSubFnCall_rate_ms = 0;
 
 		if (!isIOS_Safari) {
@@ -2017,7 +2017,7 @@ function scrollToLastMessageSubFn(cpb) {
 
 	dist_from_bottom = distFromBottom(cpb);
 
-	if (dist_from_bottom > 5) {
+	if (dist_from_bottom > 0) {
 		scrollToLastMessageSubFnCall_rate_ms = 0;
 	}
 

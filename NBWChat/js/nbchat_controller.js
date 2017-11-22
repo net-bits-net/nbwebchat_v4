@@ -75,7 +75,12 @@ var NBChatController;
             if (IsEmptyString(s))
                 return null;
             var result = { ts: null, v: "" };
-            var ts_endpos = s.indexOf("{") - 1;
+            //WARNING: not all items stored are in json format so '{' may not be there.
+            var ts_endpos = -1;
+            var iso_date_regex_pat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z/;
+            if (iso_date_regex_pat.test(s)) {
+                ts_endpos = s.indexOf("Z");
+            }
             try {
                 if (ts_endpos < 1) {
                     result.v = s;
@@ -379,6 +384,7 @@ var NBChatController;
         var result = NBStorage.GetItem("$GUESTPASS" /* GUESTPASS */);
         if (IsEmptyString(result)) {
             result = NBChatCore.GenerateRandomPassword();
+            SaveGuestuserPass(result);
         }
         return result;
     }
@@ -913,7 +919,9 @@ var NBChatController;
     }
     NBChatController.SaveChatOptions = SaveChatOptions;
     function SaveGuestuserPass(pw) {
-        AuthPass = gsAuthPass = pw;
+        if (IsEmptyString(AuthTypeCode)) {
+            AuthPass = gsAuthPass = pw;
+        }
         var e = NBStorage.SaveItem("$GUESTPASS" /* GUESTPASS */, pw, false);
         if (e != null) {
             //ToDo: handle error.

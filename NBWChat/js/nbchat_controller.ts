@@ -151,7 +151,15 @@ namespace NBChatController {
 
             let result: { ts: Date, v: string } = { ts: null, v: "" };
 
-            const ts_endpos: number = s.indexOf("{") - 1;
+            //WARNING: not all items stored are in json format so '{' may not be there.
+
+            let ts_endpos: number = -1;
+
+            var iso_date_regex_pat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z/;
+
+            if (iso_date_regex_pat.test(s)) {
+                ts_endpos = s.indexOf("Z");
+            }
 
             try {
 
@@ -567,6 +575,7 @@ namespace NBChatController {
 
         if (IsEmptyString(result)) {
             result = NBChatCore.GenerateRandomPassword();
+            SaveGuestuserPass(result);
         }
 
         return result;
@@ -1150,8 +1159,10 @@ namespace NBChatController {
     }
 
     export function SaveGuestuserPass(pw: string): void {
-        AuthPass = gsAuthPass = pw;
-
+        if (IsEmptyString(AuthTypeCode)) {
+            AuthPass = gsAuthPass = pw;
+        }
+        
         const e: Error = NBStorage.SaveItem(NBStorageItemsKeys.GUESTPASS, pw, false);
 
         if (e != null) {
