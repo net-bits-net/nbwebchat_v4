@@ -558,14 +558,14 @@ function ParseTextMessage3(str, ro) {
 
 					//possible values
 					//c
-					//c,  
+					//c,
 					//c01
-					//c01, 
-					//c1 
-					//c1, 
-					//c01,01 
-					//c1,01 
-					//c01,1 
+					//c01,
+					//c1
+					//c1,
+					//c01,01
+					//c1,01
+					//c01,1
 					//c1,1
 
 					if (s.length <= 1) {
@@ -606,7 +606,7 @@ function ParseTextMessage3(str, ro) {
 					}
 
 					if (s.length === 4) {
-						//c01, 
+						//c01,
 						//c1,1
 
 						if (isNaN(s[3]) === true) {
@@ -809,7 +809,8 @@ function ParseTextMessage3(str, ro) {
 									if (data.items.length === 0) {
 										return;
 									}
-									$("#ChatPane").contents().find("#cpbody").append("<div class='ytbox' id='ytbox_" + ytcount + "'><div class='ytloading'><img src='" + sFUIDIR + "/images/loading.gif' alt='' /> loading title...</div></div>");
+									bTimeStamphalt = true;
+									fnAppendText("<div class='ytbox' id='ytbox_" + ytcount + "'><div class='ytloading'><img src='" + sFUIDIR + "/images/loading.gif' alt='' /> loading title...</div></div>");
 									ytoutput = "<div class='ytholdertitle'><div id='vidid_" + ytcount + "'><div style='display:inline;font-weight:bold;color:black;margin-right:2px;'>You</div><div style='display:inline;font-weight:bold;color:white;background-color:red;margin-right:5px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;padding:0 2px;'>Tube</div><a id='ytxout_" + ytcount + "' href='#'>x</a> - <a target='_blank' href='https://www.youtube.com/watch?v=" + youtubeID + "'>" + data.items[0].snippet.title + "</a></div></div>";
 									setTimeout(function () {
 										showvid(ytoutput, ytcount, 2);
@@ -833,7 +834,8 @@ function ParseTextMessage3(str, ro) {
 									if (data.items.length === 0) {
 										return;
 									}
-									$("#ChatPane").contents().find("#cpbody").append("<div class='ytbox' id='ytbox_" + ytcount + "'><div class='ytloading'><img src='" + sFUIDIR + "/images/loading.gif' alt='' /> loading video...</div></div>");
+									bTimeStamphalt = true;
+									fnAppendText("<div class='ytbox' id='ytbox_" + ytcount + "'><div class='ytloading'><img src='" + sFUIDIR + "/images/loading.gif' alt='' /> loading video...</div></div>");
 									ytoutput = "<div class='ytholder'><a class='videolink' target='_blank' href='https://www.youtube.com/watch?v=" + youtubeID + "'><span></span><img src='https://img.youtube.com/vi/" + youtubeID + "/0.jpg' alt='' /></a><div class='ytxout'><a id='ytxout_" + ytcount + "' href='#'>x</a></div><div class='ytvideotitle' id='vidid_" + ytcount + "'>" + text_truncate(data.items[0].snippet.title, 80, '...') + "</div><div class='ytvideodesc'>" + text_truncate(data.items[0].snippet.description, 80, '...') + "</div><div style='font-size:10px;float:right;display:inline;font-weight:bold;color:white;background-color:red;margin-right:5px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;padding:0 2px;'>Tube</div><div style='font-size:10px;float:right;display:inline;font-weight:bold;color:black;margin-right:2px;'>You</div></div>";
 									setTimeout(function () {
 										showvid(ytoutput, ytcount, 3);
@@ -942,7 +944,7 @@ function fnAppendText(str) {
 	bSkipCPScroll = true;
 	if (bTimeStampOn == true && bTimeStamphalt == false) {
 		var dtTms = new Date();
-		// Update(15-Aug-2016): addition of date stamp bar	
+		// Update(15-Aug-2016): addition of date stamp bar
 		var dtTmsn = dtTms.getDate() + " " + monthNames[dtTms.getMonth()] + " " + dtTms.getFullYear();
 		var tms = "<span class='timestamp'>[" + FormatTimeNums(TwelveHour(dtTms.getHours())) + ":" + FormatTimeNums(dtTms.getMinutes()) + "" + amPm(dtTms.getHours()) + "]</span>&nbsp;";
 		if (!dtTmssaved || dtTmssaved != dtTmsn) {
@@ -1165,9 +1167,9 @@ function ProcessInterUserCommand(sCmd) {
 			ToggleAwayButton('', 'cmdline');
 			break;
 
-			//		case "FIXCHATPANE": 
-			//			MChatPane.redraw(true); 
-			//			break; 
+			//		case "FIXCHATPANE":
+			//			MChatPane.redraw(true);
+			//			break;
 
 		case "NICK":
 			if (sCmd.split(" ")[1].length > 0) NBChatController.sendToServer("NICK " + sCmd.split(" ")[1]);
@@ -1521,7 +1523,7 @@ function ToggleAwayButton(sReason, src) {
 			NBChatController.sendToServer("AWAY " + m_sChan + " ");
 			$("#awayicon").toggleClass('awayicon_a awayicon_b');
 		}
-		//btnAway.gotoAndStop(2);		
+		//btnAway.gotoAndStop(2);
 	}
 	else {
 		ouserMe.away = false;
@@ -2244,7 +2246,7 @@ function onFlashSocketLoad() {
 
 	loadOptions();
 
-	//ToDo: below is spaghetti logic, move it to single place in NBChatController and fewer functions. 
+	//ToDo: below is spaghetti logic, move it to single place in NBChatController and fewer functions.
 	if (iUserLoggin != USER_REG) {
 		if (sGuestNick == null) showGuestLoginDialog();
 		else {
@@ -2913,7 +2915,7 @@ function onAccessNRelatedReplies(numeric, srv_message) {
 		fnAppendText("<span class='msgfrmtparent'><span class='errortype1'>" + langr.l_error + " " + ereason + "</span></span>");
 	}
 	/*
-	
+
 	*Access*
 	801: IRCRPL_ACCESSADD
 	802: IRCRPL_ACCESSDELETE
@@ -5225,7 +5227,7 @@ function sendTostatus(sstr) {
 	bSkipStatusScroll = true;
 	if (bTimeStampOn == true && bTimeStamphalt == false) {
 		var dtTms = new Date();
-		// Update(15-Aug-2016): addition of date stamp bar	
+		// Update(15-Aug-2016): addition of date stamp bar
 		var dtTmsn = dtTms.getDate() + " " + monthNames[dtTms.getMonth()] + " " + dtTms.getFullYear();
 		var tms = "<span class='timestamp'>[" + FormatTimeNums(TwelveHour(dtTms.getHours())) + ":" + FormatTimeNums(dtTms.getMinutes()) + "" + amPm(dtTms.getHours()) + "]</span>&nbsp;";
 		sstr = tms + sstr;
@@ -5496,7 +5498,7 @@ function declineWhispertab(whsptid, sender) {
 			NBChatController.sendToServerQue("DATA " + m_sChan + " " + WhisperTabs[i].receiver.nick + " CMWHISP :WHISPDECLINED");
 			RemoveWhisperTab(i);
 			removeFromStatus(whsptid);
-			
+
 		}
 	}
 }
@@ -5507,7 +5509,7 @@ function declineandIgnoreWhispertab(whsptid, sender) {
 			//WHISPDECLINED
 			NBChatController.sendToServerQue("DATA " + m_sChan + " " + WhisperTabs[i].receiver.nick + " CMWHISP :WHISPDECLINED");
 			RemoveWhisperTab(i);
-			removeFromStatus(whsptid);			
+			removeFromStatus(whsptid);
 		}
 	}
 }
@@ -5810,8 +5812,8 @@ function openPane(panetype) {
 			$('#propstoptab').fadeIn('fast');
 			startTitleCount();
 		}
-		else { $('#chatwindowholder').fadeIn('fast'); suspendTitleCount(); }	
-	}	
+		else { $('#chatwindowholder').fadeIn('fast'); suspendTitleCount(); }
+	}
 	ScrollFixs();
 }
 
@@ -5878,20 +5880,20 @@ $(document).ready(function () {
 	// Close dialogs
 	$('#closeoptionspanebtn').on("click", function () {
 		$('#optiontoptab').fadeOut('fast');
-		resetToChatPane();	
+		resetToChatPane();
 	});
 	$('#closemodespanebtn').on("click", function () {
 		$('#modestoptab').fadeOut('fast');
-		resetToChatPane();	
+		resetToChatPane();
 	});
 	$('#closeaccesspanebtn').on("click", function () {
 		$('#accesstoptab').fadeOut('fast');
-		resetToChatPane();	
+		resetToChatPane();
 	});
 	$('#closepropspanebtn').on("click", function () {
 		$('#propstoptab').fadeOut('fast');
-		resetToChatPane();	
-	});	
+		resetToChatPane();
+	});
 	$('#btn_sendmsg').on("click", function () {
 		fnCPAppendText();
 		return false;
@@ -5921,7 +5923,7 @@ $(document).ready(function () {
 		saveOptions(options_iframe.oOPtions);
 		return false;
 	});
-	
+
 	$(document).on('click', '[id^="whispertab_"]', function (event) {
 		var getid = $(this).attr("id").split("_");
 		var tid = getid[1];
@@ -6012,13 +6014,13 @@ $(document).ready(function () {
 	});
 	$('.emoteWindow').on("click", function () {
 		if ($("#openCloseIdentifier").is(":hidden")) {
-			$("#sliderWrap").animate({ 
+			$("#sliderWrap").animate({
 				opacity: "0"
 			}, 600 );
 			$("#openCloseIdentifier").show();
 			setTimeout(function () {
 				$("#sliderWrap").css("z-index", "0");
-			}, 700);			
+			}, 700);
 		} else {
 			var emotstatus = $('#wndFEmotsstatus').text();
 			if (emotstatus == '0') {
@@ -6026,7 +6028,7 @@ $(document).ready(function () {
 				$('#wndFEmotsstatus').text('1');
 			}
 			$("#sliderWrap").css("z-index", "23");
-			$("#sliderWrap").animate({ 
+			$("#sliderWrap").animate({
 				opacity: "1"
 			}, 600 );
 			$("#openCloseIdentifier").hide();
