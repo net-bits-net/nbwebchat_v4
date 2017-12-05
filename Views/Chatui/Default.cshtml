@@ -214,7 +214,7 @@
 <div style="position:relative;height:100%;">
 	<div class="container-fluid" style="height:100%;margin:0;padding:0;">
 		<div class="ie-only">Internet Explorer 9 and below are not supported. Please update your Internet Explorer or choose an alternate browser.<br /><br /><a href="https://www.google.com/chrome/">Download Chrome</a><br /><a href="https://www.mozilla.org/firefox">Download Firefox</a></div>
-		<div id="whisperwindowadd">		
+		<div id="whisperwindowadd">
 			<!---------------- Away Message Set ----------------------->
 			<div id="wndSetAwayMsgContainer">
 				<div class="awaymsgabouttext">Set or change your away message here!</div>
@@ -229,7 +229,7 @@
 		<div id="sliderWrap">
 			<span style="float:right;z-index:24;margin-top:5px;margin-right:5px;"><i class="emoteWindow closebutton fa fa-window-close"></i></span>
 			<div id="emotesheader">
-				<span id="emotesdrag"><i class='fa fa-arrows-alt'></i> Emoticons</span>				
+				<span id="emotesdrag"><i class='fa fa-arrows-alt'></i> Emoticons</span>
 			</div>
 			<div id="sliderContent">
 				<div id="wndEmotsWindowContainerSub">
@@ -283,24 +283,24 @@
 							var MyUserId = User.Identity.GetUserId();
 							var MyUserName = User.Identity.GetUserName();
 						}
-		
+
 						@if (Request.IsAuthenticated)
 						{
-							<li><a href="@Url.Content("~/u/" + MyUserId + "/Manage")"><i class="fa fa-pencil"></i> Hello @MyUserName!</a></li>    
+							<li><a target="_blank" href="@Url.Content("~/u/" + MyUserId + "/Manage")"><i class="fa fa-pencil"></i> Hello @MyUserName!</a></li>    
 							<li><a data-toggle="tooltip" title="Log Off" href="javascript:document.getElementById('logoutForm').submit()"><i class="fa fa-sign-out"></i> Log off</a></li>
 							using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-form" }))
 							{
 								@Html.AntiForgeryToken()
-		
+
 							}
-		
+
 						}
 						else
 						{
 							<li><a data-toggle="tooltip" title="Sign In" href="@Url.Content("~/Account/Login")"><i class="fa fa-sign-in"></i> Sign In</a></li>
 							<li><a data-toggle="tooltip" title="Register" href="@Url.Content("~/Account/Register")"><i class="fa fa-pencil"></i> Register</a></li>
-						}	
-											
+						}
+
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li><a title="blue" href="#" rel="default.css?v1.1" class="styleswitch"><div style="display:inline-block;width:12px;height:12px;border:1px solid #CCC;background-color:#285E83;"></div></a></li>
@@ -317,7 +317,7 @@
 		<div id="optionswindowtoggle"><a data-toggle="tooltip" href="#" title="toggle options window" class="optionstab btn btn-warning"><i class="fa fa-gears"></i></a></div>
 		<!------------------------END------------------------------>
 		<!------------------------ Tabs Holder -------------------->
-		<div id="statusholder">			
+		<div id="statusholder">
 			<div class="btn btn-info btn-sm inactivetab" id="statustab">Chat Notifications (<span class="statuscount">0</span>)</div>
 			<div class="btn btn-success btn-sm activetab" id="chattab">Chatroom</div>
 			<div style="display:none;" class="btn btn-warning btn-sm activetab" id="optiontoptab">Options</div>
@@ -365,7 +365,7 @@
 					<img id="uicoMe" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/spacer.gif" border="0" class="lvuitemico" />
 					<span id="lbMe" class="lvuitemlbMe"></span>
 				</div>
-			</div>			
+			</div>
 			<div id="chatnicklistholder">
 				<div id="chatnicklist">
 					<div id="lvUsers" onmouseout="menuMouseOut(this);"></div>
@@ -387,7 +387,7 @@
 					<span><a data-toggle="tooltip" title="Tag User" id="btn_taguser" class="btn_taguser_a" href="#"><i id="btnTag" class="fa fa-check"></i></a></span>
 					<span><a data-toggle="tooltip" title="View Profile" id="btn_viewprofile" class="btn_viewprofile_a" href="#"><i id="btnViewProfile" class="fa fa-photo"></i></a></span>
 				</div>
-			</div>				
+			</div>
 		</div>
 		<!------------------------END------------------------------>
 		<!------------------------ Popup Menus -------------------->
@@ -417,7 +417,7 @@
 			<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miB1hH" onclick="mifBan1h();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ban 1 hr</div>
 			<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miB24hH" onclick="mifBan24h();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ban 24 hr</div>
 			<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miBnolH" onclick="mifBannol();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Ban No Limit</div>
-	
+
 			<div tabindex="-1" class="menuitemsep" align="center" unselectable="on"></div>
 			<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miVH" onclick="mifVoice();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Voice</div>
 			<div tabindex="-1" class="menuitem" onmouseover="menuItemMouseIn(this);" onmouseout="menuItemMouseOut(this);" id="miPH" onclick="mifParti();" onkeydown="mnuOnKeyPress(event, this);" unselectable="on">Participant</div>
@@ -510,7 +510,7 @@
 	};
 	$(document).ready(function(){
 		fnInitialize();
-		
+
 		$('.styleswitch').on( "click", function() {
 			var cssc = $(this).attr('rel');
 			var csscb = "@Model.STAG_NBWCHATTEMPLATEDIR/themes/" + cssc;
@@ -526,6 +526,6 @@
 			$('#nicklistinfo2').toggle();
 			return false;
 		});
-		$('[data-toggle="tooltip"]').tooltip(); 
+		$('[data-toggle="tooltip"]').tooltip();
 	});
 </script>
