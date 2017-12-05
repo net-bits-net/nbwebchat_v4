@@ -69,7 +69,7 @@ body { font-family:Tahoma;font-size:14px;  }
 .noinactivetab { color:#fff;border:1px solid #47A8DD;background-color:#1D678E;}
 .noactivetab { color:#fff;border:1px solid #7BBE67;background-color:#437733;}
 .activewtab, .inactivewtab, .blinkwtab {cursor:pointer;display:inline-block;padding:2px 4px;height:22px;max-height:22px;font-size:11px;font-family:tahoma;}
-.activewtab {background-color:#CFF59C;color:black;border:1px solid #C9E0B7;}	
+.activewtab {background-color:#CFF59C;color:black;border:1px solid #C9E0B7;}
 .inactivewtab {background-color:#A7E6F5;color:black;border:1px solid #B9E7F9;}
 .blinkwtab {background-color:#C60000;color:white;border:1px solid #D25263;background-color:#872330;}
 .tabx { float:right;padding:0px 0 0 7px;margin-top:-2px; }
@@ -94,7 +94,7 @@ body { font-family:Tahoma;font-size:14px;  }
 #chatnicklistholder, #nicklistuicons, #nicklistinfo1, #nicklistinfo2 { display:block; }
 #lvUsers {width: 210px;text-align: left;overflow-x:hidden;}
 #txNumberOfUser { font-size:13px;color:#fff;text-align:left;padding:0px 5px 0 10px; }
-#awayb { position:absolute;right:5px;top:0px;font-size:14px;max-height:14px; } 
+#awayb { position:absolute;right:5px;top:0px;font-size:14px;max-height:14px; }
 #nicklistinfo1 {z-index:5;position:absolute;right:5px;top:115px;width:221px;max-width:221px;height:25px;max-height:25px;overflow:hidden;line-height:25px;}
 #nicklistinfo2 {z-index:5;position:absolute;right:5px;top:141px;width:221px;max-width:221px;height:22px;overflow:hidden;line-height:5px;}
 #nicklistinfo2 img { margin-top:-3px;margin-bottom:-3px; }
@@ -202,17 +202,20 @@ footer { position:absolute;bottom:3px;min-height:20px;left:10px;right:10px;color
 .titlenoticepr { font-weight:bold;color:#804040; }
 .msgnoticepr { color:#804040; }
 /* Youtube */
-.ytholdertitle { margin:5px;border:1px solid #CCC;padding:5px;background:#F5F4F1;display:inline-block; }
+.yticon { padding:1px 5px;margin-right:5px;display:inline;font-size:20px;background:red;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;text-align:center; }
+.yticon span { color:white;text-align:center; }
+.ytholdertitle { padding:0 10px 0px 10px;margin:5px;border:1px solid #CCC;background:#F5F4F1;display:inline-block;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px; }
 .ytholdertitle a { color:#666;font-weight:bold;text-decoration:none; }
 .ytholdertitle a:hover { color:#000;text-decoration:none; }
-.ytholder { overflow:hidden;margin:5px;border:1px solid #CCC;height:110px;max-width:400px;background:#F5F4F1; }
+.ytholder { overflow:hidden;margin:5px;border:1px solid #CCC;background:#F5F4F1; }
 .ytholder img { width:100px;height:100px;margin:5px 10px 5px 5px; }
+.ytholder img:after { content: "";  display: table;  clear: both;}
 a.videolink { float: left;position: relative;}
 a.videolink span {width: 110px; height: 110px;position: absolute;background: url('images/playbutton.png') no-repeat 50% 50%;opacity:0.8;}
 a.videolink span:hover {opacity:1;}
-.ytvideotitle { color:#666;font-weight:bold;}
-.ytvideodesc {	color:#666;	font-size:13px;	margin-right:5px;}
-.ytbox { color:#666;font-size:12px; }
+.ytvideotitle { color:#666;font-weight:bold;display:inline; }
+.ytvideodesc {	color:#666;	font-size:13px;	margin-right:5px;padding:0 10px;}
+.ytbox { color:#666; }
 .ytxout { float:right; }
 .ytxout a { color:#666;font-weight:bold;text-decoration:none;margin-right:5px;margin-left:3px;margin-top:-2px; }
 .ytloading { color:#666;margin:5px; }
@@ -247,7 +250,7 @@ a.videolink span:hover {opacity:1;}
 	#statustab, #chattab, #optionstab { display:none; }
 	#sendbuttons { right:40px !important; }
 	#sendIntputDiv { right:205px !important; }
-	#chatnicklisttoggle { display:block; } 
+	#chatnicklisttoggle { display:block; }
 	#statuswindowtoggle { display:block; }
 	#chatwindowtoggle { display:block; }
 	#optionswindowtoggle { display:block; }
@@ -256,7 +259,7 @@ a.videolink span:hover {opacity:1;}
 	#sliderWrap { width:300px;right:45px; }
 	#sliderContent {width:100%;background:white;}
 	#wndEmotsWindowContainerSub iframe { height:164px; }
-	#emotesheader { padding:5px 5px;font-weight:bold; }	
+	#emotesheader { padding:5px 5px;font-weight:bold; }
 	#wndSetAwayMsgContainer { margin-left:-137px;width:250px;}
 	#modesContainer { width:250px;height:250px;margin-left:-125px;}
 	#propsContainer { width:250px;height:250px;margin-left:-125px;}
