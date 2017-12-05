@@ -172,15 +172,15 @@ function fnOnLoad() {
 	oOPtions.sndWhisp = pchSndWhisp.checked;
 	oOPtions.bConfirmOnLeaveOff = pchConfirmOnLeaveOff.checked;
 
-	if (window.parent.bUrlOn >= 1) { oOPtions.bYoutubeUrl = window.parent.bYoutubeUrl }
+	if (window.parent.bYoutubeUrl >= 1) { oOPtions.bYoutubeUrl = window.parent.bYoutubeUrl }
 	else { oOPtions.bYoutubeUrl = 1; }
-	oOPtions.bYoutubeUrl = window.parent.bYoutubeUrl - 1;
-	document.getElementById("utubeurl").selectedIndex = oOPtions.bYoutubeUrl;
+	if (oOPtions.bYoutubeUrl >= 1) { var selYToption = oOPtions.bYoutubeUrl - 1; }
+	document.getElementById("utubeurl").selectedIndex = selYToption;
 	if (window.parent.bUrlOn) { oOPtions.bUrlOn = true; document.getElementById("urlmanageoff").checked = true; document.getElementById("urlm").disabled = false; document.getElementById("utubeurl").disabled = true; }
 	else { oOPtions.bUrlOn = false; document.getElementById("urlmanageon").checked = true; document.getElementById("urlm").disabled = true; document.getElementById("utubeurl").disabled = false; }
 	/*
 	if (window.parent.bSafeUrlCheckOn) { oOPtions.bSafeUrlCheckOn = true; document.getElementById("urlm").selectedIndex = 1; }
-	else { 
+	else {
 	*/
 	oOPtions.bSafeUrlCheckOn = false; document.getElementById("urlm").selectedIndex = 0;
 
@@ -301,7 +301,7 @@ function fnOnUtubeManageChange() {
 //
 function fnSave() {
 	window.parent.saveOptions(oOPtions);
-	window.parent.resetToChatPane();	
+	window.parent.resetToChatPane();
 	//window.parent.$('#optionsContainer').fadeOut();
 	//window.parent.$('#optionsPane').attr('src', sFUIDIR + '/iframes/blank.htm');
 }
