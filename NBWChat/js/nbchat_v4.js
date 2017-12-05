@@ -811,7 +811,7 @@ function ParseTextMessage3(str, ro) {
 									}
 									bTimeStamphalt = true;
 									fnAppendText("<div class='ytbox' id='ytbox_" + ytcount + "'><div class='ytloading'><img src='" + sFUIDIR + "/images/loading.gif' alt='' /> loading title...</div></div>");
-									ytoutput = "<div class='ytholdertitle'><div id='vidid_" + ytcount + "'><div style='display:inline;font-weight:bold;color:black;margin-right:2px;'>You</div><div style='display:inline;font-weight:bold;color:white;background-color:red;margin-right:5px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;padding:0 2px;'>Tube</div><a id='ytxout_" + ytcount + "' href='#'>x</a> - <a target='_blank' href='https://www.youtube.com/watch?v=" + youtubeID + "'>" + data.items[0].snippet.title + "</a></div></div>";
+									ytoutput = "<div class='ytholdertitle'><div id='vidid_" + ytcount + "'><div class='yticon'><span class='fa fa-youtube'></span></div><a id='ytxout_" + ytcount + "' href='#'>x</a> - <a target='_blank' href='https://www.youtube.com/watch?v=" + youtubeID + "'>" + data.items[0].snippet.title + "</a></div></div>";
 									setTimeout(function () {
 										showvid(ytoutput, ytcount, 2);
 									}, 1000);
@@ -836,7 +836,7 @@ function ParseTextMessage3(str, ro) {
 									}
 									bTimeStamphalt = true;
 									fnAppendText("<div class='ytbox' id='ytbox_" + ytcount + "'><div class='ytloading'><img src='" + sFUIDIR + "/images/loading.gif' alt='' /> loading video...</div></div>");
-									ytoutput = "<div class='ytholder'><a class='videolink' target='_blank' href='https://www.youtube.com/watch?v=" + youtubeID + "'><span></span><img src='https://img.youtube.com/vi/" + youtubeID + "/0.jpg' alt='' /></a><div class='ytxout'><a id='ytxout_" + ytcount + "' href='#'>x</a></div><div class='ytvideotitle' id='vidid_" + ytcount + "'>" + text_truncate(data.items[0].snippet.title, 80, '...') + "</div><div class='ytvideodesc'>" + text_truncate(data.items[0].snippet.description, 80, '...') + "</div><div style='font-size:10px;float:right;display:inline;font-weight:bold;color:white;background-color:red;margin-right:5px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;padding:0 2px;'>Tube</div><div style='font-size:10px;float:right;display:inline;font-weight:bold;color:black;margin-right:2px;'>You</div></div>";
+									ytoutput = "<div class='ytholder'><a class='videolink' target='_blank' href='https://www.youtube.com/watch?v=" + youtubeID + "'><span></span><img src='https://img.youtube.com/vi/" + youtubeID + "/0.jpg' alt='' /></a><div class='ytxout'><a id='ytxout_" + ytcount + "' href='#'>x</a></div><div class='yticon'><span class='fa fa-youtube'></span></div><div class='ytvideotitle' id='vidid_" + ytcount + "'>" + text_truncate(data.items[0].snippet.title, 80, '...') + "</div><div class='ytvideodesc'>" + text_truncate(data.items[0].snippet.description, 80, '...') + "</div></div>";
 									setTimeout(function () {
 										showvid(ytoutput, ytcount, 3);
 									}, 1000);
