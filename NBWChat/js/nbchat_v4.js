@@ -1123,6 +1123,12 @@ function ViewMessageConnecting(ip, port) {
 	sendTostatus(m);
 }
 
+function ViewMessageCouldNotConnect(address) {
+	var m = langr.l_couldnotconnect(address);
+	fnAppendText("<span class='msgfrmtparent'><span class='errortype1'>" + m + "</span></span>");
+	sendTostatus('<span class="status-disconnect">' + m + '</span>');
+}
+
 function ViewMessageReconnectImmediate() {
 	sendTostatus('<span class="status-reconnect">' + langr.l_reconnecting_immediate + '</span>');
 }

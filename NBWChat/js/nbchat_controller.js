@@ -265,6 +265,7 @@ var NBChatController;
             IRCSend("USER anon \"anon.com\" \"0.0.0.0\" :anon");
         }
         else {
+            ViewMessageCouldNotConnect(connection_result.address);
             reconnectDelayed();
         }
     };
@@ -318,6 +319,9 @@ var NBChatController;
     //connect
     function Connect(reconnection_immediate) {
         if (reconnection_immediate === void 0) { reconnection_immediate = false; }
+        if (bIsKicked) {
+            bIsKicked = false;
+        }
         if (NBChatConnection.CanConnect()) {
             if (reconnection_immediate && !first_connection) {
                 ViewMessageReconnectImmediate();
@@ -368,6 +372,7 @@ var NBChatController;
     NBChatController.DebugPrint = DebugPrint;
     //disconnect
     function Disconnect(reason) {
+        bIsKicked = true; //to avoid reconnection if instance is in browser memory.
         NBChatConnection.Close(reason);
         //ViewMessageDisconnected(reason);
     }

@@ -383,6 +383,7 @@ namespace NBChatController {
     declare let onWhisper: Function;
 
     declare let ViewMessageConnecting: Function;
+    declare let ViewMessageCouldNotConnect: Function;
     declare let ViewMessageReconnectDelayed: Function;
     declare let ViewMessageReconnectImmediate: Function;
     declare let ViewMessageDisconnected: Function;
@@ -435,6 +436,7 @@ namespace NBChatController {
             IRCSend("NICK " + nick_me);
             IRCSend("USER anon \"anon.com\" \"0.0.0.0\" :anon");
         } else {
+            ViewMessageCouldNotConnect(connection_result.address);
             reconnectDelayed();
         }
     };
@@ -495,6 +497,10 @@ namespace NBChatController {
 
     //connect
     export function Connect(reconnection_immediate: boolean = false): void {
+        if (bIsKicked) {
+            bIsKicked = false;
+        }
+
         if (NBChatConnection.CanConnect()) {
             if (reconnection_immediate && !first_connection) {
                 ViewMessageReconnectImmediate();
@@ -559,6 +565,7 @@ namespace NBChatController {
 
     //disconnect
     export function Disconnect(reason: string): void {
+        bIsKicked = true; //to avoid reconnection if instance is in browser memory.
         NBChatConnection.Close(reason);
         //ViewMessageDisconnected(reason);
     }
