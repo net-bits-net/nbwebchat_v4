@@ -80,7 +80,7 @@ body { font-family:Tahoma;font-size:14px;  }
 #clearstatusbtn:hover { cursor:pointer; }
 /* Chat Area */
 #chatareaholder {z-index:2;position:absolute;right:230px;left:5px;top:117px;bottom:65px;background-color: white;overflow-y: hidden;overflow-x: initial;margin: 0;padding: 0 0 10px 10px;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;border:1px solid #292929;}
-#ChatPane, #StatusPane, #OptionsbPane, #AccessPane, #ModesPane, #PropsPane {z-index:3;position:relative;display:inline-block;white-space: nowrap;word-wrap: break-word;word-break: break-all;overflow-x: scroll;width:100%;max-width:100%;text-align: justify;white-space: normal !important;height:100%;padding:0;margin:0;}
+#ChatPane, #StatusPane, #OptionsbPane, #AccessPane, #ModesPane, #PropsPane {z-index:3;position:relative;display:inline-block;white-space: nowrap;word-wrap: break-word;word-break: break-all;overflow-x: scroll;width:100%;max-width:100%;text-align: justify;white-space: normal !important;height:100%;padding:0 0 10px 0;margin:0;}
 #sendIntputDiv { position:absolute;bottom:30px;left:5px;right:395px; }
 #txSend { height:30px;max-height:30px;width:100%;padding:2px 5px;font-size:16px;border:1px solid #292929;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px; }
 #sendbuttons { position:absolute;bottom:30px;right:230px; }
