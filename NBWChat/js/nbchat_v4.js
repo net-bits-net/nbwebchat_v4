@@ -1793,7 +1793,7 @@ function loadOptions() {
 		if (sendFontstyle != null) { ptxSend.style.fontStyle = sendFontstyle; }
 	}
 	sDspFrmt = COptions.sDspFrmt;
-	if (COptions.fontSize && COptions.fontSize != 'null') {
+	if (COptions.fontSize && COptions.fontSize != null) {
 		pageFontsize = COptions.fontSize;
 		_pcpbody.style.fontSize = COptions.fontSize;
 		_pstatusbody.style.fontSize = COptions.fontSize;
