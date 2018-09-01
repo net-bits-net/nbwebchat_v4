@@ -5,7 +5,8 @@ var isIE = (userAgent.indexOf('msie') !== -1);
 var isFF = (userAgent.indexOf('firefox') !== -1);
 var isWK = (userAgent.indexOf('webkit') !== -1);
 var isIOS_Safari = false;
-
+//Edit Mike 8/31/18 for fontsize
+var timesRunfontsize = 0;
 try {
 	if (platform.os.toString().indexOf("iOS") >= 0 && platform.name == "Safari") {
 		isIOS_Safari = true;
@@ -1775,6 +1776,18 @@ function BuildFmtString(pOptions) {
 	sDspFrmt += (pOptions.italic == true) ? 'i;' : '';
 }
 
+// Edit Mike 8/31/18
+function loadFontsize(COptions,stoptimer,num) {
+	if (COptions.fontSize && COptions.fontSize != null) {
+		pageFontsize = COptions.fontSize;
+		if (_pcpbody != null) {
+			_pcpbody.style.fontSize = COptions.fontSize;
+			_pstatusbody.style.fontSize = COptions.fontSize;
+			clearInterval(stoptimer);
+		}
+	}
+}
+
 function loadOptions() {
 	var COptions = NBChatController.LoadChatOptions();
 	var EOptions = NBChatController.GetExtraOptions();
@@ -1793,12 +1806,13 @@ function loadOptions() {
 		if (sendFontstyle != null) { ptxSend.style.fontStyle = sendFontstyle; }
 	}
 	sDspFrmt = COptions.sDspFrmt;
-	if (COptions.fontSize && COptions.fontSize != null) {
-		pageFontsize = COptions.fontSize;
-		_pcpbody.style.fontSize = COptions.fontSize;
-		_pstatusbody.style.fontSize = COptions.fontSize;
-
-	}
+	// Load fontsize for body and status edit Mike 8/31/18
+	loadFontsize(COptions,loadFsize,0);
+	var loadFsize =	window.setInterval(function(){ 
+		timesRunfontsize += 1;
+		if (timesRunfontsize === 11) { clearInterval(loadFsize); }
+		else { loadFontsize(COptions,loadFsize,timesRunfontsize); }		
+	}, 1000);
 	bCorpText = COptions.corpText;
 	sAwayMsg = (IsUndefinedOrNull(COptions.sAwayMsg)) ? '' : COptions.sAwayMsg;
 	bConfirmOnLeaveOff = COptions.bConfirmOnLeaveOff;
