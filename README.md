@@ -27,6 +27,6 @@ To log raws to the web browser console use '&LOGRAWSTOBC=true' in the webchat's 
 # Working Directories Strucuture
 Git file is not working files structure, following is asp.net/IIS directories and files structure.
 #### Webchat folder:
-![web chat folder](https://github.com/net-bits-net/nbwebchat_v3/raw/master/HelpDocs/images/webchat_folder.png)
+![web chat folder](https://github.com/net-bits-net/nbwebchat_v4/raw/master/HelpDocs/images/webchat_folder.png)
 #### Webchat page view folder: 
-![web chat page view](https://github.com/net-bits-net/nbwebchat_v3/raw/master/HelpDocs/images/webchat_view_file.png)
+![web chat page view](https://github.com/net-bits-net/nbwebchat_v4/raw/master/HelpDocs/images/webchat_view_file.png)
