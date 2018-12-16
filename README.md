@@ -2,7 +2,6 @@
 It is a feature rich open source live webchat client based on ircWx protocol. Completely cross platform (works on Windows, MAC, and Linux and their popular browsers), and secure. Its main features include multi-language (Unicode) support, formatting, user preference settings, whispers (private messaging) in, ignore/unignore, tagging, status icons, profile icons, and many more features.
 
 [//]: # "**Founder/Architect:** Habib Y.H. ( https://github.com/net-bitsDotNet )"
-**Founder/Architect:** Habib Y.H. ( https://github.com/net-bitsDotNet )
 
 **Project Lead:** Mike McAlpin ( https://github.com/err0r007 )
 
