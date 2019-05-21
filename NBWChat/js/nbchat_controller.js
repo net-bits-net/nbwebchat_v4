@@ -75,12 +75,7 @@ var NBChatController;
             if (IsEmptyString(s))
                 return null;
             var result = { ts: null, v: "" };
-            //WARNING: not all items stored are in json format so '{' may not be there.
-            var ts_endpos = -1;
-            var iso_date_regex_pat = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z/;
-            if (iso_date_regex_pat.test(s)) {
-                ts_endpos = s.indexOf("Z");
-            }
+            var ts_endpos = s.indexOf("{") - 1;
             try {
                 if (ts_endpos < 1) {
                     result.v = s;
@@ -265,7 +260,6 @@ var NBChatController;
             IRCSend("USER anon \"anon.com\" \"0.0.0.0\" :anon");
         }
         else {
-            ViewMessageCouldNotConnect(connection_result.address);
             reconnectDelayed();
         }
     };
@@ -319,9 +313,6 @@ var NBChatController;
     //connect
     function Connect(reconnection_immediate) {
         if (reconnection_immediate === void 0) { reconnection_immediate = false; }
-        if (bIsKicked) {
-            bIsKicked = false;
-        }
         if (NBChatConnection.CanConnect()) {
             if (reconnection_immediate && !first_connection) {
                 ViewMessageReconnectImmediate();
@@ -372,7 +363,6 @@ var NBChatController;
     NBChatController.DebugPrint = DebugPrint;
     //disconnect
     function Disconnect(reason) {
-        bIsKicked = true; //to avoid reconnection if instance is in browser memory.
         NBChatConnection.Close(reason);
         //ViewMessageDisconnected(reason);
     }
@@ -389,7 +379,6 @@ var NBChatController;
         var result = NBStorage.GetItem("$GUESTPASS" /* GUESTPASS */);
         if (IsEmptyString(result)) {
             result = NBChatCore.GenerateRandomPassword();
-            SaveGuestuserPass(result);
         }
         return result;
     }
@@ -432,10 +421,6 @@ var NBChatController;
         // ToDo: move out presentation logic from parser.
         WriteToPresenter("<font color='#FF0000'>Error: " + sError + "</font>");
     }
-    function IHaveJoinedTheChannel() {
-        return i_have_joined_channel;
-    }
-    NBChatController.IHaveJoinedTheChannel = IHaveJoinedTheChannel;
     function InviteFlood(bFlooding) {
         bInviteFlood = bFlooding;
     }
@@ -487,8 +472,7 @@ var NBChatController;
             ChannelName = "";
         }
         else {
-            ChannelName = ChannelName.split("\b").join("\\b"); //Javascript replace doesn't replace all. Regex version of replace might work.
-            ChannelName = ChannelName.split(" ").join("\\b");
+            ChannelName = ChannelName.split("\b").join("\\b");
         }
         connectionStarterTicker_ = new NBChatCore.NBTicker("ConnectionStarterTicker");
         connectionStarterTicker_.StopConditionFn = connectionStarterCallbackImpl;
@@ -924,9 +908,7 @@ var NBChatController;
     }
     NBChatController.SaveChatOptions = SaveChatOptions;
     function SaveGuestuserPass(pw) {
-        if (IsEmptyString(AuthTypeCode)) {
-            AuthPass = gsAuthPass = pw;
-        }
+        AuthPass = gsAuthPass = pw;
         var e = NBStorage.SaveItem("$GUESTPASS" /* GUESTPASS */, pw, false);
         if (e != null) {
             //ToDo: handle error.
