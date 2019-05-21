@@ -112,7 +112,6 @@ var NBChatConnection;
             if (pos === -1) {
                 //copy whole
                 b += s;
-                s = "";
             }
             else {
                 if (s[pos + 2] === "\0") {
@@ -184,6 +183,7 @@ var NBChatConnection;
             this.connecting_ = false;
             this.XmlNullChar = "$1a2XMLNULL2a1$"; //this is only related to flash sending messages, it has a problem sending null. Null converts to empty string,
             NBSocketGlobalInstance = this;
+            console.log("NBFlashsocket(constructor)::", NBSocketGlobalInstance);
             NBChatConnection.CanConnect = this.CanConnect.bind(this);
             NBChatConnection.Close = this.Close.bind(this);
             NBChatConnection.Connect = this.Connect.bind(this);
@@ -209,6 +209,7 @@ var NBChatConnection;
             }
         };
         NBFlashsocket.prototype.OnData = function (s) {
+            console.log("(NBFlashsocket.prototype.OnData)::", s);
             //let controller set 'NBChatConnection.OnData', here just check if it is not null.
             if (s === this.XmlNullChar) {
                 s = null;
@@ -320,6 +321,7 @@ var NBChatConnection;
             }
         };
         NBWebsocket.prototype.OnData = function (s) {
+            console.log("(NBWebsocket.prototype.OnData)::", s);
             //let controller set 'NBChatConnection.OnData', here just check if it is not null.
             if (NBChatConnection.OnData !== null) {
                 if (!IsEmptyString(s)) {
