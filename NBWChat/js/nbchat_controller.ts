@@ -692,8 +692,8 @@ namespace NBChatController {
         } else {
             //NOTE: not needed after recent js string escaping update on the website.
             //ChannelName = ChannelName.split("\b").join("\\b"); //Javascript replace doesn't replace all. Regex version of replace might work.
-            //NOTE: this should be handled on the website.
-            //ChannelName = ChannelName.split(" ").join("\\b");
+            //NOTE: Handled here but perhaps should be handled on the website.
+            ChannelName = ChannelName.split(" ").join("\\b");
         }
 
         connectionStarterTicker_ = new NBChatCore.NBTicker("ConnectionStarterTicker");
