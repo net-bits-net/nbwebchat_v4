@@ -10,7 +10,9 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<script type="text/javascript" src="/NBWChat/js/jquery.cookie.js?update=12,25,14"></script>
 <link rel="stylesheet" href="nbchat30.css" type="text/css" />
+<link class="swapts" rel="stylesheet" href="ts.css" type="text/css" />
 <STYLE type=text/css>
 BODY {
 	BACKGROUND-COLOR: transparent;
@@ -107,8 +109,37 @@ $(window).blur(function () {
 $(window).focus(function () {
 	window.parent.suspendTitleCount();
 });
+ $(window).load(function(){
+	checkTsCookie();
+});
+function checkTsCookie() {
+	if($.cookie("ts")) {
+    	var cts = $.cookie("ts");
+		$("link.swapts").attr("href",$.cookie("ts"));
+		$('#tsstatus').text(cts);
+		if (cts == 'ts.css') { window.parent.tsMenuChange('Hide Timestamp'); }
+		else { window.parent.tsMenuChange('Show Timestamp'); }
+	}
+}
+
+function ToggleTSCP() {
+    var tsstatus = $('#tsstatus').text();
+	if ($('#tsstatus').text() == 'ts.css') { 	
+		$("link.swapts").attr("href","nots.css");
+		$('#tsstatus').text('nots.css');
+		window.parent.tsMenuChange('Show Timestamp');
+	}
+	else {
+		$("link.swapts").attr("href","ts.css");
+		$('#tsstatus').text('ts.css');
+		window.parent.tsMenuChange('Hide Timestamp');
+	}
+	$.cookie("ts",$('#tsstatus').text(), {expires: 365, path: '/'});
+	window.parent.ScrollFix();
+}
 </script>
 </HEAD>
 <body id="cpbody">
+	<div style="display:none;" id="tsstatus">ts.css</div>
 </body>
 </html>
