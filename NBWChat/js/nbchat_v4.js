@@ -6092,6 +6092,13 @@ function mifAddAccess(atype) {
 	}
 	closeAllMenus();
 }
-
+// Hide/Show Timestamp Addon
+function ToggleTS() {
+    document.getElementById('ChatPane').contentWindow.ToggleTSCP();
+	closeAllMenus();
+}
+function tsMenuChange(tstext) {
+	$('#mnuCpToggleTS').text(tstext);
+}
 
 //alert(JSON.stringify(WhisperTabs))
