@@ -1234,7 +1234,8 @@ function ProcessInterUserCommand(sCmd) {
 
 					NBChatController.sendToServer("NOTICE " + m_sChan + " " + m_sChan + " " + sBCMsg);
 
-					onNoticeChanBroadcast(ouserMe.nick, m_sChan, sBCMsg);
+                    //There was double post of the message.
+					//onNoticeChanBroadcast(ouserMe.nick, m_sChan, sBCMsg);
 
 				}
 				catch (ex) {
