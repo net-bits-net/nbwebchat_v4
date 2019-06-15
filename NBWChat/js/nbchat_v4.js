@@ -1218,8 +1218,7 @@ function ProcessInterUserCommand(sCmd) {
 					NBChatController.SaveGuestuserPass(strNewGuestPass);
 					strGuestPass = NBChatController.GetGuestuserPass();
 					fnAppendText("<span class='msgfrmtparent'><span class='msgfrmt2'>" + langr.l_guestpasswordstored + " " + strGuestPass + "</span></span>");
-				}
-				else {
+				} else {
 					fnAppendText("<span class='msgfrmtparent'><span class='errortype1'>" + langr.l_errorguestpass + "</span></span>");
 				}
 			}
@@ -1234,15 +1233,10 @@ function ProcessInterUserCommand(sCmd) {
 
 					NBChatController.sendToServer("NOTICE " + m_sChan + " " + m_sChan + " " + sBCMsg);
 
-                    //There was double post of the message.
-					//onNoticeChanBroadcast(ouserMe.nick, m_sChan, sBCMsg);
-
-				}
-				catch (ex) {
+				} catch (ex) {
 					debugOutput(ex, "Commandline Function");
 				}
-			}
-			else {
+			} else {
 				fnAppendText("<span class='msgfrmtparent'><span class='errortype1'>" + langr.l_errorsolevel + "</span></span>");
 			}
 
