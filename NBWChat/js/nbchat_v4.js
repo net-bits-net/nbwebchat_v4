@@ -1225,9 +1225,10 @@ function ProcessInterUserCommand(sCmd) {
 			}
 			break;
 
+        case "CH.BROADCAST":
 		case "ROOMBROADCAST":
 
-			if (ouserMe.ilevel >= IsOwner) {
+			if (ouserMe.ilevel >= IsHost) {
 				try {
 					var sBCMsg = sCmd.split(" ").slice(1).join(" ");
 
@@ -1488,7 +1489,7 @@ function ProcessInterUserCommand(sCmd) {
 }
 
 function listCommands() {
-	fnAppendText("<span class='msgfrmtparent'><span class='msgfrmt2'>" + langr.l_commandlinessupported(sanitizeHtml("FixScroll, StopAutoScrolling, StartAutoScrolling, Connect, Disconnect, Hop, Clear, Away [<Away Message>], Unaway, Nick <Nickname>, DebugPrint, ShowGuestpassStored, SaveGuestpass <Guest Password>, Kick <kick message>, Ban15m <ban message>, Ban1h <ban message>, Ban24h <ban message>, Guestban, Guestunban, Guestmircban, Guestmircunban, INVITE <username>, TOPIC <topic message>, WELCOME <welcome message>, +/-PROTECTIONMODE, +/-LogRawsToBC")) + "</span></span>");
+	fnAppendText("<span class='msgfrmtparent'><span class='msgfrmt2'>" + langr.l_commandlinessupported(sanitizeHtml("FixScroll, StopAutoScrolling, StartAutoScrolling, Connect, Disconnect, Hop, Clear, Away [<Away Message>], Unaway, Nick <Nickname>, DebugPrint, ShowGuestpassStored, SaveGuestpass <Guest Password>, Kick <kick message>, Ban15m <ban message>, Ban1h <ban message>, Ban24h <ban message>, Guestban, Guestunban, Guestmircban, Guestmircunban, INVITE <username>, CH.BROADCAST <broadcast message>, TOPIC <topic message>, WELCOME <welcome message>, +/-PROTECTIONMODE, +/-LogRawsToBC")) + "</span></span>");
 	closeAllMenus();
 }
 function updateAwayButton(away) {
