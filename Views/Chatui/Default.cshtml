@@ -970,7 +970,7 @@
 		<!------------------------ Footer ------------------------->
 		<footer>
 			<div>
-				Powered By: Net-Bits.Net Webchat 4.0 (<a href="@Url.Content(string.Format("~/c/?cn={0}&useflash=1",Model.STAG_CHANNELNAME))">Connect With Flash</a>) &copy; 2006 - 2017 All rights Reserved. -
+				Powered By: Net-Bits.Net Webchat 4.0 (<a href="@Url.Content(string.Format("~/c/?cn={0}&useflash=1",Model.STAG_CHANNELNAME))">Connect With Flash</a>) &copy; 2006 - <span id="cyear"></span> All rights Reserved. -
 			<a href="@Url.Content("~/Privacy-Policy")">Privacy</a> - <a href="@Url.Content("~/ToU")">Terms of Use</a>
 			</div>
 		</footer>
@@ -998,7 +998,7 @@
 	};
 	$(document).ready(function(){
 		fnInitialize();
-
+ 		$('#cyear').text(new Date().getFullYear());
 		$('.styleswitch').on( "click", function() {
 			var cssc = $(this).attr('rel');
 			var csscb = "@Model.STAG_NBWCHATTEMPLATEDIR/themes/" + cssc;
