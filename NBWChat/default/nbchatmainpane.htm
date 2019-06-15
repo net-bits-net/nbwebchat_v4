@@ -110,33 +110,51 @@ $(window).focus(function () {
 	window.parent.suspendTitleCount();
 });
  $(window).load(function(){
-	checkTsCookie();
+	checkTs();
 });
-function checkTsCookie() {
-	if($.cookie("ts")) {
+    function checkTs() {
+        var time_stamp_hidden = window.parent.NBChatController.TimestampHidden();
+        var file_name = "ts.css"; //default
+        var menu_item_text = "Hide Timestamp";
+
+        if (time_stamp_hidden === true) {
+            file_name = "nots.css";
+            menu_item_text = "Show Timestamp";
+        }
+
+        $("link.swapts").attr("href", file_name);
+        $('#tsstatus').text(file_name);
+        window.parent.tsMenuChange(menu_item_text);
+
+	/*if($.cookie("ts")) {
     	var cts = $.cookie("ts");
 		$("link.swapts").attr("href",$.cookie("ts"));
 		$('#tsstatus').text(cts);
 		if (cts == 'ts.css') { window.parent.tsMenuChange('Hide Timestamp'); }
 		else { window.parent.tsMenuChange('Show Timestamp'); }
-	}
-}
+	}*/
 
-function ToggleTSCP() {
-    var tsstatus = $('#tsstatus').text();
-	if ($('#tsstatus').text() == 'ts.css') { 	
-		$("link.swapts").attr("href","nots.css");
-		$('#tsstatus').text('nots.css');
-		window.parent.tsMenuChange('Show Timestamp');
-	}
-	else {
-		$("link.swapts").attr("href","ts.css");
-		$('#tsstatus').text('ts.css');
-		window.parent.tsMenuChange('Hide Timestamp');
-	}
-	$.cookie("ts",$('#tsstatus').text(), {expires: 365, path: '/'});
-	window.parent.ScrollFix();
-}
+        
+    }
+
+    function ToggleTSCP(time_stamp_visible) {
+        var time_stamp_hidden = false;
+        var tsstatus = $('#tsstatus').text();
+	    if ($('#tsstatus').text() == 'ts.css') { 	
+		    $("link.swapts").attr("href","nots.css");
+		    $('#tsstatus').text('nots.css');
+            window.parent.tsMenuChange('Show Timestamp');
+            time_stamp_hidden = true;
+	    } else {
+		    $("link.swapts").attr("href","ts.css");
+		    $('#tsstatus').text('ts.css');
+            window.parent.tsMenuChange('Hide Timestamp');
+            time_stamp_hidden = false;
+	    }
+	    //$.cookie("ts",$('#tsstatus').text(), {expires: 365, path: '/'});
+        window.parent.NBChatController.SetTimeStampFlag(time_stamp_hidden);
+	    window.parent.ScrollFix();
+    }
 </script>
 </HEAD>
 <body id="cpbody">

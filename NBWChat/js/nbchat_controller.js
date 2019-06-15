@@ -192,12 +192,23 @@ var NBChatController;
             return options;
         }
         NBStorage.GetChatOptions = GetChatOptions;
+        function TimestampHidden() {
+            var time_stamp_hidden = false;
+            var time_stamp_flag_raw = getLatestVersionOfItem("$CPANETIMESTAMPFLAG" /* CPANETIMESTAMPFLAG */);
+            time_stamp_hidden = JSON.parse(time_stamp_flag_raw);
+            return time_stamp_hidden;
+        }
+        NBStorage.TimestampHidden = TimestampHidden;
         function SaveChatOptions(options) {
             //ToDo: test with missing fields/properties.
             NBChatCore.FillMissingFields(chat_options_default, options);
             setLatestItemAndUpdateBothStorages("$CHATOPTIONS" /* CHATOPTIONS */, JSON.stringify(options), true);
         }
         NBStorage.SaveChatOptions = SaveChatOptions;
+        function SetTimeStampFlag(time_stamp_hidden) {
+            setLatestItemAndUpdateBothStorages("$CPANETIMESTAMPFLAG" /* CPANETIMESTAMPFLAG */, JSON.stringify(time_stamp_hidden), true);
+        }
+        NBStorage.SetTimeStampFlag = SetTimeStampFlag;
         function SetExtraOptions(extra_options) {
             setLatestItemAndUpdateBothStorages("$EXTRAOPTIONS" /* EXTRAOPTIONS */, JSON.stringify(extra_options), true);
         }
@@ -952,6 +963,10 @@ var NBChatController;
         }
     }
     NBChatController.SaveSingleOption = SaveSingleOption;
+    function SetTimeStampFlag(time_stamp_hidden) {
+        NBStorage.SetTimeStampFlag(time_stamp_hidden);
+    }
+    NBChatController.SetTimeStampFlag = SetTimeStampFlag;
     function sendAuthInfo() {
         if (AuthTypeCode === "T") {
             IRCSend("UTICKET " + AuthPass);
@@ -1004,6 +1019,10 @@ var NBChatController;
         nick_me = nick;
     }
     NBChatController.SetNick = SetNick;
+    function TimestampHidden() {
+        return NBStorage.TimestampHidden();
+    }
+    NBChatController.TimestampHidden = TimestampHidden;
     function unhandledCommand(ircmsg) {
         WriteToPresenter("Unhandled Command:" + ircmsg);
     }

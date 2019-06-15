@@ -42,9 +42,11 @@ namespace NBChatController {
     "use strict";
 
     const enum NBStorageItemsKeys {
-        GUESTPASS = "$GUESTPASS", //$ to differtiate predefined keys.
+        //$ to differtiate predefined keys.
         CHATOPTIONS = "$CHATOPTIONS",
+        CPANETIMESTAMPFLAG = "$CPANETIMESTAMPFLAG",
         EXTRAOPTIONS = "$EXTRAOPTIONS",
+        GUESTPASS = "$GUESTPASS",
     }
 
     interface IEventShowNotifys {
@@ -291,10 +293,24 @@ namespace NBChatController {
             return options;
         }
 
+        export function TimestampHidden(): boolean {
+            let time_stamp_hidden: boolean = false;
+
+            const time_stamp_flag_raw = getLatestVersionOfItem(NBStorageItemsKeys.CPANETIMESTAMPFLAG);
+
+            time_stamp_hidden = JSON.parse(time_stamp_flag_raw);
+
+            return time_stamp_hidden;
+        }
+
         export function SaveChatOptions(options: IChatOptions): void {
             //ToDo: test with missing fields/properties.
             NBChatCore.FillMissingFields(chat_options_default, options);
             setLatestItemAndUpdateBothStorages(NBStorageItemsKeys.CHATOPTIONS, JSON.stringify(options), true);
+        }
+
+        export function SetTimeStampFlag(time_stamp_hidden: boolean): void {
+            setLatestItemAndUpdateBothStorages(NBStorageItemsKeys.CPANETIMESTAMPFLAG, JSON.stringify(time_stamp_hidden), true);
         }
 
         export function SetExtraOptions(extra_options: object): void {
@@ -1196,6 +1212,10 @@ namespace NBChatController {
         }
     }
 
+    export function SetTimeStampFlag(time_stamp_hidden: boolean): void {
+        NBStorage.SetTimeStampFlag(time_stamp_hidden);
+    }
+
     function sendAuthInfo(): void {
 
         if (AuthTypeCode === "T") {
@@ -1243,6 +1263,10 @@ namespace NBChatController {
 
     export function SetNick(nick: string): void {
         nick_me = nick;
+    }
+
+    export function TimestampHidden(): boolean {
+        return NBStorage.TimestampHidden();
     }
 
     function unhandledCommand(ircmsg: string): void {
