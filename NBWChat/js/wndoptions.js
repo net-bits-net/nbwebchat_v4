@@ -305,7 +305,12 @@ function fnSave() {
 	//window.parent.$('#optionsContainer').fadeOut();
 	//window.parent.$('#optionsPane').attr('src', sFUIDIR + '/iframes/blank.htm');
 }
-
+function fnSaveClose() {
+	window.parent.saveOptions(oOPtions);
+	window.parent.resetToChatPane();	
+	window.parent.closeTopTab('options');
+	window.parent.resetToChatPane();
+}
 function fnCancel() {
 	window.parent.closeTopTab('options');
 	window.parent.resetToChatPane();
