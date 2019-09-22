@@ -21,7 +21,7 @@
 <body style="background:white !important;" onload="fnOnLoad();">	
 	<div class="container-fluid" style="padding-top:10px;padding-bottom:10px;background-color:white;">
 		<div style="position:absolute;top:10px;right:20px;z-index:99;">
-			<input style="" class="btn btn-sm btn-danger" type="button" value="Save &amp; Close" onclick="fnSaveClose();" />
+			<input style="" class="btn btn-sm btn-danger" type="button" value="X" onclick="fnCancel();" />
 		</div>
 		<div class="panel panel-default" style="margin-top:40px;">
 			<div class="panel-heading">My Message Format</div>
@@ -195,10 +195,13 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-6">
-				<input class="btn btn-sm btn-success btn-block" type="button" value="Save" onclick="fnSave();" />
+			<div class="col-xs-4">
+				<input class="btn btn-sm btn-success btn-block" type="button" value="Save &amp; Close" onclick="fnSaveClose();" />
 			</div>
-			<div class="col-xs-6">
+			<div class="col-xs-4">
+				<input class="btn btn-sm btn-success btn-block" type="button" value="Save Only" onclick="fnSave();" />
+			</div>
+			<div class="col-xs-4">
 				<input class="btn btn-sm btn-danger btn-block" type="button" value="Cancel" onclick="fnCancel();" />
 			</div>
 		</div>
