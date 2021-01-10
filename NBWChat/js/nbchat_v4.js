@@ -1,4 +1,4 @@
-// Youtube api key
+// Youtube api key sign up for your own key
 var youtubeApiKey = 'AIzaSyBLpxMHYO6E9Y6o2c17IRgURVatbNQXRm0';
 // JScript source code
 var userAgent = navigator.userAgent.toLowerCase();
