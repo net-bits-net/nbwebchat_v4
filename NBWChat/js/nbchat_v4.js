@@ -1,4 +1,6 @@
-ï»¿// JScript source code
+// Youtube api key
+var youtubeApiKey = 'AIzaSyBLpxMHYO6E9Y6o2c17IRgURVatbNQXRm0';
+// JScript source code
 var userAgent = navigator.userAgent.toLowerCase();
 //alert(userAgent);
 var isIE = (userAgent.indexOf('msie') !== -1);
@@ -754,17 +756,19 @@ function ParseTextMessage3(str, ro, wnd) {
 						bbcoderet = reBBCODES_SUB.exec(regret[0]);
 
 						if (bbcoderet != null) {
-							if (bbcoderet[0].indexOf("ff:") == 0) {
-								strsubtmp += 'font-family:' + bbcoderet[0].substr(3);
-							} else if (bbcoderet[0].indexOf("bgco:") == 0) {
-								strsubtmp += 'background-color:' + FixHexColorIfHexCode(bbcoderet[0].substr(5));
-							} else if (bbcoderet[0].indexOf("co:") == 0) {
-								strsubtmp += 'color:' + FixHexColorIfHexCode(bbcoderet[0].substr(3));
-							} else if (bbcoderet[0].indexOf("b;") == 0) {
+							//Update(10-Jan-2020): Fixed bbcode to remove hex/url code injection. -- Mike
+							cleanbbcode = bbcoderet[0].replace(/\&\#/g, "").replace(/url/gi, "");
+							if (cleanbbcode.indexOf("ff:") == 0) {
+								strsubtmp += 'font-family:' + cleanbbcode.substr(3);
+							} else if (cleanbbcode.indexOf("bgco:") == 0) {
+								strsubtmp += 'background-color:' + FixHexColorIfHexCode(cleanbbcode.substr(5));
+							} else if (cleanbbcode.indexOf("co:") == 0) {
+								strsubtmp += 'color:' + FixHexColorIfHexCode(cleanbbcode.substr(3));
+							} else if (cleanbbcode.indexOf("b;") == 0) {
 								strsubtmp += 'font-weight:bold;';
-							} else if (bbcoderet[0].indexOf("i;") == 0) {
+							} else if (cleanbbcode.indexOf("i;") == 0) {
 								strsubtmp += 'font-style:italic;';
-							} else if (bbcoderet[0].indexOf("u;") == 0) {
+							} else if (cleanbbcode.indexOf("u;") == 0) {
 								strsubtmp += 'text-decoration:underline;';
 							} else {
 								strsubtmp += 'undefined;';
@@ -803,7 +807,7 @@ function ParseTextMessage3(str, ro, wnd) {
 								ytcount++;
 								strtmp += str.slice(pos1, regret.index) + "<a href='" + regret[0] + "' target='_blank'>" + regret[0] + "</a>";
 								$.getJSON("https://www.googleapis.com/youtube/v3/videos", {
-									key: "AIzaSyDAUcNMLQGLCC57fr6cchMAUUlqUSNYiQg",
+									key: youtubeApiKey,
 									part: "snippet,statistics",
 									id: youtubeID
 								}, function (data) {
@@ -817,7 +821,7 @@ function ParseTextMessage3(str, ro, wnd) {
 									else {
 										$("#WhisperPane_" + wnd).contents().find("#whisperbody").append("<div class='ytbox' id='ytbox_" + ytcount + "'><div class='ytloading'><img src='" + sFUIDIR + "/images/loading.gif' alt='' /> loading title...</div></div>");
 									}
-									ytoutput = "<div class='ytholdertitle'><div id='vidid_" + ytcount + "'><div class='yticon'><span class='fa fa-youtube'></span></div><a id='ytxout_" + ytcount + "' href='#'>x</a> - <a target='_blank' href='https://www.youtube.com/watch?v=" + youtubeID + "'>" + data.items[0].snippet.title + "</a></div></div>";
+									ytoutput = "<div class='ytholdertitle'><div id='vidid_" + ytcount + "'><div class='yticonb'><img src='" + sFUIDIR + "/images/youtubeiconfull.png' alt='' /></div> <a id='ytxout_" + ytcount + "' href='#'>x</a> - <a target='_blank' href='https://www.youtube.com/watch?v=" + youtubeID + "'>" + data.items[0].snippet.title + "</a></div></div>";
 									setTimeout(function () {
 										showvid(ytoutput, ytcount, 2, wnd);
 									}, 1000);
@@ -833,7 +837,7 @@ function ParseTextMessage3(str, ro, wnd) {
 								ytcount++;
 								strtmp += str.slice(pos1, regret.index) + "<a href='" + regret[0] + "' target='_blank'>" + regret[0] + "</a>";
 								$.getJSON("https://www.googleapis.com/youtube/v3/videos", {
-									key: "AIzaSyDAUcNMLQGLCC57fr6cchMAUUlqUSNYiQg",
+									key: youtubeApiKey,
 									part: "snippet,statistics",
 									id: youtubeID
 								}, function (data) {
@@ -847,7 +851,7 @@ function ParseTextMessage3(str, ro, wnd) {
 									else {
 										$("#WhisperPane_" + wnd).contents().find("#whisperbody").append("<div class='ytbox' id='ytbox_" + ytcount + "'><div class='ytloading'><img src='" + sFUIDIR + "/images/loading.gif' alt='' /> loading video...</div></div>");
 									}
-									ytoutput = "<div class='ytholder'><a class='videolink' target='_blank' href='https://www.youtube.com/watch?v=" + youtubeID + "'><span></span><img src='https://img.youtube.com/vi/" + youtubeID + "/0.jpg' alt='' /></a><div class='ytxout'><a id='ytxout_" + ytcount + "' href='#'>x</a></div><div class='yticon'><span class='fa fa-youtube'></span></div><div class='ytvideotitle' id='vidid_" + ytcount + "'>" + text_truncate(data.items[0].snippet.title, 80, '...') + "</div><div class='ytvideodesc'>" + text_truncate(data.items[0].snippet.description, 80, '...') + "</div></div>";
+									ytoutput = "<div class='ytholder'><a class='videolink' target='_blank' href='https://www.youtube.com/watch?v=" + youtubeID + "'><span></span><img class='ytthumbnail' src='https://img.youtube.com/vi/" + youtubeID + "/0.jpg' alt='' /></a><div class='ytxout'><a id='ytxout_" + ytcount + "' href='#'>x</a></div><div class='yticon'><img src='" + sFUIDIR + "/images/youtubeiconfull.png' alt='' /></div><div class='ytvideotitle' id='vidid_" + ytcount + "'>" + text_truncate(data.items[0].snippet.title, 80, '...') + "</div><div class='ytvideodesc'>" + text_truncate(data.items[0].snippet.description, 80, '...') + "</div></div>";
 									setTimeout(function () {
 										showvid(ytoutput, ytcount, 3, wnd);
 									}, 1000);
@@ -898,7 +902,7 @@ function showvid(content, id, vtype, wnd) {
 	else {
 		$("#WhisperPane_" + wnd).contents().find("#whisperbody").find("#ytbox_" + id).html(content);
 		$("#WhisperPane_" + wnd)[0].contentWindow.updateScroll();
-	}	
+	}
 }
 function IsMyDispFormatGood() {
 	if (bTextFrmtOff == true) return false;
@@ -1820,10 +1824,10 @@ function loadOptions() {
 	sDspFrmt = COptions.sDspFrmt;
 	// Load fontsize for body and status edit Mike 8/31/18
 	loadFontsize(COptions,loadFsize,0);
-	var loadFsize =	window.setInterval(function(){ 
+	var loadFsize =	window.setInterval(function(){
 		timesRunfontsize += 1;
 		if (timesRunfontsize === 11) { clearInterval(loadFsize); }
-		else { loadFontsize(COptions,loadFsize,timesRunfontsize); }		
+		else { loadFontsize(COptions,loadFsize,timesRunfontsize); }
 	}, 1000);
 	bCorpText = COptions.corpText;
 	sAwayMsg = (IsUndefinedOrNull(COptions.sAwayMsg)) ? '' : COptions.sAwayMsg;
@@ -2412,10 +2416,11 @@ function onNoticePrivate(sNickFrom, sChan, sMessage) {
 		}
 		else {
 			//Update(11-Aug-2016): protection against time reply flooding. --Mike
+			//Update(10-Jan-2020): Fixed time reply not using parsemessage2. -- Mike
 			if (!waittimereply) {
 				var sRpl = sMessage.substr(sMessage.indexOf("\2", 1) + 1);
 				sRpl = sRpl.substring(0, 80);
-				fnAppendText("<span class='msgfrmtparent'><span class='msgfrmt4'>" + cmdIndChar + " " + getUserLabel(sNickFrom) + "'s " + langr.l_localtime + " " + sRpl + "</span></span>");
+				fnAppendText("<span class='msgfrmtparent'><span class='msgfrmt4'>" + cmdIndChar + " " + getUserLabel(sNickFrom) + "'s " + langr.l_localtime + " " + ParseTextMessage2(sRpl, false) + "</span></span>");
 				waittimereply = true;
 				setTimeout(function () {
 					waittimereply = false;
@@ -5344,7 +5349,7 @@ function WhisperTabManager(sNickFrom, sChan, sNickTo, sMessage, type) {
 	//ToDo: Open whisper window for staff without max limit.
 	if (ret == -1 && WhisperTabs.length <= nMaxWhispTabs) {
 		if (type == WHISP_OUT) {
-		
+
 			//create new window
 			var tabWhisp = preCreateWhispTab(olvUsers.getItemByName(sNickFrom).pUser, type);
 			if (tabWhisp.tabisloaded == false) tabWhisp.tmpmessages += FormatFromByNick(sNickFrom) + ParseTextMessage(sMessage);
