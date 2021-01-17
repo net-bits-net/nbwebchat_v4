@@ -672,8 +672,8 @@ function ParseTextMessage3(str, ro, wnd) {
 
 					//use separate style tag since fg or bg can be reset independently
 
-					if (!IsUndefinedOrNull(fg)) {
-
+					//Edit Mike 1/16/21 fix for highlighted/bg text duplicating.
+					if (!IsUndefinedOrNull(fg) && IsUndefinedOrNull(bg)) {
 						if (fg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="color:' + fg + ';">';
 							addTagNeedClosing("</fg>");
@@ -681,19 +681,29 @@ function ParseTextMessage3(str, ro, wnd) {
 							var ct = remTagNeedClosing("</fg>");
 							if (ct !== null) strtmp += str.slice(pos1, regret.index) + ct;
 						}
-
 					}
-
-					if (!IsUndefinedOrNull(bg)) {
-
+					if (!IsUndefinedOrNull(bg) && IsUndefinedOrNull(fg)) {
 						if (bg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="background-color:' + bg + ';">';
-							addTagNeedClosing("</bg>");
+								addTagNeedClosing("</bg>");
 						} else {
 							var ct = remTagNeedClosing("</bg>");
-							if (ct !== null) strtmp += str.slice(pos1, regret.index) + ct;
-						}
+							if (ct !== null) { strtmp += str.slice(pos1, regret.index) + ct; }
 
+						}
+					}
+					if (!IsUndefinedOrNull(bg) && !IsUndefinedOrNull(fg)) {
+						if (bg.length > 0 && fg.length > 0) {
+							strtmp += str.slice(pos1, regret.index) + '<span style="color:' + fg + ';"><span style="background-color:' + bg + ';">';
+							addTagNeedClosing("</fg>");
+							addTagNeedClosing("</bg>");
+						}
+						else {
+							var ct = remTagNeedClosing("</fg>");
+							if (ct !== null) { strtmp += str.slice(pos1, regret.index) + ct; }
+							var ctt = remTagNeedClosing("</bg>");
+							if (ctt !== null) { strtmp += str.slice(pos1, regret.index) + ctt; }
+						}
 					}
 				}
 
