@@ -2413,7 +2413,7 @@ function onNoticePrivate(sNickFrom, sChan, sMessage) {
 		if (sMessage.charAt(0) != "\2") {
 			//Update(11-Aug-2016): parsetext2 to remove emotes. --Mike
 			if (bUnoticeOn == false) {
-				fnAppendText("<div style='padding-left:30px;'><span class='msgfrmt5'><span class='titlenoticepr'>" + ((aaTagged[sNickFrom] == true) ? ("<span class='cpnicktaggeduser'>" + getUserLabel(sNickFrom) + "</span>") : getUserLabel(sNickFrom)) + " (" + langr.l_notice + "):</span> <span class='msgnoticepr'>" + ParseTextMessage2(sMessage, false) + "</span></span></div>");
+				fnAppendText("<span class='msgfrmtparent'><span class='msgfrmt5'><span class='titlenoticepr'>" + ((aaTagged[sNickFrom] == true) ? ("<span class='cpnicktaggeduser'>" + getUserLabel(sNickFrom) + "</span>") : getUserLabel(sNickFrom)) + " (" + langr.l_notice + "):</span> <span class='msgnoticepr'>" + ParseTextMessage2(sMessage, false) + "</span></span></span>");
 			}
 			else {
 				if (!waitnotice) {
