@@ -768,7 +768,7 @@ function ParseTextMessage3(str, ro, wnd) {
 
 						if (bbcoderet != null) {
 							//Update(10-Jan-2020): Fixed bbcode to remove hex/url code injection. -- Mike
-							cleanbbcode = bbcoderet[0].replace(/\&\#/g, "").replace(/url/gi, "");
+							cleanbbcode = safetext(bbcoderet[0]);
 							if (cleanbbcode.indexOf("ff:") == 0) {
 								strsubtmp += 'font-family:' + cleanbbcode.substr(3);
 							} else if (cleanbbcode.indexOf("bgco:") == 0) {
@@ -6129,5 +6129,18 @@ function ToggleTS() {
 function tsMenuChange(tstext) {
 	$('#mnuCpToggleTS').text(tstext);
 }
-
+var safetext = function(text){
+	var table = {
+		'<': 'lt',
+		'>': 'gt',
+		'"': 'quot',
+		'\'': 'apos',
+		'&': 'amp',
+		'\r': '#10',
+		'\n': '#13'
+	};
+	return text.toString().replace(/[<>"'\r\n&]/g, function(chr){
+		return '&' + table[chr] + ';';
+	});
+};
 //alert(JSON.stringify(WhisperTabs))
