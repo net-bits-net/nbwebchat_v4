@@ -869,10 +869,10 @@ function ParseTextMessage3(str, ro, wnd) {
 								});
 							}
 						} else {
-							strtmp += str.slice(pos1, regret.index) + "<a href='" + regret[0] + "' target='_blank'>" + regret[0] + "</a>";
+							strtmp += str.slice(pos1, regret.index) + "<a href='" + safeurl(regret[0]) + "' target='_blank'>" + regret[0] + "</a>";
 						}
 					} else {
-						strtmp += str.slice(pos1, regret.index) + "<a href='" + regret[0] + "' target='_blank'>" + regret[0] + "</a>";
+						strtmp += str.slice(pos1, regret.index) + "<a href='" + safeurl(regret[0]) + "' target='_blank'>" + regret[0] + "</a>";
 					}
 
 				} else {
@@ -6141,6 +6141,15 @@ var safetext = function(text){
 	};
 	return text.toString().replace(/[<>"'\r\n&]/g, function(chr){
 		return '&' + table[chr] + ';';
+	});
+};
+var safeurl = function(text){
+	var table = {
+		'"': '',
+		'\'': ''
+	};
+	return text.toString().replace(/[<>"'\r\n&]/g, function(chr){
+		return table[chr];
 	});
 };
 //alert(JSON.stringify(WhisperTabs))
