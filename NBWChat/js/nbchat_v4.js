@@ -3218,7 +3218,7 @@ function onInvite(sNickFrom, sNickTo, sChanFor) {
 		if (isHtmlTag(sChanFor) == false) {
 			sChanForR = FixChannelEncoding(sChanFor);
 			var sURI = sSiteURL + "c/?cn=" + DecodeRoomName(sChanForR);
-			fnAppendText("<span class='msgfrmtparent'><span class='invite'>" + cmdIndChar + " " + getUserLabel(sNickFrom) + " " + langr.l_hasinvitedyou + " <u><a href='" + sURI + "' target='_blank'>" + DecodeRoomName(sChanForR) + "</a></u>.</span></span>");
+			fnAppendText("<span class='msgfrmtparent'><span class='invite'>" + cmdIndChar + " " + getUserLabel(sNickFrom) + " " + langr.l_hasinvitedyou + " <u><a href='" + safeurl(sURI) + "' target='_blank'>" + DecodeRoomName(sChanForR) + "</a></u>.</span></span>");
 		}
 		else {
 			fnAppendText("<span class='msgfrmtparent'><span class='invite'><i>" + cmdIndChar + " " + langr.l_blockedinvite(getUserLabel(sNickFrom)) + "</i></span></span>");
@@ -6145,8 +6145,8 @@ var safetext = function(text){
 };
 var safeurl = function(text){
 	var table = {
-		'"': '',
-		'\'': ''
+		'"': '%22',
+		'\'': '%27'
 	};
 	return text.toString().replace(/[<>"'\r\n&]/g, function(chr){
 		return table[chr];
