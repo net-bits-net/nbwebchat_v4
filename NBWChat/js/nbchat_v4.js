@@ -673,7 +673,7 @@ function ParseTextMessage3(str, ro, wnd) {
 					//use separate style tag since fg or bg can be reset independently
 
 					//Edit Mike 1/16/21 fix for highlighted/bg text duplicating.
-					if (!IsUndefinedOrNull(fg) && IsUndefinedOrNull(bg)) {
+					if (fg !== null && bg === null) {
 						if (fg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="color:' + fg + ';">';
 							addTagNeedClosing("</fg>");
@@ -682,7 +682,7 @@ function ParseTextMessage3(str, ro, wnd) {
 							if (ct !== null) strtmp += str.slice(pos1, regret.index) + ct;
 						}
 					}
-					if (!IsUndefinedOrNull(bg) && IsUndefinedOrNull(fg)) {
+					if (bg !== null && fg === null) {
 						if (bg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="background-color:' + bg + ';">';
 								addTagNeedClosing("</bg>");
@@ -692,7 +692,7 @@ function ParseTextMessage3(str, ro, wnd) {
 
 						}
 					}
-					if (!IsUndefinedOrNull(bg) && !IsUndefinedOrNull(fg)) {
+					if (bg !== null && fg !== null) {
 						if (bg.length > 0 && fg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="color:' + fg + ';"><span style="background-color:' + bg + ';">';
 							addTagNeedClosing("</fg>");
