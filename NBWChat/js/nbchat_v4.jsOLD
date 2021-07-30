@@ -130,11 +130,6 @@ var vstatus = false;
 var vcount = 0;
 var vtitle = document.title;
 var vinterval_id = '';
-var bBGColor = '#FFFFFF';
-var bPiconsOn = false;
-var bAltColorOn = false;
-//Update July 30 2021 LockScroll Mike
-var bLockScroll = false;
 $(window).blur(function () {
 	startTitleCount();
 });
@@ -676,8 +671,9 @@ function ParseTextMessage3(str, ro, wnd) {
 					rp = result_color[2];
 
 					//use separate style tag since fg or bg can be reset independently
-                    //Edit Mike 1/16/21 fix for highlighted/bg text duplicating.
-					if (fg !== null && bg === null) {
+
+					//Edit Mike 1/16/21 fix for highlighted/bg text duplicating.
+					if (!IsUndefinedOrNull(fg) && IsUndefinedOrNull(bg)) {
 						if (fg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="color:' + fg + ';">';
 							addTagNeedClosing("</fg>");
@@ -686,7 +682,7 @@ function ParseTextMessage3(str, ro, wnd) {
 							if (ct !== null) strtmp += str.slice(pos1, regret.index) + ct;
 						}
 					}
-					if (bg !== null && fg === null) {
+					if (!IsUndefinedOrNull(bg) && IsUndefinedOrNull(fg)) {
 						if (bg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="background-color:' + bg + ';">';
 								addTagNeedClosing("</bg>");
@@ -696,7 +692,7 @@ function ParseTextMessage3(str, ro, wnd) {
 											
 						}
 					}
-					if (bg !== null && fg !== null) {
+					if (!IsUndefinedOrNull(bg) && !IsUndefinedOrNull(fg)) {
 						if (bg.length > 0 && fg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="color:' + fg + ';"><span style="background-color:' + bg + ';">';
 							addTagNeedClosing("</fg>");
@@ -1004,12 +1000,8 @@ function fnAppendText(str) {
 	//}
 	//MChatPaneLines++;
 	//if (MChatPaneLines > (MChatPaneMaxLines - 75)) storeText('<div class="linebreakindenter">' + str + '</div>');
-    // Mike Update 03-06-21 Moved max line remove top lines to before the autocpscroll
-    MChatPaneLines++;
-	if (MChatPaneLines > MChatPaneMaxLines) {
-		//storeText('<div class="linebreakindenter">' + str + '</div>');
-		removeTopLines();
-	}
+
+
 	// *** New code.
 	//ToDo: mess left by legacy code, fix it.
 	var el_append = $('<div class="linebreakindenter">' + str + '</div>');
@@ -1021,6 +1013,12 @@ function fnAppendText(str) {
 	else {
 		if (bSkipCPScrollCall == false) { autoCPScroll(pChatPane.contentDocument.body); }
 	}
+	MChatPaneLines++;
+	if (MChatPaneLines > MChatPaneMaxLines) {
+		//storeText('<div class="linebreakindenter">' + str + '</div>');
+		removeTopLines();
+	}
+
 	fnNewMessageVisualIndicator();
 }
 function fnAppendText2(str) {
@@ -1821,7 +1819,7 @@ function loadFontsize(COptions,stoptimer,num) {
 function loadOptions() {
 	var COptions = NBChatController.LoadChatOptions();
 	var EOptions = NBChatController.GetExtraOptions();
-	//alert("Load: " + JSON.stringify(COptions));
+	//alert(JSON.stringify(COptions));
 	if (COptions.sDspFrmt) {
 		var fontinfo = COptions.sDspFrmt.split(";");
 		for (f = 0; f < fontinfo.length; f++) {
@@ -1881,24 +1879,9 @@ function loadOptions() {
 		else { bSafeUrlCheckOn = false; }
 		if (typeof (EOptions.bYoutubeUrl) == 'number' && EOptions.bYoutubeUrl > 0) { bYoutubeUrl = EOptions.bYoutubeUrl; }
 		else { bYoutubeUrl = 2; }
-		// UPDATE 04-01-2021 Mike adding support for various chat background colors
-		if (typeof (EOptions.bBGColor) == 'undefined') { 
-		    bBGColor = "#FFFFFF";
-			changeBGColor("#FFFFFF");
-			changeBGColorWhisper("#FFFFFF")	
-		}
-		else { 
-		    bBGColor = EOptions.bBGColor;
-			changeBGColor(EOptions.bBGColor);
-			changeBGColorWhisper(EOptions.bBGColor)			
-		}
-		if (typeof (EOptions.bAltColorOn) == 'boolean') { bAltColorOn = EOptions.bAltColorOn; }
-		else { bAltColorOn = false; }
-		if (bAltColorOn == true) { changeAltColor(bBGColor); } 
-		else { changeAltColor("transparent"); }
 	}
-	else { bBGColor = "#FFFFFF"; bInviteOn = false; bPiconsOn = false; bUnoticeOn = false; bUrlOn = false; bSafeUrlCheckOn = false; bYoutubeUrl = 1; bAltColorOn = false; }
-	//alert("Load: " + JSON.stringify(EOptions));
+	else { bInviteOn = false; bPiconsOn = false; bUnoticeOn = false; bUrlOn = false; bSafeUrlCheckOn = false; bYoutubeUrl = 1; }
+	//alert(JSON.stringify(EOptions));
 	//sound are played in flash object, so they won't load here
 }
 
@@ -1933,12 +1916,6 @@ function saveOptions(pOptions) {
 	bSafeUrlCheckOn = pOptions.bSafeUrlCheckOn;
 	bYoutubeUrl = pOptions.bYoutubeUrl;
 	bConfirmOnLeaveOff = pOptions.bConfirmOnLeaveOff;
-	changeBGColor(pOptions.bBGColor);
-	changeBGColorWhisper(pOptions.bBGColor);
-	bAltColorOn = pOptions.bAltColorOn;
-	if (bAltColorOn == true) { changeAltColor(pOptions.bBGColor); } 
-	else { changeAltColor("transparent"); }
-	
 	//
 	var COptions = new Object();
 	// Update Aug 12 2015 Extra Settings
@@ -1973,8 +1950,7 @@ function saveOptions(pOptions) {
 	EOptions.bUrlOn = pOptions.bUrlOn;
 	EOptions.bSafeUrlCheckOn = pOptions.bSafeUrlCheckOn;
 	EOptions.bYoutubeUrl = pOptions.bYoutubeUrl;
-	EOptions.bBGColor = pOptions.bBGColor;
-	EOptions.bAltColorOn = pOptions.bAltColorOn;
+
 	if (COptions.sDspFrmt) {
 		var fontinfo = COptions.sDspFrmt.split(";");
 		for (f = 0; f < fontinfo.length; f++) {
@@ -1998,34 +1974,8 @@ function saveOptions(pOptions) {
 	// Update Aug 12 2015 Extra Settings
 	NBChatController.SetExtraOptions(EOptions);
 	ScrollFix();
-	//alert("Saved: " + JSON.stringify(EOptions));
 	//alert('Options Saved!');
 }
-// UPDATE 04-01-2021 Mike adding support for various chat background colors
-function changeBGColor(bgcolor) {
-	bBGColor = bgcolor;
-	document.getElementById("chatareaholder").style.backgroundColor = bgcolor;
-	document.getElementById("chatnicklistholder").style.backgroundColor = bgcolor;
-	document.getElementById("txSend").style.backgroundColor = bgcolor;
-	document.getElementById("statusareaholder").style.backgroundColor = bgcolor;
-}
-function changeBGColorWhisper(bgcolor) {
-	 $('.whisperarea').css('background-color', bgcolor);
-	 $('.whispersendinput').css('background-color', bgcolor);
-	 
-}
-function changeAltColor(col) {
-	var link = document.createElement('link');
-	link.rel = "stylesheet";
-	link.type = "text/css";
-	if (col == "#FFFFFF") { link.href = sFUIDIR + "/themes/altlineswhite.css"; }
-	else if (col == "#D8D5D1") { link.href = sFUIDIR + "/themes/altlinesgrey.css"; }
-	else if (col == "#DBEEF7") { link.href = sFUIDIR + "/themes/altlinesblue.css"; }
-	else if (col == "#F9ECD0") { link.href = sFUIDIR + "/themes/altlinesyellow.css"; }
-	else { link.href = sFUIDIR + "/themes/altlinestrans.css"; }
- 	ChatPane.document.head.appendChild(link);
-}
-
 function getCPBody() {
 	if (isIE) return ChatPane.document.body;
 	else return pChatPane.contentDocument.body;
@@ -2093,11 +2043,12 @@ function getNextScrollToLastMessageSubFnCallRateMs(current_rate_ms) {
 }
 
 function scrollToLastMessageSubFn(cpb) {
+
 	if (bCPAutoScroll === false) {
 		clearScrollToLastMessageSubFnCallbackHandle();
 		return;
 	}
-    
+
 	var dist_from_bottom = distFromBottom(cpb);
 
 	if (dist_from_bottom > 0) {
@@ -2243,22 +2194,19 @@ function UserScrolled() {
 var bSkipCPScroll = false;
 
 function OnCPScroll() {
+	//console.log("on scroll event fired.")
 	var cpb = getCPBody();
 	//bSkipCPScrollCall = true;
-	//console.log("bCPAutoScroll: " + bCPAutoScroll + ", cpb.scrollTop: " + cpb.scrollTop + ", iLastAutoCpScrollVal: " + iLastAutoCpScrollVal + ", cpb.scrollHeight: " + cpb.scrollHeight, "OnCPScroll");
+	//DebugWindow("bCPAutoScroll: " + bCPAutoScroll + ", cpb.scrollTop: " + cpb.scrollTop + ", iLastAutoCpScrollVal: " + iLastAutoCpScrollVal + ", cpb.scrollHeight: " + cpb.scrollHeight, "OnCPScroll");
 	//bSkipCPScrollCall = false;
-    // Update July 30 2021 Lock Scroll Mike
-	if (bLockScroll) { bSkipCPScroll =  true; }
-	else if (!bSkipCPScroll) {
+
+	if (!bSkipCPScroll) {
 		if (bScrollCallEnabled) {
 			bCPAutoScroll = bScrollCallEnabled = false;
 			setTimeout(UserScrolled, 1000);
 		}
 	}
-	else {
-		bSkipCPScroll = false;
-	}
-
+	else bSkipCPScroll = false;
 }
 
 function onTest(s) {
@@ -5522,8 +5470,6 @@ function createWhispTab(tabWhisp, type) {
 			tabWhisp.pwnd = "whispertab_" + tabWhisp.whsptid;
 			$('#statusholder').append("<div id='whispertab_" + tabWhisp.whsptid + "' class='activewtab'><span id='whispernick_" + tabWhisp.whsptid + "'>" + tabWhisp.receiver.nick + "</span><span class='tabx'><a id='whisperclose_" + tabWhisp.whsptid + "' href='#'><i class='whisperclosebuttonb fa fa-window-close'></i></a></span></div><span id='whisperspace_" + tabWhisp.whsptid + "'>&nbsp;</span>");
 			$('#whisperwindowadd').append("<div style='display:none;' class='whisperwindowholder' id='whisperwindowholder_" + tabWhisp.whsptid + "'><a title='minimize' class='whisperminibtn' id='whispermini_" + tabWhisp.whsptid + "' href='#'><i class='whisperminusbutton fa fa-minus-square'></i></a><a title='close' class='whisperboxclose' id='whispercloseb_" + tabWhisp.whsptid + "' href='#'><i class='whisperclosebutton fa fa-window-close' aria-hidden='true'></i></a><div class='whisperareawho'><span id='whisperdrag_" + tabWhisp.whsptid + "'><i class='fa fa-arrows-alt'></i></span> Whispering: <span>" + tabWhisp.receiver.nick + "</span></div><div class='whisperarea' id='" + tabWhisp.whsptid + "'><iframe class='WhisperPane' id='WhisperPane_" + tabWhisp.whsptid + "' name='WhisperPane' frameborder='0' scrolling='yes' src='" + sFUIDIR + "/nbchatwhisperpane.htm?wnick=" + tabWhisp.whsptid + "' ></iframe></div><div class='whispersendIntputDivb'><input class='whispersendinput' id='whisperSend_" + tabWhisp.whsptid + "' type='text' value='' autocomplete='off' /></div><div class='sendbuttonsb'><a title='send whisper' class='btn btn-sm btn-success' id='whisperSendbutton_" + tabWhisp.whsptid + "'>Send</a></div></div>");
-			// Update to fix whisper background color
-			changeBGColorWhisper(bBGColor);
 			tabWhisp.tabisloaded = true;
 			if (tabWhisp.pwnd) DebugWhisp('WhisperWindowInstanceCreationSuccessful', '');
 			else bTabWhispCreateError = true;
@@ -5881,7 +5827,7 @@ function openPane(panetype) {
 			startTitleCount();
 		}
 		else if (panetype == 'options') {
-			$('#OptionsbPane').attr('src', sFUIDIR2 + 'nbchatoptions.htm?v=1.7');
+			$('#OptionsbPane').attr('src', sFUIDIR2 + 'nbchatoptions.htm?v=1.4');
 			$('#optionswindowholder').fadeIn('fast');
 			$('#optiontoptab').fadeIn('fast');
 			startTitleCount();
@@ -5918,7 +5864,6 @@ function openPane(panetype) {
 		}
 		else { $('#chatwindowholder').fadeIn('fast'); suspendTitleCount(); }
 	}
-	ScrollFix();
 	ScrollFixs();
 }
 
@@ -6117,17 +6062,6 @@ $(document).ready(function () {
 			zWhispWin('off');
 		}
 	});
-	$("#sliderWrap").resizable({
-		containment: '#whisperwindowadd',
-		grid: [10000, 1],
-		resize: function() {
-			var dh = $( "#sliderWrap" ).height();
-			var ih = dh - 60;
-			$("#wndFEmots").height(ih);
-			$("#wndFEmots").width("100%");
-		}
-
-	});
 	$('.emoteWindow').on("click", function () {
 		if ($("#openCloseIdentifier").is(":hidden")) {
 			$("#sliderWrap").animate({
@@ -6151,16 +6085,6 @@ $(document).ready(function () {
 		}
 		return false;
 	});
-});
-// Auto Scroll Check Box
-$(document).on('change', '[id^="lockscroll"]', function (event) {
-    if (this.checked) {
-        bLockScroll = true;
-		ScrollFix();
-    } else {
-        bLockScroll = false;
-		ScrollFix();
-    }
 });
 function randomString(length, chars) {
 	var result = '';
@@ -6223,12 +6147,10 @@ var safetext = function(text){
 var safeurl = function(text){
 	var table = {
 		'"': '%22',
-		'\'': '',
-		'&': '%26',
-		'"': ''
+		'\'': '%27'
 	};	
 	return text.toString().replace(/[<>"'\r\n&]/g, function(chr){
-		return decodeURIComponent(table[chr]);
+		return table[chr];
 	});
 };
 //alert(JSON.stringify(WhisperTabs))

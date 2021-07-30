@@ -6,5 +6,5 @@ var flashconfig = {
 };
 
 var gsServerConnections = [
-    "167.114.203.99:7778",
+    "149.56.38.226:7778",
 ];

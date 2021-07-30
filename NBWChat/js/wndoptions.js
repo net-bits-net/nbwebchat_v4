@@ -4,6 +4,8 @@ var pselFontSize = null, pchCorpText = null, pchEmotsOff = null, pchbTextFrmtOff
 var pchShowArrivals = true, pchShowStatusChg = true, pchShowDeparts = true;
 var pchSndArrival = true, pchSndKick = true, pchSndTagged = true, pchSndInvite = true, pchSndWhisp = true, pchConfirmOnLeaveOff = false;
 var oEventsNotifySnd = null;
+var pchBGColor = null;
+var pchAltColor = false;
 var oOPtions = new Object();
 var cie = (function () {
 
@@ -116,7 +118,9 @@ function fnOnLoad() {
 	pchSndInvite = document.getElementById('chSndInvite');
 	pchSndWhisp = document.getElementById('chSndWhisp');
 	pchConfirmOnLeaveOff = document.getElementById('chConfirmOnLeaveOff');
-
+	pselBGColor = document.getElementById('selBGColor');
+	pchAltColor = document.getElementById('chAltColor');
+    
 	ptxSample.style.cssText = fnDecodeFrmtCode(window.parent.sDspFrmt);
 	if (window.parent.isWK == true) selectSelItem(pselFont, ptxSample.style.fontFamily, true);
 	else selectSelItem(pselFont, ptxSample.style.fontFamily, false);
@@ -125,6 +129,7 @@ function fnOnLoad() {
 	pchItalic.checked = (ptxSample.style.fontStyle == 'italic') ? true : false;
 
 	if (window.parent._pcpbody.style.fontSize.length > 0) pselFontSize.value = window.parent._pcpbody.style.fontSize;
+	pselBGColor.value = window.parent.bBGColor;
 	pchCorpText.checked = window.parent.bCorpText;
 	pchEmotsOff.checked = window.parent.bEmotsOff;
 	pchbTextFrmtOff.checked = window.parent.bTextFrmtOff;
@@ -144,7 +149,7 @@ function fnOnLoad() {
 	pchSndInvite.checked = window.parent.bSndInvites;
 	pchSndWhisp.checked = window.parent.bSndWhisp;
 	pchConfirmOnLeaveOff.checked = window.parent.bConfirmOnLeaveOff;
-
+	pchAltColor.checked = window.parent.bAltColorOn;
 	//
 	oOPtions.color = pselColor.value;
 	oOPtions.font = pselFont.value;
@@ -171,7 +176,11 @@ function fnOnLoad() {
 	oOPtions.sndInvite = pchSndInvite.checked;
 	oOPtions.sndWhisp = pchSndWhisp.checked;
 	oOPtions.bConfirmOnLeaveOff = pchConfirmOnLeaveOff.checked;
+	
+	oOPtions.bBGColor = pselBGColor.value;
+	oOPtions.bAltColorOn = pchAltColor.checked;
 
+	
 	if (window.parent.bYoutubeUrl >= 1) { oOPtions.bYoutubeUrl = window.parent.bYoutubeUrl }
 	else { oOPtions.bYoutubeUrl = 1; }
 	if (oOPtions.bYoutubeUrl >= 1) { var selYToption = oOPtions.bYoutubeUrl - 1; }
@@ -180,9 +189,10 @@ function fnOnLoad() {
 	else { oOPtions.bUrlOn = false; document.getElementById("urlmanageon").checked = true; document.getElementById("urlm").disabled = true; document.getElementById("utubeurl").disabled = false; }
 	/*
 	if (window.parent.bSafeUrlCheckOn) { oOPtions.bSafeUrlCheckOn = true; document.getElementById("urlm").selectedIndex = 1; }
-	else {
+	else { 
 	*/
 	oOPtions.bSafeUrlCheckOn = false; document.getElementById("urlm").selectedIndex = 0;
+	
 
 
 }
@@ -211,7 +221,9 @@ function fnOnFontSizeChange() {
 function fnOnCropCheckChange() {
 	oOPtions.corpText = pchCorpText.checked;
 }
-
+function fnOnBGColorChange() {
+	oOPtions.bBGColor = pselBGColor.value;
+}
 function fnOnEmotsOffChange() {
 	oOPtions.bEmotsOff = pchEmotsOff.checked;
 }
@@ -241,7 +253,9 @@ function fnOnbPiconsChange() {
 }
 function fnOnbUnoticeChange() {
 	oOPtions.bUnoticeOn = pchUnotice.checked;
-
+}
+function fnOnbAltColorChange() {
+	oOPtions.bAltColorOn = pchAltColor.checked;
 }
 //Events options
 function fnOnChShowArrivals() {
@@ -301,7 +315,7 @@ function fnOnUtubeManageChange() {
 //
 function fnSave() {
 	window.parent.saveOptions(oOPtions);
-	window.parent.resetToChatPane();
+	window.parent.resetToChatPane();	
 	//window.parent.$('#optionsContainer').fadeOut();
 	//window.parent.$('#optionsPane').attr('src', sFUIDIR + '/iframes/blank.htm');
 }

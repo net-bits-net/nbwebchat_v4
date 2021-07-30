@@ -37,8 +37,21 @@ function loadEmoticons() {
                 delete tmpArray;
                 return;
             }
-            //document.body.innerHTML += '&nbsp;<img border="0" src="' + sEmotsDir + tmpArray[taCounter].imgsrc + '" onclick="insertEmotCode(\'' + tmpArray[taCounter].eico.replace("'", "\\'") + '\');" style="cursor:pointer;" />';
+            var n = tmpArray[taCounter].imgsrc.indexOf("doline");
+            if (n >= 0) { 
+            	if (tmpArray[taCounter].imgsrc == "doline_smile") { $('#renderbox').append('<a name="smiley"></a><div style="color:#666;font-size:12px;text-align:center;margin:8px 0 2px 0;">Smiley Emoticons</div>'); }
+            	if (tmpArray[taCounter].imgsrc == "doline_animal") { $('#renderbox').append('<a name="animal"></a><div style="color:#666;font-size:12px;text-align:center;margin:8px 0 2px 0;">Animal Emoticons</div>'); }
+   				if (tmpArray[taCounter].imgsrc == "doline_food") { $('#renderbox').append('<a name="food"></a><div style="color:#666;font-size:12px;text-align:center;margin:8px 0 2px 0;">Food and Drink Emoticons</div>'); }
+				if (tmpArray[taCounter].imgsrc == "doline_misc") { $('#renderbox').append('<a name="misc"></a><div style="color:#666;font-size:12px;text-align:center;margin:8px 0 2px 0;">Misc Emoticons</div>'); }
+				if (tmpArray[taCounter].imgsrc == "doline_new") { $('#renderbox').append('<a name="new"></a><div style="color:#666;font-size:12px;text-align:center;margin:8px 0 2px 0;">New Emoticons</div>'); }
+				if (tmpArray[taCounter].imgsrc == "doline_holiday") { $('#renderbox').append('<a name="holiday"></a><div style="color:#666;font-size:12px;text-align:center;margin:8px 0 2px 0;">Holiday Emoticons</div>'); }
+	
+				$('#renderbox').append('<div style="margin-bottom:8px 0;height:1px;border-bottom:1px solid #CCC;"></div>');
+            }
+            else {
 			$('#renderbox').append('<img style="padding:5px;" border="0" src="' + sEmotsDir + tmpArray[taCounter].imgsrc + '" onclick="insertEmotCode(\'' + tmpArray[taCounter].eico.replace("'", "\\'") + '\');" style="cursor:pointer;" />');
+					//document.body.innerHTML += '';
+            }	
 			taCounter++;
         }
     }
