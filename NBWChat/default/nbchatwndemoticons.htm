@@ -3,10 +3,32 @@
 <head>
     <title>Emoticons Window</title>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script type="text/javascript" src="../js/wndemots.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js?update=12,25,14"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/ui-lightness/jquery-ui.css">
+	<script type="text/javascript" src="../js/wndemots.js?v1.1"></script>
+    <style>
+	#emotesectionheader { border-bottom:1px solid #ccc;height:28px;line-height:28px;background:#F5F5F5;position: fixed;top: 0;left: 0;z-index: 999;width: 100%; }
+	#emotesectionheader a { opacity:0.8;color:#333;border-right:1px solid #ccc;display:inline-block;font-size:17px;padding:0 6px; }
+	#emotesectionheader a:first-child { border-left:1px solid #CCC; }
+	#emotesectionheader a:hover { text-decoration:none;opacity:1; }	
+	</style>
 </head>
 <body topmargin="0" leftmargin="0" style="overflow-y : scroll; border-width: 0px; text-align: center; margin: 0px; ">
-<div id="renderbox"></div>
+<div id="renderbox">
+	<div id="emotesectionheader">
+		<a title="go to smiley emotes" href="#smiley"><span>&#128515</span></a>
+		<a title="go to animal emotes" href="#animal"><span>&#128570</span></a>
+		<a title="go to food emotes" href="#food"><span>&#127829</span></a>	
+		<a title="go to misc emotes" href="#misc"><span>&#128640</span></a>	
+		<a title="go to newest emotes" href="#new"><span>&#127775</span></a>			
+		<a title="go to holiday emotes" href="#holiday"><span>&#127876</span></a>
+	</div>
+	<div style="margin-top:40px;"></div>
+</div>
 <script language=JavaScript>
 $( document ).ready(function() {
 	loadEmoticons();
