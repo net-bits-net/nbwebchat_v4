@@ -1,4 +1,4 @@
-ï»¿@*
+﻿@*
 	Copyright (c) Net-Bits.Net ( http://www.net-bits.net ) and any other contributors.
 
 	The above copyright notice and this permission notice shall be included in
@@ -76,17 +76,21 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/nbchat30.css?v1.5" type="text/css" />
-	<link class="changestyle" rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/themes/default.css?v1.1" type="text/css" />
+	<link rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/nbchat30.css?v1.9" type="text/css" />
+	<link class="changestyle" rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/themes/default.css?v1.2" type="text/css" />
 	<!--[if lte IE 9 ]>
 	<link rel="stylesheet" href="@Model.STAG_NBWCHATTEMPLATEDIR/nbchat30ie.css?update=11,04,17" type="text/css" />
 	<![endif]-->
+	
+
+	
+	
 	@*core functions here so they can be used.*@
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_core.js?"></script>
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/platform.js">
 		//Source/Credit: https://github.com/bestiejs/platform.js
 	</script>
-
+    
 	<script type="text/javascript">
 
 		sFUIDIR = '@Model.STAG_NBWCHATTEMPLATEDIR';
@@ -189,13 +193,13 @@
 		}
 	</script>
 
-	<script type="text/javascript" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatres.js?update=12,25,14"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatres.js?update=40"></script>
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/global.js?update=12,25,14"></script>
-	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nblang_v4.js?update=01,18,17"></script>
-	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_connection.js?"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nblang_v4.js?update=06,15,19"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_connection.js?update=06,15,19"></script>
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/ircwx_parser.js?"></script>
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_controller.js?v=0001"></script>
-	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_v4.js?update=11,16,17"></script>
+	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/nbchat_v4.js?update=38"></script>
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/jquery.cookie.js?update=12,25,14"></script>
 
 	<script language="javascript" type="text/javascript">
@@ -205,7 +209,7 @@
 		sGuestNick = '@Model.STAG_GUESTNICK';
 		sIcoDir = sURIFUIDIR2 + 'images/listicons/';
 		if (isWK) sEmotsDir = sURIFUIDIR2 + 'images/emots/';
-		emotsWndURI = sFUIDIR + '/nbchatwndemoticons.htm?v=3.444';
+		emotsWndURI = sFUIDIR + '/nbchatwndemoticons.htm?v=3.445';
 	</script>
 
 	<script type="text/javascript" src="@Model.STAG_NBWCHATROOTDIR/js/wndmain.js?update=12,25,14"></script>
@@ -214,7 +218,29 @@
 <div style="position:relative;height:100%;">
 	<div class="container-fluid" style="height:100%;margin:0;padding:0;">
 		<div class="ie-only">Internet Explorer 9 and below are not supported. Please update your Internet Explorer or choose an alternate browser.<br /><br /><a href="https://www.google.com/chrome/">Download Chrome</a><br /><a href="https://www.mozilla.org/firefox">Download Firefox</a></div>
-		<div id="whisperwindowadd">
+		<!--------------- Theme Selector --------------------------->
+		<div id="colorselholder">			
+			<a id="xtheme" style="color:red;float:right;padding-right:5px;" href="#"><i class="closebutton fa fa-window-close"></i></a>
+			<div style="color:white;text-align:center;padding:0 0 10px 0;">Theme Selector</div>
+			<a title="blue" href="#" rel="default.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#285E83;"></div></a>&nbsp;
+			<a title="black" href="#" rel="black.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:black;"></div></a>&nbsp;
+			<a title="red" href="#" rel="red.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#D31515;"></div></a>&nbsp;
+			<a title="pink" href="#" rel="pink.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#FF0054;"></div></a>&nbsp;
+			<a title="purple" href="#" rel="purple.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#300A40;"></div></a>&nbsp;
+			<a title="green" href="#" rel="green.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#0A3F07;margin-top:2px;"></div></a>&nbsp;
+			<a title="msn" href="#" rel="msn.css?v1.5" class="styleswitch"><img style="margin-top:-7px;display:inline-block;width:15px;height:15px;" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/holiday/msntheme.png" alt="" /></a>&nbsp;
+			<a title="christmas" href="#" rel="xmas.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#70A2BA;"><span style="font-size:13px;color:white;position:relative;float:left;left:1px;top:-4px;">&#10052;</span></div></a>&nbsp;
+			<a title="christmas2" href="#" rel="xmas2.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#770101;"><span style="font-size:13px;color:white;position:relative;float:left;left:1px;top:-4px;">&#10052;</span></div></a>&nbsp;
+			<a title="christmas3" href="#" rel="xmas3.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#1A3850;"><span style="font-size:13px;color:white;position:relative;float:left;left:1px;top:-4px;">&#10052;</span></div></a>&nbsp;
+			<a title="valentines" href="#" rel="valentines.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#710000;"><span style="font-size:10px;color:white;position:relative;float:left;left:1px;top:-1px;">&#10084;</span></div></a>&nbsp;
+			<a title="st patrick" href="#" rel="stpatrick.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#81D116;"><span style="font-size:12px;color:white;position:relative;float:left;left:1px;top:-3px;">&#9752;</span></div></a>&nbsp;
+			<a title="halloween" href="#" rel="halloween.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#000000;"><span style="font-size:9px;color:white;position:relative;float:left;left:1px;top:-1px;">&#127875;</span></div></a>&nbsp;
+			<a title="thanksgiving" href="#" rel="thanksgiving.css?v1.5" class="styleswitch"><div style="display:inline-block;width:14px;height:14px;border:1px solid #CCC;background-color:#D95002;"><span style="font-size:9px;color:white;position:relative;float:left;left:1px;top:-1px;">&#129411;</span></div></a>&nbsp;
+			
+			<a id="icbg" title="change transparency" href="#"><div style="color:white;display:inline-block;font-size:20px;">&#128065;</div></a>
+		</div>
+		<!--------------- End -------------------------------------->
+		<div id="whisperwindowadd">		
 			<!---------------- Away Message Set ----------------------->
 			<div id="wndSetAwayMsgContainer">
 				<div class="awaymsgabouttext">Set or change your away message here!</div>
@@ -229,11 +255,11 @@
 		<div id="sliderWrap">
 			<span style="float:right;z-index:24;margin-top:5px;margin-right:5px;"><i class="emoteWindow closebutton fa fa-window-close"></i></span>
 			<div id="emotesheader">
-				<span id="emotesdrag"><i class='fa fa-arrows-alt'></i> Emoticons</span>
+				<span id="emotesdrag"><i class='fa fa-arrows-alt'></i> Emoticons</span>				
 			</div>
 			<div id="sliderContent">
 				<div id="wndEmotsWindowContainerSub">
-					<iframe scrolling="yes" id="wndFEmots" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm" frameborder="0" scrolling="yes"></iframe>
+					<iframe scrolling="yes" id="wndFEmots" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatblank.htm?v.1" frameborder="0" scrolling="yes"></iframe>
 				</div>
 				<div style="display:none;" id="wndFEmotsstatus">0</div>
 				<div id="openCloseIdentifier"></div>
@@ -241,83 +267,82 @@
 		</div>
 		<!------------------------END------------------------------>
 		<!------------------------ Logo & Roomname Bar ------------>
-		<div id="logoholder">
-			<div id="siteicon"></div>
-			<div id="headerlogo">@MainConfig.IConfig().SiteTitle</div>
-			<div class="channame">
-				<div class="insetborder">
-					<span class="channame_nowchatting">Now Chatting In:</span> <img id="chanIco" border="0" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/spacer.png" /> <span id="txChan" class="chanlabel">loading...</span>
+		<div id="headerholder">
+			<div id="logoholder">
+				<div id="siteicon"></div>
+				<div id="headerlogo">ircWX</div>
+				<div class="channame">
+					<div class="insetborder">
+						<span class="channame_nowchatting">Now Chatting In:</span> <img id="chanIco" border="0" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/spacer.png" /> <span id="txChan" class="chanlabel">loading...</span>
+					</div>
 				</div>
+				<span id="txChanModes" class="chanmodeslabel" style="display:none;"></span>
+				<div id="nbflashchat20"></div>
+				<script type="text/javascript">
+					if (!HasWebsocketSupport) {
+						flashconfig.src = '@Model.STAG_NBWCHATROOTDIR/nbflashconnectionv4.swf?update=20,35';
+						flashembed("nbflashchat20", flashconfig);
+					} else {
+						$("#nbflashchat20").append('<img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/nbwchat_logo_ws.png" border="0" />');
+					}
+				</script>
 			</div>
-			<span id="txChanModes" class="chanmodeslabel" style="display:none;"></span>
-			<div id="nbflashchat20"></div>
-			<script type="text/javascript">
-				if (!HasWebsocketSupport) {
-					flashconfig.src = '@Model.STAG_NBWCHATROOTDIR/nbflashconnectionv4.swf?update=20,35';
-					flashembed("nbflashchat20", flashconfig);
-				} else {
-					$("#nbflashchat20").append('<img src="@Model.STAG_NBWCHATTEMPLATEDIR/images/nbwchat_logo_ws.png" border="0" />');
-				}
-			</script>
-		</div>
-		<!------------------------END------------------------------>
-		<!-----------------BEGIN NAV------------------------------->
-		<nav class="navbar navbar-default navbar-static-top">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-				</div>
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-						<li><a data-toggle="tooltip" title="Home" target="_blank" href="@Url.Content("~/")"><i class="fa fa-home"></i> Home</a></li>
-							<li><a data-toggle="tooltip" title="More Rooms" target="_blank" href="@Url.Content("~/ChannelsList")"><i class="fa fa-list"></i> More Rooms</a></li>
-							<li><a data-toggle="tooltip" class="optionstab" title="Options" href="#"><i class="fa fa-gears"></i> Options</a></li>
-							<li><a data-toggle="tooltip" title="Help" target="_blank" href="@Url.Content("~/Help")"><i class="fa fa-question-circle "></i> Help</a></li>
-							@using Microsoft.AspNet.Identity
-						@{
-							var MyUserId = User.Identity.GetUserId();
-							var MyUserName = User.Identity.GetUserName();
-						}
-
-						@if (Request.IsAuthenticated)
-						{
-							<li><a target="_blank" href="@Url.Content("~/u/" + MyUserId + "/Manage")"><i class="fa fa-pencil"></i> Hello @MyUserName!</a></li>    
-							<li><a data-toggle="tooltip" title="Log Off" href="javascript:document.getElementById('logoutForm').submit()"><i class="fa fa-sign-out"></i> Log off</a></li>
-							using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-form" }))
-							{
-								@Html.AntiForgeryToken()
-
+			<!------------------------END------------------------------>
+			<!-----------------BEGIN NAV------------------------------->
+			<nav class="navbar navbar-default navbar-static-top">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+						<ul class="nav navbar-nav navleft">
+							<li><a title="Home" target="_blank" href="@Url.Content("~/")"><i class="fa fa-home"></i> Home</a></li>
+								<li><a title="More Rooms" target="_blank" href="@Url.Content("~/ChannelsList")"><i class="fa fa-list"></i> More Rooms</a></li>
+								<li><a class="optionstab" title="Options" href="#"><i class="fa fa-gears"></i> Options</a></li>
+								<li><a title="Help" target="_blank" href="@Url.Content("~/Help")"><i class="fa fa-question-circle "></i> Help</a></li>
+								<li><a class="menubuttons" title="Select Theme Color" id="selcolorbtn" href="#"><i class="fa fa-paint-brush"></i> Themes</a></li>
+								@using Microsoft.AspNet.Identity
+							@{
+								var MyUserId = User.Identity.GetUserId();
+								var MyUserName = User.Identity.GetUserName();
 							}
-
-						}
-						else
-						{
-							<li><a data-toggle="tooltip" title="Sign In" href="@Url.Content("~/Account/Login")"><i class="fa fa-sign-in"></i> Sign In</a></li>
-							<li><a data-toggle="tooltip" title="Register" href="@Url.Content("~/Account/Register")"><i class="fa fa-pencil"></i> Register</a></li>
-						}
-
-					</ul>
-					<ul class="nav navbar-nav navbar-right">
-						<li><a title="blue" href="#" rel="default.css?v1.1" class="styleswitch"><div style="display:inline-block;width:12px;height:12px;border:1px solid #CCC;background-color:#285E83;"></div></a></li>
-						<li><a title="black" href="#" rel="black.css?v1.1" class="styleswitch"><div style="display:inline-block;width:12px;height:12px;border:1px solid #CCC;background-color:black;"></div></a></li>
-					</ul>
+			
+							@if (Request.IsAuthenticated)
+							{
+								<li><a target="_blank" href="@Url.Content("~/u/" + MyUserId + "/Manage")"><i class="fa fa-pencil"></i> Hello @MyUserName!</a></li>    
+								<li><a title="Log Off" href="javascript:document.getElementById('logoutForm').submit()"><i class="fa fa-sign-out"></i> Log off</a></li>
+								using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-form" }))
+								{
+									@Html.AntiForgeryToken()
+			
+								}
+			
+							}
+							else
+							{
+								<li><a title="Sign In" href="@Url.Content("~/Account/Login")"><i class="fa fa-sign-in"></i> Sign In</a></li>
+								<li><a title="Register" href="@Url.Content("~/Account/Register")"><i class="fa fa-pencil"></i> Register</a></li>
+							}	
+											
+						</ul>
+					</div>
 				</div>
-			</div>
-		</nav>
+			</nav>
+		</div>	
 		<!------------------------END------------------------------>
 		<!------------------------SIDEBUTTONS---------------------->
-		<div id="chatnicklisttoggle"><a data-toggle="tooltip" href="#" title="toggle nicklist" class="btn btn-danger"><i class="fa fa-eye"></i></a></div>
-		<div id="statuswindowtoggle"><a data-toggle="tooltip" id="statustabb" href="#" title="toggle status window" class="btn btn-info">(<span class="statuscountb">0</span>)</a></div>
-		<div id="chatwindowtoggle"><a data-toggle="tooltip" id="chattabb" href="#" title="toggle chat window" class="btn btn-success"><i class="fa fa-comments"></i></a></div>
-		<div id="optionswindowtoggle"><a data-toggle="tooltip" href="#" title="toggle options window" class="optionstab btn btn-warning"><i class="fa fa-gears"></i></a></div>
+		<div id="chatnicklisttoggle"><a href="#" title="toggle nicklist" class="btn btn-danger"><i class="fa fa-eye"></i></a></div>
+		<div id="statuswindowtoggle"><a id="statustabb" href="#" title="toggle status window" class="btn btn-info">(<span class="statuscountb">0</span>)</a></div>
+		<div id="chatwindowtoggle"><a id="chattabb" href="#" title="toggle chat window" class="btn btn-success"><i class="fa fa-comments"></i></a></div>
+		<div id="optionswindowtoggle"><a href="#" title="toggle options window" class="optionstab btn btn-warning"><i class="fa fa-gears"></i></a></div>
 		<!------------------------END------------------------------>
 		<!------------------------ Tabs Holder -------------------->
-		<div id="statusholder">
+		<div id="statusholder">			
 			<div class="btn btn-info btn-sm inactivetab" id="statustab">Chat Notifications (<span class="statuscount">0</span>)</div>
 			<div class="btn btn-success btn-sm activetab" id="chattab">Chatroom</div>
 			<div style="display:none;" class="btn btn-warning btn-sm activetab" id="optiontoptab">Options</div>
@@ -357,7 +382,7 @@
 			<div id="chatareaholder" @Html.Raw(iOSTouchScrolling)><iframe style="overflow-x: hidden !important; -webkit-overflow-scrolling: touch; overflow-y: scroll; min-height: 101%;" id="ChatPane" name="ChatPane" frameborder="0" scrolling="yes" src="@Model.STAG_NBWCHATTEMPLATEDIR/nbchatmainpane.htm"></iframe></div>
 			<div id="chatnicklistbg"></div>
 			<div id="nicklistinfo1">
-				<div id="awayb"><a id="awayicon" class="awayicon_a" data-toggle="tooltip" title="Away" href="javascript:ToggleAwayButton(null, 'button');"><i class="fa fa fa-coffee"></i></a></div>
+				<div id="awayb"><a id="awayicon" class="awayicon_a" title="Away" href="javascript:ToggleAwayButton(null, 'button');"><i class="fa fa fa-coffee"></i></a></div>
 				<div id="txNumberOfUser">loading...</div>
 			</div>
 			<div id="nicklistinfo2">
@@ -365,7 +390,7 @@
 					<img id="uicoMe" src="@Model.STAG_NBWCHATTEMPLATEDIR/images/listicons/spacer.gif" border="0" class="lvuitemico" />
 					<span id="lbMe" class="lvuitemlbMe"></span>
 				</div>
-			</div>
+			</div>			
 			<div id="chatnicklistholder">
 				<div id="chatnicklist">
 					<div id="lvUsers" onmouseout="menuMouseOut(this);"></div>
@@ -375,19 +400,25 @@
 				<input id="txSend" name="txSend" type="text" maxlength="512" onclick="ScrollFix();" onkeypress="fnCheckKey(event);" onkeydown="onTxSendKeypress(event);" autocomplete="off" />
 			</div>
 			<div id="sendbuttons">
-				<a id="btn_sendmsg" data-toggle="tooltip" title="Send Message" href="#" class="btn btn-sm btn-success">Send</a>
-				<a id="btn_sendaction" data-toggle="tooltip" title="Send Action" href="#" class="btn btn-sm btn-primary"><i class="fa fa-exclamation"></i></a>
-				<a data-toggle="tooltip" title="View Emotes" href="#" class="emoteWindow btn btn-sm btn-warning topMenuAction"><i class="fa fa-smile-o"></i></a>
-				<a data-toggle="tooltip" title="Set Away Message" href="#" id="openawaymsg" class="btn btn-sm btn-info"><i class="fa fa-clock-o"></i></a>
+				<a id="btn_sendmsg" title="Send Message" href="#" class="btn btn-sm btn-success">Send</a>
+				<a id="btn_sendaction" title="Send Action" href="#" class="btn btn-sm btn-primary"><i class="fa fa-exclamation"></i></a>
+				<a title="View Emotes" href="#" class="emoteWindow btn btn-sm btn-warning topMenuAction"><i class="fa fa-smile-o"></i></a>
+				<a title="Set Away Message" href="#" id="openawaymsg" class="btn btn-sm btn-info"><i class="fa fa-clock-o"></i></a>
+			</div>
+			<div id="manualscroll">
+				<div class="custom-control custom-checkbox" title="This option locks auto scroll.">
+					<input type="checkbox" class="custom-control-input" id="lockscroll" name="lockscroll">
+					<label class="custom-control-label" for="customCheck">Trivia Mode</label>
+				</div>
 			</div>
 			<div id="nicklistuicons">
 				<div class="buttonholder" style="font-size:23px;">
-					<span><a data-toggle="tooltip" title="Whisper User" id="btn_whisperuser" class="btn_whisperuser_a" href="#"><i id="btnWhisp" class="fa fa-comments"></i></a></span>
-					<span><a data-toggle="tooltip" title="Ignore User" id="btn_ignoreuser" class="btn_ignoreuser_a" href="#"><i id="btnIgnore" class="fa fa-ban"></i></a></span>
-					<span><a data-toggle="tooltip" title="Tag User" id="btn_taguser" class="btn_taguser_a" href="#"><i id="btnTag" class="fa fa-check"></i></a></span>
-					<span><a data-toggle="tooltip" title="View Profile" id="btn_viewprofile" class="btn_viewprofile_a" href="#"><i id="btnViewProfile" class="fa fa-photo"></i></a></span>
+					<span><a title="Whisper User" id="btn_whisperuser" class="btn_whisperuser_a" href="#"><i id="btnWhisp" class="fa fa-comments"></i></a></span>
+					<span><a title="Ignore User" id="btn_ignoreuser" class="btn_ignoreuser_a" href="#"><i id="btnIgnore" class="fa fa-ban"></i></a></span>
+					<span><a title="Tag User" id="btn_taguser" class="btn_taguser_a" href="#"><i id="btnTag" class="fa fa-check"></i></a></span>
+					<span><a title="View Profile" id="btn_viewprofile" class="btn_viewprofile_a" href="#"><i id="btnViewProfile" class="fa fa-photo"></i></a></span>
 				</div>
-			</div>
+			</div>				
 		</div>
 		<!------------------------END------------------------------>
 		<!------------------------ Popup Menus -------------------->
@@ -485,7 +516,7 @@
 		<!------------------------ Footer ------------------------->
 		<footer>
 			<div>
-				Powered By: Net-Bits.Net Webchat 4.0 (<a href="@Url.Content(string.Format("~/c/?cn={0}&useflash=1",Model.STAG_CHANNELNAME))">Connect With Flash</a>) &copy; 2006 - <span id="cyear"></span> All rights Reserved. -
+				Powered By: Net-Bits.Net Webchat 4.0 &copy; 2006 - <span id="cyear"></span> All rights Reserved. -
 			<a href="@Url.Content("~/Privacy-Policy")">Privacy</a> - <a href="@Url.Content("~/ToU")">Terms of Use</a>
 			</div>
 		</footer>
@@ -495,6 +526,35 @@
 <!------------------------END------------------------------>
 <!------------------------ Advertisement ---------------------->
 <div style="text-align:center;">
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<!-- sp_rs -->
+	<ins class="adsbygoogle"
+		 style="display:block"
+		 data-ad-client="ca-pub-8254166811237269"
+		 data-ad-slot="1501694338"
+		 data-ad-format="auto"></ins>
+	<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+</div>
+<div id="transbox" style="display:none;opacity:0.9;text-align:center;position:absolute;top:5px;right:10px;height:100px;width:300px;z-index:99999999999;background:black;border:1px solid #CCC;">
+<div style="font-size:13px;font-weight:bold;color:red;float:right;margin-right:5px;">
+	<a id="transboxclose" style="color:red;" href="#">X</a>
+</div>
+<div style="color:#CCC;font-size:12px;margin-bottom:8px;">Select Background Transparency</div>
+	<div style="margin:5px 20px;">
+  		<select id="transtype" class="form-control input-sm" name="transtype">
+    		<option value="none">No Transparency</option>
+    		<option value="95" selected>95% Transparency</option>
+    		<option value="90">90% Transparency</option>
+    		<option value="85">85% Transparency</option>
+    		<option value="75">75% Transparency</option>
+  		</select>
+	</div>
+	<div style="margin:0px 20px;">
+		<button id="transupdate" type="button" class="btn btn-success btn-xs btn-block">Update</button>
+	</div>
+</form>
 </div>
 <!------------------------END------------------------------>
 <script language="JavaScript" type="text/JavaScript">
@@ -514,11 +574,63 @@
 	$(document).ready(function(){
 		fnInitialize();
 		$('#cyear').text(new Date().getFullYear());
+		$('#icbg').on("click", function() {
+			if ($('#transbox').is(":hidden")) { $('#transbox').css('display', 'block'); }
+     		return false;
+		});
+		$('#selcolorbtn').on( "click", function() {
+			if ($('#colorselholder').is(':visible')) {
+				$('#colorselholder').slideUp();
+				$('#selcolorbtn img').css('opacity','1');
+			}
+			else {
+				$('#colorselholder').slideDown();
+				$('#selcolorbtn img').css('opacity','0.5');
+			}
+			return false;
+		});
+		$('#xtheme').on( "click", function() {
+			$('#colorselholder').slideUp();
+			$('#selcolorbtn img').css('opacity','1');
+			return false;
+		});	
+		$('#transboxclose').on("click", function() {
+			$('#transbox').css('display', 'none'); 
+     		return false;
+		});
+		$('#transupdate').on("click", function() {
+			var ttype = $('#transtype').val();
+			if (ttype == '75') { 
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite75.png') !important;");
+			}
+			if (ttype == '85') { 
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite85.png') !important;");
+			}
+			if (ttype == '90') { 
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite90.png') !important;");
+			}
+			if (ttype == '95') { 
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite95.png') !important;");
+			}
+			if (ttype == 'none') { 
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background-color: #FFF !important;background-image:none;");
+			}			
+     		return false;
+		});		
 		$('.styleswitch').on( "click", function() {
 			var cssc = $(this).attr('rel');
 			var csscb = "@Model.STAG_NBWCHATTEMPLATEDIR/themes/" + cssc;
 			$("link.changestyle").attr("href",csscb);
-			$.cookie("css",$(this).attr('rel'), {expires: 365, path: '/'});
+			$.cookie("css",$(this).attr('rel'), {expires: 365, path: "/;SameSite=None", secure: true});
+			var cssbg = $(this).attr('title');
+			if (cssbg == 'blue' || cssbg == 'black' || cssbg == 'red' || cssbg == 'pink' || cssbg == 'purple' || cssbg == 'green' || cssbg == 'msn') { 
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background-color: #FFF !important;background-image:none;");
+			}
+			else {
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite95.png') !important;");
+			}
+			$('#transtype').val(95);
+	
 			return false;
 		});
 		$('#chatnicklisttoggle').on( "click", function() {
@@ -529,6 +641,5 @@
 			$('#nicklistinfo2').toggle();
 			return false;
 		});
-		$('[data-toggle="tooltip"]').tooltip();
 	});
 </script>
