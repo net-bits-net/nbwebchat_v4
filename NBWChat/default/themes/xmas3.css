@@ -1,0 +1,64 @@
+@import url('http://fonts.googleapis.com/css?family=Cherry+Swash');
+body { background:#19354B url('../images/holiday/xmas3bg.jpg') no-repeat 100% fixed;background-size: 100% 100%; }
+#headerholder{
+background:transparent url('../images/holiday/headerbg.png')
+}
+
+#logoholder { background:transparent; }
+#headerlogo { text-shadow: 2px 2px 2px #000;color:#fff; }
+#headertop { background-color:transparent; }
+#headernav ul { background-color:transparent; }
+#headernav ul li a { color:white;font-weight:bold;text-decoration:none; }
+#headernav ul li a:hover { background-color:#000 !important; }
+.navbar-default {font-family:'Cherry Swash';background:#9F1616 url('../images/holiday/xmas3bells.png') repeat-x;opacity:0.9;border-top:1px solid #FDE692;border-bottom:1px solid #FDE692; }
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {color: #FFF;}
+.navbar-collapse .navbar-right li a:hover { background:transparent; } 
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus { background:#2F78AC;}
+.navbar-default .navbar-toggle .icon-bar {background: white;}
+.navbar-default .navbar-nav > li > a { color:#FDE692;font-size:16px; }
+.lvuitemlbMe { }
+.lvuitemlbMeSel {  }
+#txNumberOfUser {  }
+.lvuitemMe, .lvuitemMeAway {  }
+#nicklistinfo1 { font-family:'Cherry Swash';color:#fff;background:transparent; }
+#nicklistinfo1 a { color:#fff; }
+#nicklistinfo2 { background:transparent;color:#fff; }
+.channame_nowchatting { font-family:'Cherry Swash';font-size:18px;color:#fff;text-shadow: 2px 2px 2px #000; }
+.chanlabel { color:#fff;text-shadow: 2px 2px 2px #000;font-weight:bold; }
+#statusareaholder, #chatareaholder { border:2px solid #1E4474 !important;background:transparent url('../images/transwhite95.png') !important; }
+#chatnicklistholder { border:2px solid #1E4474 !important;background:transparent url('../images/transwhite95.png') !important; }
+#chatnicklist { top:5px !important; }
+#nicklistuicons { text-shadow: 2px 2px 2px #2F3F54;  }
+#txSend { border:2px solid #1E4474 !important;background:transparent url('../images/transwhite95.png') !important; }
+#wndSetAwayMsgContainer { background:#19354B;border:1px solid #000; }
+.awaymsgabouttext { color:#FFF; }
+.awayicon_a { color:white !important;border:1px solid #fff;background:#19354B;padding:0 2px; }
+.awayicon_a:hover { color:white; }
+.awayicon_b { color:#1163CB !important;border:1px solid #1163CB;background:#fff;padding:0 2px; }
+.awayicon_b:hover { color:white; }
+#awayb { top:3px !important;right:7px !important; }
+#whisperheader { background:#19354B; }
+#sliderWrap {color:#333333;border:1px solid #ccc;background:#19354B; }
+#topheaderbar { background:#19354B;color:white; }
+#whisperhistoryheader { background-color:#19354B; }
+.whisperwindowholder { background-color:#19354B; }
+.whisperclosebutton { color:red;background:white; }
+.whisperminusbutton { color:#4CBAD8;background:white; }
+.whisperclosebuttonb { color:red;background:white; }
+#optionsheader, #modesheader, #accessheader, #propsheader, #emotesheader { background-color:#19354B;color:white; }
+footer { color:#fff;font-weight:bold;text-shadow: 1px 1px 1px #000; }
+footer a { color:#fff; }
+footer a:hover { color: #F5EFD3 !important;text-decoration:none; }
+.btn_whisperuser_a, .btn_whisperuser_a:hover { color:#fff; }
+.btn_ignoreuser_a, .btn_ignoreuser_a:hover { color:red; }
+.btn_taguser_a, .btn_taguser_a:hover { color:#fff; }
+.btn_viewprofile_a, .btn_viewprofile_a:hover  { color:#fff; }
+.btn_whisperuser_d, .btn_ignoreuser_d, .btn_taguser_d, .btn_viewprofile_d  { color:#fff;pointer-events: none;cursor: default; }
+.btn_whisperuser_d:hover, .btn_ignoreuser_d:hover, .btn_taguser_d:hover, .btn_viewprofile_d:hover { color:#fff; }
+.closebutton { color:red;background:white; }
+#sendbuttons {  }
+@media only screen and (max-width : 750px) {
+	#chatnicklistbg { background:#19354B; }
+	.navbar-collapse li { border-bottom:1px solid #355B74; }  
+}
+

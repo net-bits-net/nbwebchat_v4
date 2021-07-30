@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css?family=IM+Fell+English+SC&display=swap');
+
+body { background:#2D572B url('../images/holiday/stpatrickbg.jpg') no-repeat 100% fixed;background-size: 100% 100%; }
+#siteicon { height:31px;width:30px;background:transparent url('../images/holiday/shamrockicon.png') no-repeat right !important;float:left;margin-top:3px;margin-left:3px; }
+#logoholder { background:transparent; }
+#headerlogo { text-shadow: 2px 2px 2px #000;color:#fff; }
+#headertop { background-color:transparent; }
+#headerholder { background:transparent url('../images/holiday/stpatrickborder.png') repeat-x; }
+.channame {  }
+.themeholder {  }
+.themeholder a { font-family:Tahoma;  }
+#headernav ul li a { color:white;font-weight:bold;text-decoration:none; }
+#headernav ul li a:hover { background-color:#285E83; }
+.navbar-default { background:transparent url('../images/trans50.png');border:0px; }
+.navleft > li > a { font-size:18px !important;font-family:'IM Fell English SC'; }
+.navbar-default .navbar-nav > li > a { text-shadow: 2px 2px 2px #000; }
+.navbar-default .navbar-right > li > a { text-shadow:none !important; }
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {color: #EAFBDB;}
+.navbar-collapse .navbar-right li a:hover { background:transparent; } 
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus { background:#2D572B;}
+.navbar-default .navbar-toggle .icon-bar {background: white;}
+.lvuitemlb { color: #010501 !important; }
+.lvuitemlbSelected { color:white !important;background-color:#8BC540; }
+.lvuitem:hover { background-color:#D6EABB; }
+.lvuitemMe, .lvuitemMeAway { font-family:Tahoma; }
+.lvuitemlbMe { background: transparent;color:white !important;font-family:Tahoma;}
+.lvuitemlbMeSel { background: transparent;color:white !important; }
+#txNumberOfUser { font-family:Tahoma; }
+#nicklistinfo1 { color:#fff;background:transparent url('../images/trans50.png'); }
+#nicklistinfo1 a { color:#fff; }
+#nicklistinfo2 { background:transparent url('../images/trans50.png');color:#fff; }
+.channame_nowchatting { color:white;font-family:'IM Fell English SC';font-size:21px;text-shadow: 2px 2px 2px #000; }
+.chanlabel { color:#E8F0F7;font-weight:bold;text-shadow: 2px 2px 2px #000; }
+#statusareaholder, #chatareaholder { border:2px solid #064F25 !important;background:transparent url('../images/transwhite95.png') !important; }
+#chatnicklistholder { border:2px solid #064F25 !important;background:transparent url('../images/transwhite95.png') !important; }
+#chatnicklist { top:5px !important; }
+#txSend { border:1px solid #064F25 !important;background:transparent url('../images/transwhite90.png') !important; }
+#nicklistuicons { background:transparent url('../images/trans50.png');-webkit-border-radius: 8px;
+-moz-border-radius: 8px;
+border-radius: 8px; }
+#wndSetAwayMsgContainer { background:#2D572B;border:1px solid #064F25; }
+.awaymsgabouttext { color:#FFF; }
+.awayicon_a { color:white !important;border:1px solid #ccc;background:#8BC540;padding:0 2px; }
+.awayicon_a:hover { color:white; }
+.awayicon_b { color:#8BC540 !important;border:1px solid #8BC540;background:#fff;padding:0 2px; }
+.awayicon_b:hover { color:white; }
+#awayb { top:4px !important;right:7px !important; }
+#whisperheader { background:#2D572B; }
+#sliderContent {color:#333333;border:2px solid #2D572B; }
+#topheaderbar { background:#2D572B;color:white; }
+#whisperhistoryheader { background:#2D572B; }
+.whisperwindowholder { background:#2D572B; }
+.whisperclosebutton { color:red;background:white; }
+.whisperminusbutton { color:#4CBAD8;background:white; }
+.whisperclosebuttonb { color:red;background:white; }
+#optionsheader, #modesheader, #accessheader, #propsheader, #emotesheader { background:#2D572B;color:white; }
+footer { font-family:tahoma;color:white; }
+footer a { color:white !important; }
+footer a:hover { color: #E8F0F7 !important;text-decoration:none; }
+.btn_whisperuser_a, .btn_whisperuser_a:hover { color:white; }
+.btn_ignoreuser_a, .btn_ignoreuser_a:hover { color:red;text-shadow: 1px 1px 1px #000; }
+.btn_taguser_a, .btn_taguser_a:hover { color:#fff; }
+.btn_viewprofile_a, .btn_viewprofile_a:hover  { color:#fff; }
+.btn_whisperuser_d, .btn_ignoreuser_d, .btn_taguser_d, .btn_viewprofile_d  { color:#fff;pointer-events: none;cursor: default; }
+.btn_whisperuser_d:hover, .btn_ignoreuser_d:hover, .btn_taguser_d:hover, .btn_viewprofile_d:hover { color:#FF558C; }
+#snowflake { display:none; }
+#themeextra { display:none; }
+#awayb a { color:white; }
+#awayb a:hover { color:#CCC; }
+.closebutton { color:red;background:white; }
+@media only screen and (max-width : 750px) {
+	#chatnicklistbg { background:#2D572B; }
+	.navbar-collapse li { border-bottom:1px solid #E10049; }  
+}

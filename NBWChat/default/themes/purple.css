@@ -1,0 +1,51 @@
+body { background-color:#300A40; }
+#logoholder { background:-webkit-gradient(linear,0 0,0 100%,from(#5E0B82),to(#300A40));background:-moz-linear-gradient(0% 0 270deg,#5E0B82,#300A40);background:linear-gradient(#5E0B82,#300A40);background:-o-linear-gradient(#5E0B82,#300A40);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#5E0B82', endColorstr='#300A40'); }
+#headerlogo { text-shadow: 2px 2px 2px #000;color:#fff; }
+#headertop { background-color:transparent; }
+#headernav ul { background-color:#17384F; }
+#headernav ul li a { color:white;font-weight:bold;text-decoration:none; }
+#headernav ul li a:hover { background-color:#285E83; }
+.navbar-default { background:#1C0525;border-top:1px solid #5E0B82;border-bottom:1px solid #5E0B82; }
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {color: #F1DAFC;}
+.navbar-collapse .navbar-right li a:hover { background:transparent; } 
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus { background:#300A40;}
+.navbar-default .navbar-toggle .icon-bar {background: white;}
+.lvuitemlbMe { background: transparent;color:white !important;}
+.lvuitemlbMeSel { background: transparent;color:white !important; }
+#nicklistinfo1 { color:white;background:transparent; }
+#nicklistinfo1 a { color:white; }
+#nicklistinfo2 { background:transparent;color:white; }
+.channame_nowchatting { color:white; }
+.chanlabel { color:#E8F0F7;font-weight:bold; }
+#wndSetAwayMsgContainer { background:#300A40;border:1px solid #000; }
+.awaymsgabouttext { color:#FFF; }
+.awayicon_a { color:white !important;border:1px solid #ccc;background:#1C0525;padding:0 2px; }
+.awayicon_a:hover { color:white; }
+.awayicon_b { color:#1163CB !important;border:1px solid #1163CB;background:#fff;padding:0 2px; }
+.awayicon_b:hover { color:white; }
+#whisperheader { background:#300A40; }
+#sliderContent {color:#333333;border:2px solid #300A40; }
+#topheaderbar { background:#300A40;color:white; }
+#whisperhistoryheader { background:#300A40; }
+.whisperwindowholder { background:#300A40; }
+.whisperclosebutton { color:red;background:white; }
+.whisperminusbutton { color:#4CBAD8;background:white; }
+.whisperclosebuttonb { color:red;background:white; }
+#optionsheader, #modesheader, #accessheader, #propsheader, #emotesheader { background:#300A40;color:white; }
+footer { color:white; }
+footer a { color:white !important; }
+footer a:hover { color: #E8F0F7 !important;text-decoration:none; }
+.btn_whisperuser_a, .btn_whisperuser_a:hover { color:white; }
+.btn_ignoreuser_a, .btn_ignoreuser_a:hover { color:red; }
+.btn_taguser_a, .btn_taguser_a:hover { color:#CBDFF3; }
+.btn_viewprofile_a, .btn_viewprofile_a:hover  { color:#D6EACE; }
+.btn_whisperuser_d, .btn_ignoreuser_d, .btn_taguser_d, .btn_viewprofile_d  { color:#8B1DBA;pointer-events: none;cursor: default; }
+.btn_whisperuser_d:hover, .btn_ignoreuser_d:hover, .btn_taguser_d:hover, .btn_viewprofile_d:hover { color:#8B1DBA; }
+#snowflake { display:none; }
+#themeextra { display:none; }
+.closebutton { color:red;background:white; }
+#icbg { display:none; }
+@media only screen and (max-width : 750px) {
+	#chatnicklistbg { background:#300A40; }
+	.navbar-collapse li { border-bottom:1px solid #310940; }  
+}

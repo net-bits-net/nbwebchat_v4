@@ -1,0 +1,2 @@
+.linebreakindenter:nth-child(even) { background:transparent; }
+.linebreakindenter:nth-child(odd) { background:transparent; }

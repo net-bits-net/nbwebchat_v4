@@ -43,9 +43,6 @@ footer a:hover { color: #E8F0F7;text-decoration:none; }
 .btn_whisperuser_d, .btn_ignoreuser_d, .btn_taguser_d, .btn_viewprofile_d  { color:grey;pointer-events: none;cursor: default; }
 .btn_whisperuser_d:hover, .btn_ignoreuser_d:hover, .btn_taguser_d:hover, .btn_viewprofile_d:hover { color:grey; }
 .closebutton { color:red;background:white; }
-#snowflake { display:none; }
-#themeextra { display:none; }
-#icbg { display:none; }
 #bgtrans { display:none; }
 @media only screen and (max-width : 750px) {
 	#chatnicklistbg { background:#075288; }

@@ -1,0 +1,69 @@
+@import url('http://fonts.googleapis.com/css?family=Tangerine');
+
+body { background:#E20F0D url('../images/holiday/valday.jpg') no-repeat 100% fixed;background-size: 100% 100%; }
+#siteicon { height:37px;width:40px;background:transparent url('../images/holiday/cupidicon.png') no-repeat right !important;float:left; }
+#logoholder { background:transparent; }
+#headerlogo { text-shadow: 2px 2px 2px #000;color:#fff; }
+#headertop { background-color:transparent; }
+.channame {  }
+.themeholder {  }
+.themeholder a { font-family:Tahoma;  }
+#headernav ul li a { color:white;font-weight:bold;text-decoration:none; }
+#headernav ul li a:hover { background-color:#285E83; }
+.navbar-default { background:transparent url('../images/trans50.png'); }
+.navleft > li > a { font-size:24px !important;font-family:'Tangerine'; }
+.navbar-default .navbar-nav > li > a {}
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {color: #FAD1D1;}
+.navbar-collapse .navbar-right li a:hover { background:transparent; } 
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus { background:#E20F0D;}
+.navbar-default .navbar-toggle .icon-bar {background: white;}
+.lvuitemMe, .lvuitemMeAway { font-family:Tahoma; }
+.lvuitemlbMe { background: transparent;color:white !important;font-family:Tahoma;}
+.lvuitemlbMeSel { background: transparent;color:white !important; }
+#txNumberOfUser { font-family:Tahoma; }
+#nicklistinfo1 { color:#fff;background:transparent url('../images/trans50.png'); }
+#nicklistinfo1 a { color:#fff; }
+#nicklistinfo2 { background:transparent url('../images/trans50.png');color:#fff; }
+.channame_nowchatting { color:white;font-family:'Tangerine';font-size:24px; }
+.chanlabel { color:#E8F0F7;font-weight:bold; }
+#statusareaholder, #chatareaholder { border:2px solid #F37273 !important;background:transparent url('../images/transwhite95.png') !important; }
+#chatnicklistholder { border:2px solid #F37273 !important;background:transparent url('../images/transwhite95.png') !important; }
+#chatnicklist { top:5px !important; }
+#txSend { border:1px solid #F37273 !important;background:transparent url('../images/transwhite90.png') !important; }
+#nicklistuicons { background:transparent url('../images/trans50.png');-webkit-border-radius: 8px;
+-moz-border-radius: 8px;
+border-radius: 8px; }
+#wndSetAwayMsgContainer { background:#E20F0D;border:1px solid #F37273; }
+.awaymsgabouttext { color:#FFF; }
+.awayicon_a { color:white !important;border:1px solid #ccc;background:#710000;padding:0 2px; }
+.awayicon_a:hover { color:white; }
+.awayicon_b { color:#1163CB !important;border:1px solid #1163CB;background:#fff;padding:0 2px; }
+.awayicon_b:hover { color:white; }
+#awayb { top:4px !important;right:7px !important; }
+#whisperheader { background:#E20F0D; }
+#sliderContent {color:#333333;border:2px solid #E20F0D; }
+#topheaderbar { background:#E20F0D;color:white; }
+#whisperhistoryheader { background:#E20F0D; }
+.whisperwindowholder { background:#E20F0D; }
+.whisperclosebutton { color:red;background:white; }
+.whisperminusbutton { color:#4CBAD8;background:white; }
+.whisperclosebuttonb { color:red;background:white; }
+#optionsheader, #modesheader, #accessheader, #propsheader, #emotesheader { background:#E20F0D;color:white; }
+footer { font-family:tahoma;color:white; }
+footer a { color:white !important; }
+footer a:hover { color: #E8F0F7 !important;text-decoration:none; }
+.btn_whisperuser_a, .btn_whisperuser_a:hover { color:white; }
+.btn_ignoreuser_a, .btn_ignoreuser_a:hover { color:red;text-shadow: 1px 1px 1px #000; }
+.btn_taguser_a, .btn_taguser_a:hover { color:#fff; }
+.btn_viewprofile_a, .btn_viewprofile_a:hover  { color:#fff; }
+.btn_whisperuser_d, .btn_ignoreuser_d, .btn_taguser_d, .btn_viewprofile_d  { color:#fff;pointer-events: none;cursor: default; }
+.btn_whisperuser_d:hover, .btn_ignoreuser_d:hover, .btn_taguser_d:hover, .btn_viewprofile_d:hover { color:#FF558C; }
+#snowflake { display:none; }
+#themeextra { display:none; }
+#awayb a { color:white; }
+#awayb a:hover { color:#CCC; }
+.closebutton { color:red;background:white; }
+@media only screen and (max-width : 750px) {
+	#chatnicklistbg { background:#E20F0D; }
+	.navbar-collapse li { border-bottom:1px solid #E10049; }  
+}
