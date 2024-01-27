@@ -39,7 +39,6 @@ var sendFontfamily = null;
 var sendFontcolor = null;
 var sendFontweight = null;
 var sendFontstyle = null;
-
 var whisperzindex = 22;
 var whisperoffset = 1;
 var whisperoffsetleft = 1;
@@ -49,7 +48,7 @@ else {
 	sFUIDIR2 = sFUIDIR + '/';
 	var sTPN = window.location.pathname.replace(/chatui.aspx|chatui.php|\/c\/?.*/i, "");
 	var hostport = ":" + window.location.port;
-	sURIFUIDIR2 = "//" + window.location.hostname + hostport + sTPN + sFUIDIR2;
+	sURIFUIDIR2 = "http://" + window.location.hostname + hostport + sTPN + sFUIDIR2;
 }
 var aaTagged = new Array();
 var staffIgnore = ["^Bot_Iggy"];
@@ -90,8 +89,7 @@ var paturl = "https?://(\\w*:\\w*@)?[-\\w.]+(:\\d+)?(/([^\\s[]*(\\?[^\\s]+)?)?)?
 var reHTMLFRMTTAGS = /\bspan\b|\bfont\b|\bb\b|\bi\b|\bu\b/i;
 var reInlineScript = /\son\w.*?=/i;
 var reBBCODES = /\[style.*?\]|\[\/style\]/i;
-//Update Dec 15 2023 text gradient Mike
-var reBBCODES_SUB = /ff:.+?;|co:.+?;|bgco:.+?;|b;|i;|u;|g:.+?;|\bundefined\b/ig;
+var reBBCODES_SUB = /ff:.+?;|co:.+?;|bgco:.+?;|b;|i;|u;|\bundefined\b/ig;
 var aTagNeedClosing = new Array();
 var re = null;
 var tmpUser = new Object();
@@ -132,34 +130,12 @@ var vstatus = false;
 var vcount = 0;
 var vtitle = document.title;
 var vinterval_id = '';
-var bBGColor = '#FFFFFF';
-var bPiconsOn = false;
-var bAltColorOn = false;
-
-//Update Dec 15 2023 text gradient Mike
-var bBGColor = '#FFFFFF';
-var GColor = '#000000';
-var GColorSel = false;
-var bgTextFrmtOff = false;
-var sendFontgcolor = null;
-
-//Update July 30 2021 LockScroll Mike
-var bLockScroll = false;
 $(window).blur(function () {
 	startTitleCount();
 });
 $(window).focus(function () {
 	suspendTitleCount();
 });
-//Update Jan 14 2024 URL Shorten Long Links Mike
-function shortenURL(url) {
-	if (url.length > 100) {
-		var shortenedUrl = url.substring(0, 80) + "(...)";
-		return shortenedUrl;
-	} else {
-    return url;
-	}	
-}
 function startTitleCount() {
 	vtype = '';
 	vcount = 0;
@@ -695,8 +671,9 @@ function ParseTextMessage3(str, ro, wnd) {
 					rp = result_color[2];
 
 					//use separate style tag since fg or bg can be reset independently
-                    //Edit Mike 1/16/21 fix for highlighted/bg text duplicating.
-					if (fg !== null && bg === null) {
+
+					//Edit Mike 1/16/21 fix for highlighted/bg text duplicating.
+					if (!IsUndefinedOrNull(fg) && IsUndefinedOrNull(bg)) {
 						if (fg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="color:' + fg + ';">';
 							addTagNeedClosing("</fg>");
@@ -705,7 +682,7 @@ function ParseTextMessage3(str, ro, wnd) {
 							if (ct !== null) strtmp += str.slice(pos1, regret.index) + ct;
 						}
 					}
-					if (bg !== null && fg === null) {
+					if (!IsUndefinedOrNull(bg) && IsUndefinedOrNull(fg)) {
 						if (bg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="background-color:' + bg + ';">';
 								addTagNeedClosing("</bg>");
@@ -715,7 +692,7 @@ function ParseTextMessage3(str, ro, wnd) {
 											
 						}
 					}
-					if (bg !== null && fg !== null) {
+					if (!IsUndefinedOrNull(bg) && !IsUndefinedOrNull(fg)) {
 						if (bg.length > 0 && fg.length > 0) {
 							strtmp += str.slice(pos1, regret.index) + '<span style="color:' + fg + ';"><span style="background-color:' + bg + ';">';
 							addTagNeedClosing("</fg>");
@@ -785,11 +762,7 @@ function ParseTextMessage3(str, ro, wnd) {
 				//edit begin
 				if (bTextFrmtOff === false) {
 					strsubtmp = '';
-					//Update Dec 15 2023 text gradient Mike
-					var colorone = '';
-					var colortwo = '';
-					var usegradient = false;
-					
+
 					while (true) {
 						bbcoderet = reBBCODES_SUB.exec(regret[0]);
 
@@ -803,23 +776,13 @@ function ParseTextMessage3(str, ro, wnd) {
 								strsubtmp += 'background-color:' + FixHexColorIfHexCode(cleanbbcode.substr(5));
 							} else if (cleanbbcode.indexOf("co:") == 0) {
 								strsubtmp += 'color:' + FixHexColorIfHexCode(cleanbbcode.substr(3));
-								//Update Dec 15 2023 text gradient Mike
-								colorone = FixHexColorIfHexCode(cleanbbcode.substr(3)).slice(0, -1);
 							} else if (cleanbbcode.indexOf("b;") == 0) {
 								strsubtmp += 'font-weight:bold;';
 							} else if (cleanbbcode.indexOf("i;") == 0) {
 								strsubtmp += 'font-style:italic;';
 							} else if (cleanbbcode.indexOf("u;") == 0) {
 								strsubtmp += 'text-decoration:underline;';
-							} 
-							//Update Dec 15 2023 text gradient Mike
-							else if (cleanbbcode.indexOf("g:") == 0 && bgTextFrmtOff === false) {
-						
-								colortwo = FixHexColorIfHexCode(cleanbbcode.substr(2)).slice(0, -1);
-								usegradient = true;
-								strsubtmp += 'background: ' + colorone + ';background: linear-gradient(to right, ' + colorone + ' 0%, ' + colortwo + ' 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;';
-							}
-							else {
+							} else {
 								strsubtmp += 'undefined;';
 							}
 						}
@@ -907,36 +870,16 @@ function ParseTextMessage3(str, ro, wnd) {
 								});
 							}
 						} else {
-							//Update Dec 15 2023 text gradient Mike
-							if (usegradient) {
-								strtmp += str.slice(pos1, regret.index) + "<a class='normallink' href='" + safeurl(regret[0]) + "' target='_blank'>" + shortenURL(regret[0]) + "</a>";
-							}
-							else {
-								strtmp += str.slice(pos1, regret.index) + "<a href='" + safeurl(regret[0]) + "' target='_blank'>" + shortenURL(regret[0]) + "</a>";
-							}							
+							strtmp += str.slice(pos1, regret.index) + "<a href='" + safeurl(regret[0]) + "' target='_blank'>" + regret[0] + "</a>";
 						}
 					} else {
-						//Update Dec 15 2023 text gradient Mike
-						if (usegradient) {
-							//Update Jan 14 2024 URL Shorten Long Links Mike
-							strtmp += str.slice(pos1, regret.index) + "<a class='normallink' href='" + safeurl(regret[0]) + "' target='_blank'>" + shortenURL(regret[0]) + "</a>";	
-						}
-						else {
-							//Update Jan 14 2024 URL Shorten Long Links Mike
-							strtmp += str.slice(pos1, regret.index) + "<a href='" + safeurl(regret[0]) + "' target='_blank'>" + shortenURL(regret[0]) + "</a>";
-						}
+						strtmp += str.slice(pos1, regret.index) + "<a href='" + safeurl(regret[0]) + "' target='_blank'>" + regret[0] + "</a>";
 					}
 
 				} else {
 					//old code, commented 29-jul-2017 HY
 					//strtmp += str.slice(pos1, regret.index) + "<span style=\"color:blue;\">-URLs Blocked in Options-</span>";
-					//Update Dec 15 2023 text gradient Mike
-					if (usegradient) {
-						strtmp += str.slice(pos1, regret.index) + "<a class='normallink' href='#' target='_blank' disabled='disabled' style='pointer-events: none;' onclick='return false;'>" + shortenURL(regret[0]) + "</a>";
-					}
-					else {					
-						strtmp += str.slice(pos1, regret.index) + "<a href='#' target='_blank' disabled='disabled' style='pointer-events: none;' onclick='return false;'>" + shortenURL(regret[0]) + "</a>";
-					}
+					strtmp += str.slice(pos1, regret.index) + "<a href='#' target='_blank' disabled='disabled' style='pointer-events: none;' onclick='return false;'>" + regret[0] + "</a>";
 				}
 				pos1 = re.lastIndex;
 			} else {
@@ -1057,12 +1000,8 @@ function fnAppendText(str) {
 	//}
 	//MChatPaneLines++;
 	//if (MChatPaneLines > (MChatPaneMaxLines - 75)) storeText('<div class="linebreakindenter">' + str + '</div>');
-    // Mike Update 03-06-21 Moved max line remove top lines to before the autocpscroll
-    MChatPaneLines++;
-	if (MChatPaneLines > MChatPaneMaxLines) {
-		//storeText('<div class="linebreakindenter">' + str + '</div>');
-		removeTopLines();
-	}
+
+
 	// *** New code.
 	//ToDo: mess left by legacy code, fix it.
 	var el_append = $('<div class="linebreakindenter">' + str + '</div>');
@@ -1074,6 +1013,12 @@ function fnAppendText(str) {
 	else {
 		if (bSkipCPScrollCall == false) { autoCPScroll(pChatPane.contentDocument.body); }
 	}
+	MChatPaneLines++;
+	if (MChatPaneLines > MChatPaneMaxLines) {
+		//storeText('<div class="linebreakindenter">' + str + '</div>');
+		removeTopLines();
+	}
+
 	fnNewMessageVisualIndicator();
 }
 function fnAppendText2(str) {
@@ -1855,8 +1800,6 @@ function BuildFmtString(pOptions) {
 	sDspFrmt = '';
 	if (pOptions.font.length > 0) sDspFrmt += 'ff:' + pOptions.font + ';';
 	if (pOptions.color.length > 0) sDspFrmt += 'co:' + pOptions.color + ';';
-	//Update Dec 15 2023 text gradient Mik
-	if (pOptions.GColorSel == true) sDspFrmt += 'g:' + pOptions.GColor + ';';
 	sDspFrmt += (pOptions.bold == true) ? 'b;' : '';
 	sDspFrmt += (pOptions.italic == true) ? 'i;' : '';
 }
@@ -1876,43 +1819,19 @@ function loadFontsize(COptions,stoptimer,num) {
 function loadOptions() {
 	var COptions = NBChatController.LoadChatOptions();
 	var EOptions = NBChatController.GetExtraOptions();
-	//alert("Load: " + JSON.stringify(COptions));
+	//alert(JSON.stringify(COptions));
 	if (COptions.sDspFrmt) {
-		//console.log('load options: ' + COptions.sDspFrmt);
 		var fontinfo = COptions.sDspFrmt.split(";");
 		for (f = 0; f < fontinfo.length; f++) {
 			if (fontinfo[f].substr(0, 3) == 'ff:') { sendFontfamily = fontinfo[f].substr(3); }
 			if (fontinfo[f].substr(0, 3) == 'co:') { sendFontcolor = fontinfo[f].substr(3); }
-			//Update Dec 15 2023 text gradient Mike
-			if (fontinfo[f].substr(0, 2) == 'g:') { sendFontgcolor = fontinfo[f].substr(2); }
 			if (fontinfo[f].substr(0, 1) == 'b') { sendFontweight = 'bold'; }
 			if (fontinfo[f].substr(0, 1) == 'i') { sendFontstyle = 'italic'; }
 		}
-		//Update Dec 15 2023 text gradient Mike
-		var formatSendtxt = '';
-		if (sendFontfamily != null) { 
-			//ptxSend.style.fontFamily = sendFontfamily; 
-			formatSendtxt += 'font-family: ' + sendFontfamily + ';';
-		}
-		if (sendFontcolor != null) { 
-			//ptxSend.style.color = sendFontcolor;
-			formatSendtxt += 'color: ' + sendFontcolor + ';';			
-		}
-		if (sendFontweight != null) { 
-			//ptxSend.style.fontWeight = sendFontweight;
-			formatSendtxt += 'font-weight: ' + sendFontweight + ';';			
-		}
-		if (sendFontstyle != null) { 
-			//ptxSend.style.fontStyle = sendFontstyle; 
-			formatSendtxt += 'font-style: ' + sendFontstyle + ';';
-		}
-		/*
-		if (sendFontgcolor != null) {
-			formatSendtxt += 'background: ' + sendFontcolor + ';background: linear-gradient(to right, ' + sendFontcolor + ' 0%, ' + sendFontgcolor + ' 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;';
-		}
-		*/
-		ptxSend.style.cssText = formatSendtxt;	
-		setFontswhisper();		
+		if (sendFontfamily != null) { ptxSend.style.fontFamily = sendFontfamily; }
+		if (sendFontcolor != null) { ptxSend.style.color = sendFontcolor; }
+		if (sendFontweight != null) { ptxSend.style.fontWeight = sendFontweight; }
+		if (sendFontstyle != null) { ptxSend.style.fontStyle = sendFontstyle; }
 	}
 	sDspFrmt = COptions.sDspFrmt;
 	// Load fontsize for body and status edit Mike 8/31/18
@@ -1944,8 +1863,6 @@ function loadOptions() {
 
 	if (typeof (COptions.bEmotsOff) == 'boolean') bEmotsOff = COptions.bEmotsOff;
 	if (typeof (COptions.bTextFrmtOff) == 'boolean') bTextFrmtOff = COptions.bTextFrmtOff;
-	//Update Dec 15 2023 text gradient Mike
-	if (typeof (EOptions.bgTextFrmtOff) == 'boolean') bgTextFrmtOff = EOptions.bgTextFrmtOff;
 
 	if (typeof (COptions.bWhispOff) == 'boolean') bWhispOff = COptions.bWhispOff;
 	//if (typeof (COptions.bTimeStampOn) == 'boolean') bTimeStampOn = COptions.bTimeStampOn;
@@ -1962,39 +1879,9 @@ function loadOptions() {
 		else { bSafeUrlCheckOn = false; }
 		if (typeof (EOptions.bYoutubeUrl) == 'number' && EOptions.bYoutubeUrl > 0) { bYoutubeUrl = EOptions.bYoutubeUrl; }
 		else { bYoutubeUrl = 2; }
-		//Update Dec 15 2023 text gradient Mike
-		if (typeof (EOptions.GColorSel) == 'undefined') {
-			GColorSel = false;
-		}
-		else {
-			GColorSel = EOptions.GColorSel;
-		}
-		
-		if (typeof (EOptions.GColor) == 'undefined') { 
-		    GColor = "#000000";
-		}
-		else { 
-		    GColor = EOptions.GColor;
-		}
-		
-		// UPDATE 04-01-2021 Mike adding support for various chat background colors
-		if (typeof (EOptions.bBGColor) == 'undefined') { 
-		    bBGColor = "#FFFFFF";
-			changeBGColor("#FFFFFF");
-			changeBGColorWhisper("#FFFFFF")	
-		}
-		else { 
-		    bBGColor = EOptions.bBGColor;
-			changeBGColor(EOptions.bBGColor);
-			changeBGColorWhisper(EOptions.bBGColor)			
-		}
-		if (typeof (EOptions.bAltColorOn) == 'boolean') { bAltColorOn = EOptions.bAltColorOn; }
-		else { bAltColorOn = false; }
-		if (bAltColorOn == true) { changeAltColor(bBGColor); } 
-		else { changeAltColor("transparent"); }
 	}
-	else { bBGColor = "#FFFFFF"; bInviteOn = false; bPiconsOn = false; bUnoticeOn = false; bUrlOn = false; bSafeUrlCheckOn = false; bYoutubeUrl = 1; bAltColorOn = false; }
-	//alert("Load: " + JSON.stringify(EOptions));
+	else { bInviteOn = false; bPiconsOn = false; bUnoticeOn = false; bUrlOn = false; bSafeUrlCheckOn = false; bYoutubeUrl = 1; }
+	//alert(JSON.stringify(EOptions));
 	//sound are played in flash object, so they won't load here
 }
 
@@ -2018,8 +1905,6 @@ function saveOptions(pOptions) {
 
 	bEmotsOff = pOptions.bEmotsOff;
 	bTextFrmtOff = pOptions.bTextFrmtOff;
-	//Update Dec 15 2023 text gradient Mike
-	bgTextFrmtOff = pOptions.bgTextFrmtOff;
 
 	bWhispOff = pOptions.bWhispOff;
 	//bTimeStampOn = pOptions.bTimeStampOn;
@@ -2031,12 +1916,6 @@ function saveOptions(pOptions) {
 	bSafeUrlCheckOn = pOptions.bSafeUrlCheckOn;
 	bYoutubeUrl = pOptions.bYoutubeUrl;
 	bConfirmOnLeaveOff = pOptions.bConfirmOnLeaveOff;
-	changeBGColor(pOptions.bBGColor);
-	changeBGColorWhisper(pOptions.bBGColor);
-	bAltColorOn = pOptions.bAltColorOn;
-	if (bAltColorOn == true) { changeAltColor(pOptions.bBGColor); } 
-	else { changeAltColor("transparent"); }
-	
 	//
 	var COptions = new Object();
 	// Update Aug 12 2015 Extra Settings
@@ -2071,90 +1950,32 @@ function saveOptions(pOptions) {
 	EOptions.bUrlOn = pOptions.bUrlOn;
 	EOptions.bSafeUrlCheckOn = pOptions.bSafeUrlCheckOn;
 	EOptions.bYoutubeUrl = pOptions.bYoutubeUrl;
-	
-	EOptions.bBGColor = pOptions.bBGColor;
-	//Update Dec 15 2023 text gradient Mike
-	EOptions.GColor = pOptions.GColor;
-	EOptions.GColorSel = pOptions.GColorSel;
-	EOptions.bgTextFrmtOff = pOptions.bgTextFrmtOff;
-	GColor = pOptions.GColor;
-	GColorSel = pOptions.GColorSel;
-	
-	EOptions.bAltColorOn = pOptions.bAltColorOn;
-	
-	
-	
 
-	
 	if (COptions.sDspFrmt) {
 		var fontinfo = COptions.sDspFrmt.split(";");
 		for (f = 0; f < fontinfo.length; f++) {
 			if (fontinfo[f].substr(0, 3) == 'ff:') { sendFontfamily = fontinfo[f].substr(3); }
 			if (fontinfo[f].substr(0, 3) == 'co:') { sendFontcolor = fontinfo[f].substr(3); }
-			//Update Dec 15 2023 text gradient Mike
-			if (fontinfo[f].substr(0, 2) == 'g:') { sendFontgcolor = fontinfo[f].substr(2); }
 			if (fontinfo[f].substr(0, 1) == 'b') { sendFontweight = 'bold'; }
 			if (fontinfo[f].substr(0, 1) == 'i') { sendFontstyle = 'italic'; }
 		}
-		//Update Dec 15 2023 text gradient Mike
-		var formatSendtxt = '';
-		if (sendFontfamily != null) { 
-			//ptxSend.style.fontFamily = sendFontfamily; 
-			formatSendtxt += 'font-family: ' + sendFontfamily + ';';
-		}
-		if (sendFontcolor != null) { 
-			//ptxSend.style.color = sendFontcolor;
-			formatSendtxt += 'color: ' + sendFontcolor + ';';			
-		}
-		if (sendFontweight != null) { 
-			//ptxSend.style.fontWeight = sendFontweight;
-			formatSendtxt += 'font-weight: ' + sendFontweight + ';';			
-		}
-		if (sendFontstyle != null) { 
-			//ptxSend.style.fontStyle = sendFontstyle; 
-			formatSendtxt += 'font-style: ' + sendFontstyle + ';';
-		}
-		/*
-		if (sendFontgcolor != null && GColorSel == true) {
-			formatSendtxt += 'background: ' + sendFontcolor + ';background: linear-gradient(to right, ' + sendFontcolor + ' 0%, ' + sendFontgcolor + ' 100%);-webkit-background-clip: text;background-clip: text;-webkit-text-fill-color: transparent;';
-		}
-		*/
-		ptxSend.style.cssText = formatSendtxt;	
+		if (sendFontfamily != null) { ptxSend.style.fontFamily = sendFontfamily; }
+		else { ptxSend.style.fontFamily = 'Tahoma'; }
+		if (sendFontcolor != null) { ptxSend.style.color = sendFontcolor; }
+		else { ptxSend.style.color = '#000000'; }
+		if (sendFontweight != null) { ptxSend.style.fontWeight = sendFontweight; }
+		else { ptxSend.style.fontWeight = 'normal'; }
+		if (sendFontstyle != null) { ptxSend.style.font = sendFontstyle; }
+		else { ptxSend.style.fontStyle = 'normal'; }
 		setFontswhisper();
 	}
-	
+
 	NBChatController.SaveChatOptions(COptions);
 	// Update Aug 12 2015 Extra Settings
 	NBChatController.SetExtraOptions(EOptions);
 	ScrollFix();
-	//alert("Saved: " + JSON.stringify(EOptions));
 	//alert('Options Saved!');
 }
-// UPDATE 04-01-2021 Mike adding support for various chat background colors
-function changeBGColor(bgcolor) {
-	bBGColor = bgcolor;
-	document.getElementById("chatareaholder").style.backgroundColor = bgcolor;
-	document.getElementById("chatnicklistholder").style.backgroundColor = bgcolor;
-	document.getElementById("sendIntputDiv").style.backgroundColor = bgcolor;
-	document.getElementById("statusareaholder").style.backgroundColor = bgcolor;
-}
-function changeBGColorWhisper(bgcolor) {
-	 $('.whisperarea').css('background-color', bgcolor);
-	 $('.whispersendinput').css('background-color', bgcolor);
-	 
-}
-function changeAltColor(col) {
-	var link = document.createElement('link');
-	link.rel = "stylesheet";
-	link.type = "text/css";
-	if (col == "#FFFFFF") { link.href = sFUIDIR + "/themes/altlineswhite.css"; }
-	else if (col == "#D8D5D1") { link.href = sFUIDIR + "/themes/altlinesgrey.css"; }
-	else if (col == "#DBEEF7") { link.href = sFUIDIR + "/themes/altlinesblue.css"; }
-	else if (col == "#F9ECD0") { link.href = sFUIDIR + "/themes/altlinesyellow.css"; }
-	else { link.href = sFUIDIR + "/themes/altlinestrans.css"; }
- 	ChatPane.document.head.appendChild(link);
-}
-
 function getCPBody() {
 	if (isIE) return ChatPane.document.body;
 	else return pChatPane.contentDocument.body;
@@ -2222,11 +2043,12 @@ function getNextScrollToLastMessageSubFnCallRateMs(current_rate_ms) {
 }
 
 function scrollToLastMessageSubFn(cpb) {
+
 	if (bCPAutoScroll === false) {
 		clearScrollToLastMessageSubFnCallbackHandle();
 		return;
 	}
-    
+
 	var dist_from_bottom = distFromBottom(cpb);
 
 	if (dist_from_bottom > 0) {
@@ -2372,22 +2194,19 @@ function UserScrolled() {
 var bSkipCPScroll = false;
 
 function OnCPScroll() {
+	//console.log("on scroll event fired.")
 	var cpb = getCPBody();
 	//bSkipCPScrollCall = true;
-	//console.log("bCPAutoScroll: " + bCPAutoScroll + ", cpb.scrollTop: " + cpb.scrollTop + ", iLastAutoCpScrollVal: " + iLastAutoCpScrollVal + ", cpb.scrollHeight: " + cpb.scrollHeight, "OnCPScroll");
+	//DebugWindow("bCPAutoScroll: " + bCPAutoScroll + ", cpb.scrollTop: " + cpb.scrollTop + ", iLastAutoCpScrollVal: " + iLastAutoCpScrollVal + ", cpb.scrollHeight: " + cpb.scrollHeight, "OnCPScroll");
 	//bSkipCPScrollCall = false;
-    // Update July 30 2021 Lock Scroll Mike
-	if (bLockScroll) { bSkipCPScroll =  true; }
-	else if (!bSkipCPScroll) {
+
+	if (!bSkipCPScroll) {
 		if (bScrollCallEnabled) {
 			bCPAutoScroll = bScrollCallEnabled = false;
 			setTimeout(UserScrolled, 1000);
 		}
 	}
-	else {
-		bSkipCPScroll = false;
-	}
-
+	else bSkipCPScroll = false;
 }
 
 function onTest(s) {
@@ -2424,7 +2243,7 @@ function fnInitialize() {
 	//ppwGuest = document.getElementById('pwdGuest');
 	ptxGLDErrorMessage = $('#txGLDErrorMessage')[0]; // document.getElementById('txGLDErrorMessage');
 
-	//console.log("fnInitialize()::#0");
+	console.log("fnInitialize()::#0");
 
 	if (IsNotLoaded() == false) {
 		setTimeout(fnInitialize, 1000);
@@ -2451,7 +2270,7 @@ function fnInitialize() {
 	//LoadDummyUsers();
 
 	gsPresenterInitialized = true;
-	//console.log("fnInitialize()::#1");
+	console.log("fnInitialize()::#1");
 }
 function loadnicklist() {
 	olvUsers = new ListView(document.getElementById('lvUsers'));
@@ -2675,7 +2494,6 @@ function onKick(sNickFrom, sChan, sNickTo, sMessage) {
 }
 
 function onPrivmsg(sNickFrom, sChan, sMessage) {
-	
 	if (IsUndefinedOrNull(sMessage)) sMessage = '';
 	var pLVI = olvUsers.getItemByName(sNickFrom);
 	var str = new String();
@@ -2688,17 +2506,10 @@ function onPrivmsg(sNickFrom, sChan, sMessage) {
 
 				switch (sCmd) {
 					case "ACTION":
-
-						//Update Dec 15 2023 text gradient Mike
-						sMessage = sMessage.replace(reBBCODES, "");
-						sMessage = sMessage.replace("[/style]", "");
-						
 						//check ways to optimize this
 						//make action function 1 function
 						//fnAppendText("<span style='font-style:italic; color: #9C009C;'>" + getUserLabel(sNickFrom) + " " + ParseTextMessage(sMessage.substring(pos1, sMessage.length - 1)) + "</span>");
 						// Update 25-Nov-2014 Changed action color to class - Mike
-						
-	
 						if (pLVI.pUser.ilevel >= IsHelpOp) fnAppendText('<span class="actiontext"><img unselectable="on" src="' + fnGetIco(pLVI.pUser) + '" border="0" class="lvuitemico" /><a class="usernickclick" style="text-decoration:none;" href="javascript:;" onclick="usernickclick(\'' + sNickFrom + '\');">' + getUserLabel(sNickFrom) + "</a> " + ParseTextMessage(sMessage.substring(pos1, sMessage.length - 1)) + "</span>");
 						else fnAppendText('<span class="actiontext"><span class="cpblankicospace"></span><a class="usernickclick" style="text-decoration:none;" href="javascript:;" onclick="usernickclick(\'' + sNickFrom + '\');">' + getUserLabel(sNickFrom) + "</a> " + ParseTextMessage(sMessage.substring(pos1, sMessage.length - 1)) + "</span>");
 						getVisualType('A');
@@ -5659,8 +5470,6 @@ function createWhispTab(tabWhisp, type) {
 			tabWhisp.pwnd = "whispertab_" + tabWhisp.whsptid;
 			$('#statusholder').append("<div id='whispertab_" + tabWhisp.whsptid + "' class='activewtab'><span id='whispernick_" + tabWhisp.whsptid + "'>" + tabWhisp.receiver.nick + "</span><span class='tabx'><a id='whisperclose_" + tabWhisp.whsptid + "' href='#'><i class='whisperclosebuttonb fa fa-window-close'></i></a></span></div><span id='whisperspace_" + tabWhisp.whsptid + "'>&nbsp;</span>");
 			$('#whisperwindowadd').append("<div style='display:none;' class='whisperwindowholder' id='whisperwindowholder_" + tabWhisp.whsptid + "'><a title='minimize' class='whisperminibtn' id='whispermini_" + tabWhisp.whsptid + "' href='#'><i class='whisperminusbutton fa fa-minus-square'></i></a><a title='close' class='whisperboxclose' id='whispercloseb_" + tabWhisp.whsptid + "' href='#'><i class='whisperclosebutton fa fa-window-close' aria-hidden='true'></i></a><div class='whisperareawho'><span id='whisperdrag_" + tabWhisp.whsptid + "'><i class='fa fa-arrows-alt'></i></span> Whispering: <span>" + tabWhisp.receiver.nick + "</span></div><div class='whisperarea' id='" + tabWhisp.whsptid + "'><iframe class='WhisperPane' id='WhisperPane_" + tabWhisp.whsptid + "' name='WhisperPane' frameborder='0' scrolling='yes' src='" + sFUIDIR + "/nbchatwhisperpane.htm?wnick=" + tabWhisp.whsptid + "' ></iframe></div><div class='whispersendIntputDivb'><input class='whispersendinput' id='whisperSend_" + tabWhisp.whsptid + "' type='text' value='' autocomplete='off' /></div><div class='sendbuttonsb'><a title='send whisper' class='btn btn-sm btn-success' id='whisperSendbutton_" + tabWhisp.whsptid + "'>Send</a></div></div>");
-			// Update to fix whisper background color
-			changeBGColorWhisper(bBGColor);
 			tabWhisp.tabisloaded = true;
 			if (tabWhisp.pwnd) DebugWhisp('WhisperWindowInstanceCreationSuccessful', '');
 			else bTabWhispCreateError = true;
@@ -5949,7 +5758,6 @@ function whispTabClosed(nick) {
 		}
 	}
 }
-
 function setFontswhisper() {
 	if (sendFontfamily != null) { $('.whispersendinput').css('font-family', sendFontfamily); }
 	else { $('.whispersendinput').css('font-family', 'Tahoma'); }
@@ -5959,24 +5767,7 @@ function setFontswhisper() {
 	else { $('.whispersendinput').css('font-weight', 'normal'); }
 	if (sendFontstyle != null) { $('.whispersendinput').css('font-style', sendFontstyle); }
 	else { $('.whispersendinput').css('font-style', 'normal'); }
-	/*
-	if (sendFontgcolor != null && GColorSel == true) {
-		$('.whispersendinput').css('background', 'linear-gradient(to right, ' + sendFontcolor + ' 0%, ' + sendFontgcolor + ' 100%');
-		$('.whispersendinput').css('-webkit-background-clip', 'text');
-		$('.whispersendinput').css('background-clip', 'text');
-		$('.whispersendinput').css('-webkit-text-fill-color', 'transparent');
-	}	
-	else {
-		$('.whispersendinput').css('background', 'none');	
-		$('.whispersendinput').css('-webkit-text-fill-color', 'unset');	
-		$('.whispersendinput').css('-webkit-background-clip', 'unset');
-		$('.whispersendinput').css('background-clip', 'unset');		
-		$('.whispersendinput').css('color', sendFontcolor);
-	}
-	*/
 }
-
-
 function setFontsizewhisper(fsize) {
 	for (var i = 0; i < WhisperTabs.length; i++) {
 		$("#WhisperPane_" + WhisperTabs[i].whsptid).contents().find("#whisperbody").css("font-size", fsize);
@@ -6036,7 +5827,7 @@ function openPane(panetype) {
 			startTitleCount();
 		}
 		else if (panetype == 'options') {
-			$('#OptionsbPane').attr('src', sFUIDIR2 + 'nbchatoptions.htm?v=1.7');
+			$('#OptionsbPane').attr('src', sFUIDIR2 + 'nbchatoptions.htm?v=1.4');
 			$('#optionswindowholder').fadeIn('fast');
 			$('#optiontoptab').fadeIn('fast');
 			startTitleCount();
@@ -6073,7 +5864,6 @@ function openPane(panetype) {
 		}
 		else { $('#chatwindowholder').fadeIn('fast'); suspendTitleCount(); }
 	}
-	ScrollFix();
 	ScrollFixs();
 }
 
@@ -6193,10 +5983,6 @@ $(document).ready(function () {
 		whisperzindex++;
 		$('#whisperwindowholder_' + tid).css('z-index', whisperzindex);
 		$('#whisperwindowholder_' + tid).show('fast');
-		//Update Jan 14 2024 fix whisper reopen autoscroll bug for chrome
-		var whispframe = $("#WhisperPane_" + tid)[0].contentWindow;
-		var whispframeDoc = whispframe.document || whispframe.contentDocument;
-		whispframeDoc.body.scrollTop = whispframeDoc.body.scrollHeight;
 		return false;
 	});
 	$(document).on('focus', '[id^="whisperSend_"]', function (event) {
@@ -6276,17 +6062,6 @@ $(document).ready(function () {
 			zWhispWin('off');
 		}
 	});
-	$("#sliderWrap").resizable({
-		containment: '#whisperwindowadd',
-		grid: [10000, 1],
-		resize: function() {
-			var dh = $( "#sliderWrap" ).height();
-			var ih = dh - 60;
-			$("#wndFEmots").height(ih);
-			$("#wndFEmots").width("100%");
-		}
-
-	});
 	$('.emoteWindow').on("click", function () {
 		if ($("#openCloseIdentifier").is(":hidden")) {
 			$("#sliderWrap").animate({
@@ -6310,16 +6085,6 @@ $(document).ready(function () {
 		}
 		return false;
 	});
-});
-// Auto Scroll Check Box
-$(document).on('change', '[id^="lockscroll"]', function (event) {
-    if (this.checked) {
-        bLockScroll = true;
-		ScrollFix();
-    } else {
-        bLockScroll = false;
-		ScrollFix();
-    }
 });
 function randomString(length, chars) {
 	var result = '';
@@ -6382,12 +6147,10 @@ var safetext = function(text){
 var safeurl = function(text){
 	var table = {
 		'"': '%22',
-		'\'': '',
-		'&': '%26',
-		'"': ''
+		'\'': '%27'
 	};	
 	return text.toString().replace(/[<>"'\r\n&]/g, function(chr){
-		return decodeURIComponent(table[chr]);
+		return table[chr];
 	});
 };
 //alert(JSON.stringify(WhisperTabs))

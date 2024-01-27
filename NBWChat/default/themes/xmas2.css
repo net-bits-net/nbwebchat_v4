@@ -22,7 +22,7 @@ body { background:#8C0000 url('../images/holiday/redsnow.jpg'); }
 #statusareaholder, #chatareaholder { border:1px solid #4F0000 !important;background:transparent url('../images/transwhite95.png') !important; }
 #chatnicklistholder { border:1px solid #4F0000 !important;background:transparent url('../images/transwhite95.png') !important; }
 #chatnicklist { top:5px !important; }
-#txSend { border:1px solid #4F0000 !important;background:transparent url('../images/transwhite95.png') !important; }
+#sendIntputDiv { border:1px solid #4F0000 !important;background:transparent url('../images/transwhite95.png') !important; }
 #wndSetAwayMsgContainer { background:#8C0000;border:1px solid #000; }
 .awaymsgabouttext { color:#FFF; }
 .awayicon_a { color:white !important;border:1px solid #fff;background:#8C0000;padding:0 2px; }

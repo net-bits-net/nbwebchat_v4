@@ -34,7 +34,7 @@ body { background:#2D572B url('../images/holiday/stpatrickbg.jpg') no-repeat 100
 #statusareaholder, #chatareaholder { border:2px solid #064F25 !important;background:transparent url('../images/transwhite95.png') !important; }
 #chatnicklistholder { border:2px solid #064F25 !important;background:transparent url('../images/transwhite95.png') !important; }
 #chatnicklist { top:5px !important; }
-#txSend { border:1px solid #064F25 !important;background:transparent url('../images/transwhite90.png') !important; }
+#sendIntputDiv { border:1px solid #064F25 !important;background:transparent url('../images/transwhite90.png') !important; }
 #nicklistuicons { background:transparent url('../images/trans50.png');-webkit-border-radius: 8px;
 -moz-border-radius: 8px;
 border-radius: 8px; }

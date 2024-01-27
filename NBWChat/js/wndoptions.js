@@ -1,6 +1,6 @@
 var ptxSample = null;
-var pselFont = null, pselColor = null, pchBold = null, pchItalic = null;
-var pselFontSize = null, pchCorpText = null, pchEmotsOff = null, pchbTextFrmtOff = null;
+var pselFont = null, pselColor = null, pchBold = null, pchItalic = null, pselgColor = null, pchGradient = null;
+var pselFontSize = null, pchCorpText = null, pchEmotsOff = null, pchbTextFrmtOff = null, pchbgTextFrmtOff = null;
 var pchShowArrivals = true, pchShowStatusChg = true, pchShowDeparts = true;
 var pchSndArrival = true, pchSndKick = true, pchSndTagged = true, pchSndInvite = true, pchSndWhisp = true, pchConfirmOnLeaveOff = false;
 var oEventsNotifySnd = null;
@@ -64,6 +64,14 @@ function selectSelColor(psel, color) {
 
 	}
 }
+function selectSelgColor(psel, color) {
+	pselgColor.value = color;
+	var cstr = color;
+	var cres = cstr.replace("#", "");
+	pselgColor.color.fromString(cres);
+}
+
+
 function selectSelItem(psel, val, remValSingleQuote) {
 
 	if (remValSingleQuote) {
@@ -94,13 +102,16 @@ function fnOnLoad() {
 	ptxSample = document.getElementById('txSample');
 	pselFont = document.getElementById('selFont');
 	pselColor = document.getElementById('selColor');
+	pselgColor = document.getElementById('selgColor');
 	pchBold = document.getElementById('chBold');
+	pchGradient = document.getElementById('chGradient');
 	pchItalic = document.getElementById('chItalic');
 
 	pselFontSize = document.getElementById('selFontSize');
 	pchCorpText = document.getElementById('chCorpText');
 	pchEmotsOff = document.getElementById('chEmotsOff');
 	pchbTextFrmtOff = document.getElementById('chbTextFrmtOff');
+	pchbgTextFrmtOff = document.getElementById('chbgTextFrmtOff');
 
 	pchWhispOff = document.getElementById('chWhispOff');
 	//pchTimeStamp = document.getElementById('chTimeStamp');
@@ -121,11 +132,14 @@ function fnOnLoad() {
 	pselBGColor = document.getElementById('selBGColor');
 	pchAltColor = document.getElementById('chAltColor');
     
-	ptxSample.style.cssText = fnDecodeFrmtCode(window.parent.sDspFrmt);
+	ptxSample.style.cssText = fnDecodeFrmtCode(window.parent.sDspFrmt);	
+	
 	if (window.parent.isWK == true) selectSelItem(pselFont, ptxSample.style.fontFamily, true);
 	else selectSelItem(pselFont, ptxSample.style.fontFamily, false);
 	selectSelColor(pselColor, ptxSample.style.color);
+	selectSelgColor(pselgColor, window.parent.GColor);
 	pchBold.checked = (ptxSample.style.fontWeight == 'bold') ? true : false;
+	if (window.parent.GColorSel) { pchGradient.checked = window.parent.GColorSel; }
 	pchItalic.checked = (ptxSample.style.fontStyle == 'italic') ? true : false;
 
 	if (window.parent._pcpbody.style.fontSize.length > 0) pselFontSize.value = window.parent._pcpbody.style.fontSize;
@@ -133,6 +147,7 @@ function fnOnLoad() {
 	pchCorpText.checked = window.parent.bCorpText;
 	pchEmotsOff.checked = window.parent.bEmotsOff;
 	pchbTextFrmtOff.checked = window.parent.bTextFrmtOff;
+	pchbgTextFrmtOff.checked = window.parent.bgTextFrmtOff;
 
 	pchWhispOff.checked = window.parent.bWhispOff;
 	//pchTimeStamp.checked = window.parent.bTimeStampOn;
@@ -152,6 +167,8 @@ function fnOnLoad() {
 	pchAltColor.checked = window.parent.bAltColorOn;
 	//
 	oOPtions.color = pselColor.value;
+	oOPtions.GColor = pselgColor.value;
+	oOPtions.GColorSel = pchGradient.checked;
 	oOPtions.font = pselFont.value;
 	oOPtions.bold = pchBold.checked;
 	oOPtions.italic = pchItalic.checked;
@@ -160,6 +177,7 @@ function fnOnLoad() {
 	oOPtions.corpText = pchCorpText.checked;
 	oOPtions.bEmotsOff = pchEmotsOff.checked;
 	oOPtions.bTextFrmtOff = pchbTextFrmtOff.checked;
+	oOPtions.bgTextFrmtOff = pchbgTextFrmtOff.checked;
 	oOPtions.bWhispOff = pchWhispOff.checked;
 	//oOPtions.bTimeStampOn = pchTimeStamp.checked;
 	oOPtions.bInviteOn = pchInvite.checked;
@@ -193,13 +211,22 @@ function fnOnLoad() {
 	*/
 	oOPtions.bSafeUrlCheckOn = false; document.getElementById("urlm").selectedIndex = 0;
 	
-
+	if (window.parent.GColorSel) { 
+		changeSample();	
+	}
 
 }
 
 function fnOnTextColorChange() {
-	ptxSample.style.color = pselColor.value;
+	if (chGradient.checked) { changeSample(); }
+	else { ptxSample.style.color = pselColor.value; }
 	oOPtions.color = pselColor.value;
+}
+function fnOnTextgColorChange() {
+	if (chGradient.checked) { 
+		changeSample();	
+	}
+	oOPtions.GColor = pselgColor.value;
 }
 function fnOnFontFamilyChange() {
 	ptxSample.style.fontFamily = pselFont.value;
@@ -208,6 +235,23 @@ function fnOnFontFamilyChange() {
 function fnOnBoldCheckChange() {
 	ptxSample.style.fontWeight = (pchBold.checked) ? 'bold' : 'normal';
 	oOPtions.bold = pchBold.checked;
+}
+function fnOnGradientCheckChange() {
+	oOPtions.GColorSel = chGradient.checked;
+	changeSample();
+}
+function changeSample() {
+	if (chGradient.checked) {
+		ptxSample.style.fontWeight = (pchBold.checked) ? 'bold' : 'normal';
+		ptxSample.style.fontStyle = (pchItalic.checked) ? 'italic' : 'normal';
+		ptxSample.style.cssText = 'font-style:' + ptxSample.style.fontStyle + ';font-weight:' + ptxSample.style.fontWeight + ';font-family:' + ptxSample.style.fontFamily + ';background: ' + pselColor.value + ';background: linear-gradient(to right, ' + pselColor.value + ' 0%, ' + pselgColor.value + ' 100%);-webkit-background-clip: text;-webkit-text-fill-color: transparent;';	
+	}
+	else {
+		ptxSample.style.fontWeight = (pchBold.checked) ? 'bold' : 'normal';
+		ptxSample.style.fontStyle = (pchItalic.checked) ? 'italic' : 'normal';
+		ptxSample.style.cssText = 'font-style:' + ptxSample.style.fontStyle + ';font-weight:' + ptxSample.style.fontWeight + ';font-family:' + ptxSample.style.fontFamily + ';color: ' + pselColor.value + ';';	
+
+	}	
 }
 function fnOnItalicCheckChange() {
 	ptxSample.style.fontStyle = (pchItalic.checked) ? 'italic' : 'normal';
@@ -230,6 +274,10 @@ function fnOnEmotsOffChange() {
 
 function fnOnbTextFrmtOffChange() {
 	oOPtions.bTextFrmtOff = pchbTextFrmtOff.checked;
+}
+
+function fnOnbgTextFrmtOffChange() {
+	oOPtions.bgTextFrmtOff = pchbgTextFrmtOff.checked;
 }
 
 function fnOnWhispOffChange() {
@@ -323,7 +371,7 @@ function fnSaveClose() {
 	window.parent.saveOptions(oOPtions);
 	window.parent.resetToChatPane();	
 	window.parent.closeTopTab('options');
-	window.parent.resetToChatPane();
+	//window.parent.resetToChatPane();
 }
 function fnCancel() {
 	window.parent.closeTopTab('options');

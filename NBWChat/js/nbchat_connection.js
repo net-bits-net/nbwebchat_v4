@@ -365,12 +365,24 @@ var NBChatConnection;
             this.wsocket_.close();
         };
         NBWebsocket.prototype.Connect = function (ip, port) {
+			
+	
             if (!this.CanConnect()) {
                 throw new Error("Socket is connecting or connected. Should use 'NBChatConnection.CanConnect() before trying to connect.");
             }
             this.ip_ = ip;
             this.port_ = port;
-            this.wsocket_ = new WebSocket("ws://" + this.ip_ + ":" + this.port_ + "/");
+			this.protocol = window.location.protocol;
+			if (this.protocol == 'https:') {
+				console.log('using wss:// on ' + ip + ' ' + port);
+				this.wsocket_ = new WebSocket("wss://" + this.ip_ + ":" + this.port_ + "/");
+				
+			}
+			else {
+				console.log('using ws:// on ' + ip + ' ' + port);
+				this.wsocket_ = new WebSocket("ws://" + this.ip_ + ":" + this.port_ + "/");				
+				
+			}
             this.connecting_ = true;
             this.wsocket_.onopen = function (ev) {
                 //this.ip_ doesn't exist here.

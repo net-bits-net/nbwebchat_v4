@@ -17,7 +17,7 @@ body { background:#075288; }
 #nicklistinfo2 { background:transparent;color:white; }
 .channame_nowchatting { color:white; }
 .chanlabel { color:#E8F0F7;font-weight:bold; }
-#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend { background-color:#FFF;background-image:none !important;  }
+#statusareaholder, #chatareaholder, #chatnicklistholder, #sendIntputDiv { background-color:#FFF;background-image:none !important;  }
 #wndSetAwayMsgContainer { background:#075288;border:1px solid #000; }
 .awaymsgabouttext { color:#FFF; }
 .awayicon_a { color:white !important;border:1px solid #ccc;background:#1E4864;padding:0 2px; }

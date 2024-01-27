@@ -29,7 +29,7 @@ body { background:#E20F0D url('../images/holiday/valday.jpg') no-repeat 100% fix
 #statusareaholder, #chatareaholder { border:2px solid #F37273 !important;background:transparent url('../images/transwhite95.png') !important; }
 #chatnicklistholder { border:2px solid #F37273 !important;background:transparent url('../images/transwhite95.png') !important; }
 #chatnicklist { top:5px !important; }
-#txSend { border:1px solid #F37273 !important;background:transparent url('../images/transwhite90.png') !important; }
+#sendIntputDiv { border:1px solid #F37273 !important;background:transparent url('../images/transwhite90.png') !important; }
 #nicklistuicons { background:transparent url('../images/trans50.png');-webkit-border-radius: 8px;
 -moz-border-radius: 8px;
 border-radius: 8px; }

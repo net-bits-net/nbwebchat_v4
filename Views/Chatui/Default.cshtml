@@ -396,7 +396,7 @@
 					<div id="lvUsers" onmouseout="menuMouseOut(this);"></div>
 				</div>
 			</div>
-						<div id="sendIntputDiv">
+			<div id="sendIntputDiv">
 				<input id="txSend" name="txSend" type="text" maxlength="512" onclick="ScrollFix();" onkeypress="fnCheckKey(event);" onkeydown="onTxSendKeypress(event);" autocomplete="off" />
 			</div>
 			<div id="sendbuttons">
@@ -601,19 +601,19 @@
 		$('#transupdate').on("click", function() {
 			var ttype = $('#transtype').val();
 			if (ttype == '75') { 
-				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite75.png') !important;");
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #sendIntputDiv").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite75.png') !important;");
 			}
 			if (ttype == '85') { 
-				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite85.png') !important;");
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #sendIntputDiv").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite85.png') !important;");
 			}
 			if (ttype == '90') { 
-				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite90.png') !important;");
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #sendIntputDiv").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite90.png') !important;");
 			}
 			if (ttype == '95') { 
-				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite95.png') !important;");
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #sendIntputDiv").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite95.png') !important;");
 			}
 			if (ttype == 'none') { 
-				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background-color: #FFF !important;background-image:none;");
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #sendIntputDiv").css("cssText", "background-color: #FFF !important;background-image:none;");
 			}			
      		return false;
 		});		
@@ -621,13 +621,13 @@
 			var cssc = $(this).attr('rel');
 			var csscb = "@Model.STAG_NBWCHATTEMPLATEDIR/themes/" + cssc;
 			$("link.changestyle").attr("href",csscb);
-			$.cookie("css",$(this).attr('rel'), {expires: 365, path: "/;SameSite=None", secure: true});
+			$.cookie("css",$(this).attr('rel'), {expires: 365, path: '/'});
 			var cssbg = $(this).attr('title');
 			if (cssbg == 'blue' || cssbg == 'black' || cssbg == 'red' || cssbg == 'pink' || cssbg == 'purple' || cssbg == 'green' || cssbg == 'msn') { 
-				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background-color: #FFF !important;background-image:none;");
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #sendIntputDiv").css("cssText", "background-color: #FFF !important;background-image:none;");
 			}
 			else {
-				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #txSend").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite95.png') !important;");
+				$("#statusareaholder, #chatareaholder, #chatnicklistholder, #sendIntputDiv").css("cssText", "background:transparent url('@Model.STAG_NBWCHATTEMPLATEDIR/images/transwhite95.png') !important;");
 			}
 			$('#transtype').val(95);
 	

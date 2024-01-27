@@ -22,7 +22,7 @@ body { background:#70A0B9 url('../images/holiday/snowflakebg.jpg'); }
 #statusareaholder, #chatareaholder { border:1px solid #6FA1B9 !important;background:transparent url('../images/transwhite90.png') !important; }
 #chatnicklistholder { border:1px solid #6FA1B9 !important;background:transparent url('../images/transwhite90.png') !important; }
 #chatnicklist { top:5px !important; }
-#txSend { border:1px solid #6FA1B9 !important;background:transparent url('../images/transwhite90.png') !important; }
+#sendIntputDiv { border:1px solid #6FA1B9 !important;background:transparent url('../images/transwhite90.png') !important; }
 #wndSetAwayMsgContainer { background:#70A0B9;border:1px solid #000; }
 .awaymsgabouttext { color:#FFF; }
 .awayicon_a { color:white !important;border:1px solid #fff;background:#6EA1B9;padding:0 2px; }

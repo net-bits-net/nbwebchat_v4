@@ -29,7 +29,7 @@ background:transparent url('../images/holiday/headerbg.png')
 #chatnicklistholder { border:2px solid #1E4474 !important;background:transparent url('../images/transwhite95.png') !important; }
 #chatnicklist { top:5px !important; }
 #nicklistuicons { text-shadow: 2px 2px 2px #2F3F54;  }
-#txSend { border:2px solid #1E4474 !important;background:transparent url('../images/transwhite95.png') !important; }
+#sendIntputDiv { border:2px solid #1E4474 !important;background:transparent url('../images/transwhite95.png') !important; }
 #wndSetAwayMsgContainer { background:#19354B;border:1px solid #000; }
 .awaymsgabouttext { color:#FFF; }
 .awayicon_a { color:white !important;border:1px solid #fff;background:#19354B;padding:0 2px; }

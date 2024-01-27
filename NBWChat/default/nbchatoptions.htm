@@ -16,7 +16,7 @@
 	<link class="changestyle" rel="stylesheet" href="themes/default.css" type="text/css" />
 
 	<title>Chat Options</title>
-	<script type="text/javascript" src="../js/wndoptions.js?v=1.7"></script>
+	<script type="text/javascript" src="../js/wndoptions.js?v=2.3"></script>
 </head>
 <body style="background:white !important;" onload="fnOnLoad();">	
 	<div class="container-fluid" style="padding-top:10px;padding-bottom:10px;background-color:white;">
@@ -30,7 +30,7 @@
 				   
 				   <div class="row">
 						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">                   
-							<div style="padding-bottom:3px;">
+							<div style="padding-bottom:7px;">
 								<select style="display:inline-block;" class="form-control" id="selFont" onchange="fnOnFontFamilyChange();">
 									<option value="Abadi MT Condensed Light">Abadi MT Condensed Light</option>
 									<option value="Arial">Arial</option>
@@ -74,17 +74,32 @@
 									<option value="Verdana">Verdana</option>
 								</select>
 							</div>
-						</div>
-						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">         	    
-							<div style="padding-bottom:3px;">
-								<input style="max-width:100px;display:inline-block;" id="selColor" onchange="fnOnTextColorChange();" class="form-control color {hash:true,minS:0.2}" value="#000000"> <a style="font-size:10px;text-decoration:none;color:#333;" href="https://dl.dropboxusercontent.com/u/1080546/colors.html" target="_blank">Old Colors</a>
-							</div>
-						</div>
-						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"> 	
 							<div style="padding-bottom:3px;">
 								<b>Bold</b> <input id="chBold" type="checkbox" onpropertychange="fnOnBoldCheckChange();" onchange="fnOnBoldCheckChange();" />&nbsp;<i>Italics</i>&nbsp;&nbsp;<input id="chItalic" type="checkbox" onpropertychange="fnOnItalicCheckChange();" onchange="fnOnItalicCheckChange();" />
 							</div>
+							
+							
 						</div>
+						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">         	    
+							<div style="padding-bottom:3px;">
+								<div>Main text color</div>
+								<input style="max-width:100px;display:inline-block;" id="selColor" onchange="fnOnTextColorChange();" class="form-control color {hash:true,minS:0.2}" value="#000000"> 
+								<!--<a style="font-size:10px;text-decoration:none;color:#333;" href="https://dl.dropboxusercontent.com/u/1080546/colors.html" target="_blank">Old Colors</a>-->
+							</div>
+						</div>
+						
+						<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">         	    
+							<div style="padding-bottom:3px;">
+								<div>Fade to text color</div>
+								<input style="max-width:100px;display:inline-block;" id="selgColor" onchange="fnOnTextgColorChange();" class="form-control color {hash:true,minS:0.2}" value="#000000">
+							</div>
+							<div style="padding-bottom:3px;">
+								Use Gradient <input id="chGradient" type="checkbox" onpropertychange="fnOnGradientCheckChange();" onchange="fnOnGradientCheckChange();" />
+							</div>
+						</div>
+						
+						
+						
 					</div>							
 					<div style="height:10px;"></div>
 					<div style="padding:3px;border:1px solid #CCC;text-align:center;font-size:18px;">
@@ -137,6 +152,9 @@
 					</span>
 					<span style="padding-right:10px;display:inline-block;">
 						<input id="chbTextFrmtOff" type="checkbox" onpropertychange="fnOnbTextFrmtOffChange();" onchange="fnOnbTextFrmtOffChange();" />&nbsp; Turn off text formatting
+					</span>
+					<span style="padding-right:10px;display:inline-block;">
+						<input id="chbgTextFrmtOff" type="checkbox" onpropertychange="fnOnbgTextFrmtOffChange();" onchange="fnOnbgTextFrmtOffChange();" />&nbsp; Turn off text gradient
 					</span>
 					<!--
 					<span style="padding-right:10px;display:inline-block;">

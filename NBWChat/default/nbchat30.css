@@ -84,8 +84,13 @@ body { font-family:Tahoma;font-size:14px;  }
 /* Chat Area */
 #chatareaholder {z-index:2;position:absolute;right:230px;left:5px;top:117px;bottom:65px;background-color: white;overflow-y: hidden;overflow-x: initial;margin: 0;padding: 0 0 10px 10px;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;border:1px solid #292929;}
 #DebugPane, #ChatPane, #StatusPane, #OptionsbPane, #AccessPane, #ModesPane, #PropsPane {z-index:3;position:relative;display:inline-block;white-space: nowrap;word-wrap: break-word;word-break: break-all;overflow-x: scroll;width:100%;max-width:100%;text-align: justify;white-space: normal !important;height:100%;padding:0 0 10px 0;margin:0;}
-#sendIntputDiv { position:absolute;bottom:30px;left:5px;right:505px; }
-#txSend { height:30px;max-height:30px;width:100%;padding:2px 5px;font-size:16px;border:1px solid #292929;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px; }
+#txSend { width:100%;border:0px;height:30px;padding:2px 5px;font-size:14px;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;  }
+#txSend:focus{
+    outline: none;
+}
+#sendIntputDiv { position:absolute;bottom:30px;left:5px;right:505px;max-height:30px;padding:0px 0px;border:1px solid #292929;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;  }
+
+
 #manualscroll { position:absolute;bottom:30px;right:397px;color:white;font-weight:normal !important; }
 #sendbuttons { position:absolute;bottom:30px;right:230px; }
 /* Nicklist */
@@ -132,8 +137,11 @@ body { font-family:Tahoma;font-size:14px;  }
 .whisperwindowholder { width:480px;height:290px;border:2px solid #FFF;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px; }
 .whisperareawho { color:white;font-size:13px;font-weight:bold;position:absolute;top:6px;left:8px; }
 .whisperarea { position:absolute;right:5px;left:5px;top:30px;bottom:40px;background-color: white;margin: 0;padding: 0 0 10px 10px;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;border:1px solid #292929; }
-.whispersendIntputDivb { position:absolute;bottom:7px;left:5px;right:65px; }
-.whispersendinput { height:29px;max-height:29px;width:100%;padding:2px 5px;font-size:16px;border:1px solid #292929;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px; }
+.whispersendIntputDivb { background-color:white;border:1px solid #292929;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px;position:absolute;bottom:7px;left:5px;right:65px; }
+.whispersendinput:focus{
+    outline: none;
+}
+.whispersendinput { border:0px;height:29px;max-height:29px;width:100%;padding:2px 5px;font-size:16px;-webkit-border-radius: 8px;-moz-border-radius: 8px;border-radius: 8px; }
 .sendbuttonsb { position:absolute;bottom:8px;right:12px; }
 .WhisperPane {z-index:3;position:relative;display:inline-block;white-space: nowrap;word-wrap: break-word;word-break: break-all;overflow-x: scroll;width:100%;max-width:100%;text-align: justify;white-space: normal !important;height:100%;padding:0;margin:5px 0 0 0;}
 .whisploading { position:fixed;top:20px;color:#333;font-size:14px;z-index:3; }
@@ -151,6 +159,20 @@ body { font-family:Tahoma;font-size:14px;  }
 footer { position:absolute;bottom:3px;min-height:20px;left:10px;right:10px;color:white;font-size:13px;overflow:hidden; }
 .aright { text-align:right; }
 /* Chat Content */
+/* Update Dec 15 2023 text gradient Mike
+a.normallink { 
+
+display: inline;
+    text-decoration: none;
+    background-image: linear-gradient(transparent, transparent),linear-gradient(transparent, transparent),linear-gradient(to right, #0000ff, #0000ff);
+    background-repeat: no-repeat;
+    background-position: 120%, 122%, 0 130%;
+	background-size: 100% 5px;
+
+}
+a.normallink:hover { 
+background-image: linear-gradient(transparent, transparent),linear-gradient(transparent, transparent),linear-gradient(to right, #ff0000, #ff0000);
+}
 .status-connecting { color:green; }
 .timestamp { color:grey;font-family:'Courier New'; }
 .timeline {}
